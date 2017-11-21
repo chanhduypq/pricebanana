@@ -1,0 +1,515 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Qoo10 Price Tracker</title>
+	<!-- jquery -->
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.min.css">
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<!-- bootstrap-social and font-awesome -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-social/5.1.1/bootstrap-social.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<!-- jquery -->
+	<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"></script>
+	<!-- canvasjs -->
+	<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+	<style type="text/css">
+		.clearfix::after {
+			display: block;
+			content: "";
+			clear: both;
+		}
+		#pricebanana_ctn {
+			min-width: 700px;
+			max-width: 960px;
+			display: flex;
+			height: 416px;
+			border: 0px none;
+			margin: 10px 0px 0px;
+		}
+		#pricebanana_ctn iframe {
+			width: 100%;
+			height: 100%;
+			border: 0 none;
+			overflow: hidden;
+		}
+		#tabs .acount{
+			position: absolute;
+			right: 20px;
+			top: 10px;
+		}
+		#tabs .acount a{
+			text-decoration: none;
+			color: #ff6347;
+		}
+		.custom-handle .ui-slider .ui-slider-handle,.custom-handle .ui-state-active a{
+			outline: none;
+		}
+		.ui-slider .ui-slider-handle{
+			outline: none;
+			border-color: 1px solid #000!important;
+			box-shadow: 0 0 6px 0 #f47a00!important;
+		}
+		#tabs-track-product .ui-slider .custom-handle {
+			width: 3em;
+			height: 1.6em;
+			top: 50%;
+			margin-top: -.8em;
+			text-align: center;
+			line-height: 1.6em;
+		}
+		#tabs-track-product .price_slider{
+			margin-bottom: 25px;
+		}
+		.panel-login {
+		    border-color: #ccc;
+			-webkit-box-shadow: 0px 2px 3px 0px rgba(0,0,0,0.2);
+			-moz-box-shadow: 0px 2px 3px 0px rgba(0,0,0,0.2);
+			box-shadow: 0px 2px 3px 0px rgba(0,0,0,0.2);
+		}
+		.panel-login>.panel-heading {
+			color: #00415d;
+			background-color: #fff;
+			border-color: #fff;
+			text-align:center;
+		}
+		.panel-login>.panel-heading a{
+			text-decoration: none;
+			color: #666;
+			font-weight: bold;
+			font-size: 15px;
+			-webkit-transition: all 0.1s linear;
+			-moz-transition: all 0.1s linear;
+			transition: all 0.1s linear;
+		}
+		.panel-login>.panel-heading a.active{
+			color: #029f5b;
+			font-size: 18px;
+		}
+		.panel-login>.panel-heading hr{
+			margin-top: 10px;
+			margin-bottom: 0px;
+			clear: both;
+			border: 0;
+			height: 1px;
+			background-image: -webkit-linear-gradient(left,rgba(0, 0, 0, 0),rgba(0, 0, 0, 0.15),rgba(0, 0, 0, 0));
+			background-image: -moz-linear-gradient(left,rgba(0,0,0,0),rgba(0,0,0,0.15),rgba(0,0,0,0));
+			background-image: -ms-linear-gradient(left,rgba(0,0,0,0),rgba(0,0,0,0.15),rgba(0,0,0,0));
+			background-image: -o-linear-gradient(left,rgba(0,0,0,0),rgba(0,0,0,0.15),rgba(0,0,0,0));
+		}
+		.panel-login input[type="text"],.panel-login input[type="email"],.panel-login input[type="password"] {
+			height: 45px;
+			border: 1px solid #ddd;
+			font-size: 16px;
+			-webkit-transition: all 0.1s linear;
+			-moz-transition: all 0.1s linear;
+			transition: all 0.1s linear;
+		}
+		.panel-login input:hover,
+		.panel-login input:focus {
+			outline:none;
+			-webkit-box-shadow: none;
+			-moz-box-shadow: none;
+			box-shadow: none;
+			border-color: #ccc;
+		}
+		.btn-login {
+			background-color: #59B2E0;
+			outline: none;
+			color: #fff;
+			font-size: 14px;
+			height: auto;
+			font-weight: normal;
+			padding: 14px 0;
+			text-transform: uppercase;
+			border-color: #59B2E6;
+		}
+		.btn-login:hover,
+		.btn-login:focus {
+			color: #fff;
+			background-color: #53A3CD;
+			border-color: #53A3CD;
+		}
+		.forgot-password {
+			text-decoration: underline;
+			color: #888;
+		}
+		.forgot-password:hover,
+		.forgot-password:focus {
+			text-decoration: underline;
+			color: #666;
+		}
+
+		.btn-register {
+			background-color: #1CB94E;
+			outline: none;
+			color: #fff;
+			font-size: 14px;
+			height: auto;
+			font-weight: normal;
+			padding: 14px 0;
+			text-transform: uppercase;
+			border-color: #1CB94A;
+		}
+		.btn-register:hover,
+		.btn-register:focus {
+			color: #fff;
+			background-color: #1CA347;
+			border-color: #1CA347;
+		}
+		.social-layout a{
+			color: #fff;
+		}
+
+	</style>
+</head>
+<body>
+ 
+<div id="tabs" style="display: block; width: 900px; height: auto; padding: 0px; position: relative;">
+	<div class="acount">
+		<a href="#">tung.maitrong@gmail.com</a>
+	</div>
+	<ul>
+		<li><a href="#tabs-price-history">Price History</a></li>
+		<li><a href="#tabs-track-product">Track Product</a></li>
+	</ul>
+	<div id="tabs-price-history" style="max-width: 850px;">
+		<div id="chartContainer" style="height: 370px; width: 100%;"></div>
+	</div>
+	<div id="tabs-track-product">
+			
+			<!-- acount-form -->
+			<div id="acount-form">
+				<div class="panel panel-login">
+					<div class="panel-heading">
+						<div class="row">
+							<div class="col-xs-4">
+								<a href="#" class="active" id="login-form-link">Login</a>
+							</div>
+							<div class="col-xs-4">
+								<a href="#" id="register-form-link">Register</a>
+							</div>
+							<div class="col-xs-4">
+								<a href="#" class="forgot-form-link">Forgot Password</a>
+							</div>
+						</div>
+						<hr>
+					</div>
+					<div class="panel-body">
+						<div class="row">
+							<div class="col-lg-12">
+									
+								<form id="login-form" action="" method="post" role="form" style="display: block;">
+									<div class="row">
+										<div class="col-lg-8">
+											<div class="form-group">
+												<input type="text" name="username" id="username" tabindex="1" class="form-control" placeholder="Username" value="">
+											</div>
+											<div class="form-group">
+												<input type="password" name="password" id="password" tabindex="2" class="form-control" placeholder="Password">
+											</div>
+											<div class="form-group">
+												<div class="row">
+													<div class="col-sm-4">
+														<input type="checkbox" tabindex="3" class="" name="remember" id="remember">
+														<label for="remember">Remember Me </label>
+													</div>
+													<div class="col-sm-6">
+														<a href="#" tabindex="5" class="forgot-password forgot-form-link"> Forgot Password?</a>
+													</div>
+												</div>
+											</div>
+											<div class="form-group">
+												<div class="row">
+													<div class="col-sm-5">
+														<input type="submit" name="login-submit" id="login-submit" tabindex="4" class="form-control btn btn-login" value="Log In">
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="col-lg-4">
+											<h4>Or log in with</h4>
+											<div class="social-layout">
+												<a class="btn btn-block btn-social btn-twitter">
+												    <span class="fa fa-twitter"></span> Login with Twitter
+												 </a>
+												 <a class="btn btn-block btn-social btn-twitter">
+												    <span class="fa fa-google"></span> Login with Google
+												 </a>
+												 <a class="btn btn-block btn-social btn-twitter">
+												    <span class="fa fa-facebook"></span> Login with Facebook
+												 </a>
+											</div>
+										</div>
+									</div>
+								</form>
+								
+								<form id="register-form" action="" method="post" role="form" style="display: none;">
+									<div class="row">
+										<div class="col-lg-8">
+											<div class="form-group">
+												<input type="text" name="username" id="username" tabindex="1" class="form-control" placeholder="Username" value="">
+											</div>
+											<div class="form-group">
+												<input type="email" name="email" id="email" tabindex="1" class="form-control" placeholder="Email Address" value="">
+											</div>
+											<div class="form-group">
+												<input type="password" name="password" id="password" tabindex="2" class="form-control" placeholder="Password">
+											</div>
+											<div class="form-group">
+												<input type="password" name="confirm-password" id="confirm-password" tabindex="2" class="form-control" placeholder="Confirm Password">
+											</div>
+											<div class="form-group">
+												<div class="row">
+													<div class="col-sm-6">
+														<input type="submit" name="register-submit" id="register-submit" tabindex="4" class="form-control btn btn-register" value="Register Now">
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="col-lg-4">
+											<h4>Or register with</h4>
+											<div class="social-layout">
+												<a class="btn btn-block btn-social btn-twitter">
+												    <span class="fa fa-twitter"></span> Sign in with Twitter
+												 </a>
+												 <a class="btn btn-block btn-social btn-twitter">
+												    <span class="fa fa-google"></span> Sign in with Google
+												 </a>
+												 <a class="btn btn-block btn-social btn-twitter">
+												    <span class="fa fa-facebook"></span> Sign in with Facebook
+												 </a>
+											</div>
+										</div>
+									</div>
+								</form>
+							
+								<form id="forgot-form" action="" method="post" role="form" style="display: none;">
+									<div class="row">
+										<div class="col-lg-8">
+											<div class="form-group">
+												<input type="text" name="username" id="username" tabindex="1" class="form-control" placeholder="Username" value="">
+											</div>
+											<div class="form-group">
+												<div class="row">
+													<div class="col-sm-6">
+														<input type="submit" name="login-submit" id="login-submit" tabindex="4" class="form-control btn btn-login" value="Submit">
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</form>
+								
+							</div>
+						</div>
+					</div>
+				</div>
+				
+			</div>
+			<!-- end acount-form -->
+			
+			<!-- track-price -->
+			<div id="track-price" class="group-price" style="display: none;">
+				<form action="" method="post" class="track-product">
+					<p class="price">Price: <span></span></p>
+					<p class="tracking_price">Traking Price: <span></span></p>
+					<p class="discount_price">Sale: <span></span><i></i></p>
+					<div class="price_slider">
+					  <div class="ui-slider-handle custom-handle"></div>
+					</div>
+					<div class="action">
+						<button class="ui-button ui-widget ui-corner-all">Start tracking</button>
+					</div>
+				</form>
+			</div>
+			<!-- end track-price -->
+		
+	</div>
+</div>
+ 
+ <script>
+		$( function() {
+
+			//tab and slider
+			$( "#tabs" ).tabs();
+
+			//login
+			 $('#login-form-link').click(function(e) {
+		    	$("#login-form").delay(100).fadeIn(100);
+		 		$("#register-form").fadeOut(100);
+		 		$("#forgot-form").fadeOut(100);
+				$('.panel-heading a').removeClass('active');
+				$(this).addClass('active');
+				e.preventDefault();
+			});
+			$('#register-form-link').click(function(e) {
+				$("#register-form").delay(100).fadeIn(100);
+		 		$("#login-form").fadeOut(100);
+		 		$("#forgot-form").fadeOut(100);
+				$('.panel-heading a').removeClass('active');
+				$(this).addClass('active');
+				e.preventDefault();
+			});
+
+			$('.forgot-form-link').click(function(e) {
+				$("#forgot-form").delay(100).fadeIn(100);
+		 		$("#login-form").fadeOut(100);
+		 		$("#register-form").fadeOut(100);
+				$('.panel-heading a').removeClass('active');
+				$('.panel-heading .forgot-form-link').addClass('active');
+				e.preventDefault();
+			});
+			
+
+			//Q-Price
+			trackingPriceSlide(120,25,700);
+
+			function trackingPriceSlide(current_price,min_price,max_price){
+					//slider
+					var currency = '$';
+					var currency_label  = currency+' ';
+					var price           = $( '#track-price .price span' );
+					var tracking_price  = $( '#track-price .tracking_price span' );
+					var discount_price  = $( '#track-price .discount_price span' );
+					var discount_price_percent  = $( '#track-price .discount_price i' );
+
+					var handle = $( '#track-price .custom-handle' );
+					$( '#track-price .price_slider' ).slider({
+
+						value: current_price,
+						min: min_price,
+						max: max_price,
+						range: 'min',
+						create: function() {
+
+							slide_price = $( this ).slider( 'value' );
+							handle.text( currency_label + slide_price );
+							tracking_price.text(slide_price);
+							price.text(currency_label + max_price);
+
+							// caculate
+							discount = max_price-slide_price;
+							discount_price.text(currency_label+discount);
+							//percent
+							percent = (slide_price/max_price)*100;
+							percent = 100-Math.ceil(percent);
+							discount_price_percent.text(' ('+percent+'%)');
+							$( '#track-price .price_slider .ui-slider-range' ).css( 'background-color', getColor( 100-percent ) );
+
+						},
+						slide: function( event, ui ) {
+
+							handle.text( currency_label+ui.value );
+							$(tracking_price).text(currency_label+ui.value);
+							$(discount_price).text(currency_label+(max_price-ui.value));
+
+							//percent
+							percent = (ui.value/max_price)*100;
+							percent = 100-Math.ceil(percent);
+							discount_price_percent.text(' ('+percent+'%)');
+							//update color
+							$( '#track-price .price_slider .ui-slider-range' ).css( 'background-color', getColor( 100-percent ) );
+						}
+
+					});
+			}
+
+
+			function getColor( v ) {
+				var c = "";
+				if ( v < 80 ) {
+					r = 255; g = parseInt( ( ( v * 2 ) * 255 ) / 100 );
+				}
+				else  {
+					r = parseInt( ( ( 100 - v ) * 2 ) * 255 / 100 ); g = 255;
+				}
+				c = "rgb(" + r + "," + g + ",0)"; 
+				return( c );
+			}
+
+	});
+
+
+	//chart data
+	window.onload = function () {
+
+		// put data
+		var dataPrice = [
+							{ x: new Date(2017, 0, 3), y: 10 },
+							{ x: new Date(2017, 0, 4), y: 15 },
+							{ x: new Date(2017, 0, 5), y: 20 },
+							{ x: new Date(2017, 0, 6), y: 40 },
+							{ x: new Date(2017, 0, 7), y: 50 },
+							{ x: new Date(2017, 0, 8), y: 30 },
+							{ x: new Date(2017, 0, 9), y: 20 },
+							{ x: new Date(2017, 0, 10), y: 40 },
+							{ x: new Date(2017, 0, 11), y: 30 },
+							{ x: new Date(2017, 0, 12), y: 10 },
+							{ x: new Date(2017, 0, 13), y: 40 },
+							{ x: new Date(2017, 0, 14), y: 35 },
+							{ x: new Date(2017, 0, 15), y: 25 },
+							{ x: new Date(2017, 0, 16), y: 50 }
+						];
+
+		var chart = new CanvasJS.Chart("chartContainer", {
+			animationEnabled: true,
+			theme: "light2",
+			title:{
+				text: "Price History"
+			},
+			axisX:{
+				valueFormatString: "DD MMM",
+				crosshair: {
+					enabled: true,
+					snapToDataPoint: true
+				}
+			},
+			axisY: {
+				title: "Price",
+				crosshair: {
+					enabled: true
+				}
+			},
+			toolTip:{
+				shared:true
+			},  
+			legend:{
+				cursor:"pointer",
+				verticalAlign: "bottom",
+				horizontalAlign: "left",
+				dockInsidePlotArea: true,
+				itemclick: toogleDataSeries
+			},
+			data: [
+					{
+						type: "line",
+						showInLegend: true,
+						name: "Q-Price",
+						markerType: "square",
+						color: "#F08080",
+						dataPoints: dataPrice
+					}
+				  ]
+		});
+		chart.render();
+
+		function toogleDataSeries(e){
+			if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+				e.dataSeries.visible = false;
+			} else{
+				e.dataSeries.visible = true;
+			}
+			chart.render();
+		}
+
+	}
+
+
+ </script>
+ 
+</body>
+</html>
