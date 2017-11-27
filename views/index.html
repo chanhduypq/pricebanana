@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Price Banana Tracker</title>
+	<!-- jquery -->
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.min.css">
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<!-- bootstrap-social and font-awesome -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-social/5.1.1/bootstrap-social.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<!-- jquery -->
+	<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"></script>
+	<!-- canvasjs -->
+	<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="css/style.css" />
+</head>
+<body>
+ 
+<div id="tabs">
+	<div class="acount">
+		<span href="#" id="user_email"><%= user_email %></span>
+	</div>
+	<ul>
+		<li><a href="#tabs-price-history">Price History</a></li>
+		<li><a id="tracking_tab" href="#tabs-track-product">Track Product</a></li>
+	</ul>
+	<div id="tabs-price-history">
+		<div id="chartContainer"></div>
+	</div>
+	<div id="tabs-track-product">
+			<!-- acount-form -->
+			<div id="acount-form" style="display:none">
+				<div class="panel panel-login">
+					<div class="panel-heading">
+						<div class="row">
+							<div class="col-xs-6">
+								<a href="#" class="active" id="login-form-link">Login</a>
+							</div>
+							<div class="col-xs-6">
+								<a href="#" id="register-form-link">Register</a>
+							</div>
+						</div>
+						<hr>
+					</div>
+					<div class="panel-body">
+						<div class="row">
+							<div class="col-lg-12">
+								<form id="login-form" method="post" role="form">
+									<div class="row">
+										<div class="col-lg-12">
+											<div class="form-group">
+												<input type="text" name="logemail" tabindex="1" class="form-control" placeholder="Email">
+											</div>
+											<div class="form-group">
+												<input type="password" name="logpassword" tabindex="2" class="form-control" placeholder="Password">
+											</div>
+											<div class="form-group">
+												<div class="row">
+													<div class="col-sm-4">
+														<input type="checkbox" tabindex="3" name="rememberme">
+														<label for="rememberme">Remember Me</label>
+													</div>
+												</div>
+											</div>
+											<div class="form-group">
+												<div class="row">
+													<div class="col-sm-5">
+														<input type="button" id="login-submit" tabindex="4" class="form-control btn btn-login" value="Log In">
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</form>
+								<form id="register-form" method="post" role="form" style="display: none;">
+									<div class="row">
+										<div class="col-lg-12">
+											<div class="form-group">
+												<input type="text" name="username" tabindex="5" class="form-control" placeholder="Username">
+											</div>
+											<div class="form-group">
+												<input type="email" name="email" tabindex="6" class="form-control" placeholder="Email Address">
+											</div>
+											<div class="form-group">
+												<input type="password" name="password" tabindex="7" class="form-control" placeholder="Password">
+											</div>
+											<div class="form-group">
+												<input type="password" name="passwordConf" tabindex="8" class="form-control" placeholder="Confirm Password">
+											</div>
+											<div class="form-group">
+												<div class="row">
+													<div class="col-sm-6">
+														<input type="button" name="register-submit" id="register-submit" tabindex="9" class="form-control btn btn-register" value="Register Now">
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- end acount-form -->
+			<!-- track-price -->
+			<div id="track-price" class="group-price" style="display: none;">
+				<form action="" method="post" class="track-product">
+					<p class="price">Price: <span></span></p>
+					<p class="tracking_price">Traking Price: <span></span></p>
+					<p class="discount_price">Sale: <span></span><i></i></p>
+					<div class="price_slider">
+					  <div class="ui-slider-handle custom-handle"></div>
+					</div>
+					<div class="action">
+						<button class="ui-button ui-widget ui-corner-all">Start tracking</button>
+					</div>
+				</form>
+			</div>
+			<!-- end track-price -->
+	</div>
+</div>
+ 
+ <script>
+	$( function() {
+		//tab and slider
+		$( "#tabs" ).tabs();
+		$('#tracking_tab').click(function() {
+			var user_email = '<%= user_email %>';
+			if(user_email == '') {
+				$('#track-price').hide();
+				$('#acount-form').show();
+			} else {
+				$('#acount-form').hide();
+				$('#track-price').show();
+			}
+		});
+
+        //Q-Price
+        var current_price = parseFloat('<%= current_price %>');
+        var tracked_price = parseFloat('<%= tracked_price %>');
+        trackingPriceSlide(tracked_price,0,current_price);
+
+		//login
+		$('#login-form-link').click(function(e) {
+			$("#login-form").delay(100).fadeIn(100);
+			$("#register-form").fadeOut(100);
+			$("#forgot-form").fadeOut(100);
+			$('.panel-heading a').removeClass('active');
+			$(this).addClass('active');
+			e.preventDefault();
+		});
+		$('#register-form-link').click(function(e) {
+			$("#register-form").delay(100).fadeIn(100);
+			$("#login-form").fadeOut(100);
+			$("#forgot-form").fadeOut(100);
+			$('.panel-heading a').removeClass('active');
+			$(this).addClass('active');
+			e.preventDefault();
+		});
+
+		$('#login-submit').click(function() {
+			var checked = true;
+			var logemail = $.trim($('input[name=logemail]').val());
+            $('input[name=logemail]').css('border-color','#ccc');
+			if(logemail == '' || logemail.indexOf('@') === -1) {
+				$('input[name=logemail]').css('border-color','red');
+				checked = false;
+			}
+			var logpassword = $.trim($('input[name=logpassword]').val());
+            $('input[name=logpassword]').css('border-color','#ccc');
+			if(logpassword == '') {
+				$('input[name=logpassword]').css('border-color','red');
+				checked = false;
+			}
+			var rememberme = $('input[name=rememberme]').is(":checked");
+			if(checked) {
+				$.ajax({
+					type: "POST",
+					url: '/login',
+					data: {
+						logemail: logemail,
+						logpassword: logpassword,
+						rememberme: rememberme,
+						is_ajax: true
+					},
+					dataType: 'json',
+					success: function(result) {
+						if(result.success) {
+							$('#acount-form').hide();
+							$('#track-price').show();
+							$('#user_email').html(logemail+' (<a href="/logout">Logout</a>)');
+                            updatePriceSlide(result.tracked_price);
+						} else {
+							alert(result.message);
+						}
+					},
+					error: function() {
+						alert('ajax error');
+					}
+				});
+			}
+		});
+
+        $('#register-submit').click(function() {
+            var checked = true;
+            var username = $.trim($('input[name=username]').val());
+            $('input[name=username]').css('border-color','#ccc');
+            if(username == '') {
+                $('input[name=username]').css('border-color','red');
+                checked = false;
+            }
+            var email = $.trim($('input[name=email]').val());
+            $('input[name=email]').css('border-color','#ccc');
+            if(email == '' || email.indexOf('@') === -1) {
+                $('input[name=email]').css('border-color','red');
+                checked = false;
+            }
+            var password = $.trim($('input[name=password]').val());
+            $('input[name=password]').css('border-color','#ccc');
+            if(password == '') {
+                $('input[name=password]').css('border-color','red');
+                checked = false;
+            }
+            var passwordConf = $.trim($('input[name=passwordConf]').val());
+            $('input[name=passwordConf]').css('border-color','#ccc');
+            if(passwordConf == '') {
+                $('input[name=passwordConf]').css('border-color','red');
+                checked = false;
+            }
+
+            if(checked) {
+                $.ajax({
+                    type: "POST",
+                    url: '/login',
+                    data: {
+                        username: username,
+                        email: email,
+                        password: password,
+                        passwordConf: passwordConf,
+                        is_ajax: true
+                    },
+                    dataType: 'json',
+                    success: function(result) {
+                        if(result.success) {
+                            $('#acount-form').hide();
+                            $('#track-price').show();
+                            $('#user_email').html(email+' (<a href="/logout">Logout</a>)');
+                        } else {
+                            alert(result.message);
+                        }
+                    },
+                    error: function() {
+                        alert('ajax error');
+                    }
+                });
+            }
+        });
+	});
+
+	//chart data
+	window.onload = function () {
+	    // show email
+        var user_email = '<%= user_email %>';
+        if(user_email != '') {
+            $('#user_email').append(' (<a href="/logout">Logout</a>)');
+        }
+
+		// put data
+		var dataPrice = [];
+		var price_history = '<%= price_history %>';
+		var price_parse = price_history.split('_');
+		for(var i=0;i<price_parse.length;i++) {
+			var one_price = price_parse[i];
+			if(one_price != '') {
+				var one_price_parse = one_price.split('-');
+				var ye = parseInt(one_price_parse[0]);
+				var m = parseInt(one_price_parse[1]) - 1;
+                var d = parseInt(one_price_parse[2]);
+                var p = parseInt(one_price_parse[3]);
+                dataPrice.push({ x: new Date(ye, m, d), y:p });
+			}
+		}
+
+		var chart = new CanvasJS.Chart("chartContainer", {
+			animationEnabled: true,
+			theme: "light2",
+			title:{
+				text: "Price History"
+			},
+			axisX:{
+				valueFormatString: "DD MMM",
+				crosshair: {
+					enabled: true,
+					snapToDataPoint: true
+				}
+			},
+			axisY: {
+				title: "Price",
+				crosshair: {
+					enabled: true
+				}
+			},
+			toolTip:{
+				shared:true
+			},  
+			legend:{
+				cursor:"pointer",
+				verticalAlign: "bottom",
+				horizontalAlign: "left",
+				dockInsidePlotArea: true,
+				itemclick: toogleDataSeries
+			},
+			data: [
+				{
+					type: "line",
+					showInLegend: true,
+					name: "Q-Price",
+					markerType: "square",
+					color: "#F08080",
+					dataPoints: dataPrice
+				}
+			]
+		});
+		chart.render();
+
+		function toogleDataSeries(e){
+			if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+				e.dataSeries.visible = false;
+			} else{
+				e.dataSeries.visible = true;
+			}
+			chart.render();
+		}
+	};
+	function updatePriceSlide(track_value) {
+        $( '#track-price .price_slider' ).slider('option','value',track_value);
+        $( '#track-price .tracking_price span' ). text('$ '+track_value);
+	}
+    function trackingPriceSlide(current_price,min_price,max_price){
+        //slider
+        var currency = '$';
+        var currency_label  = currency+' ';
+        var price           = $( '#track-price .price span' );
+        var tracking_price  = $( '#track-price .tracking_price span' );
+        var discount_price  = $( '#track-price .discount_price span' );
+        var discount_price_percent  = $( '#track-price .discount_price i' );
+
+        var handle = $( '#track-price .custom-handle' );
+        $( '#track-price .price_slider' ).slider({
+            value: current_price,
+            min: min_price,
+            max: max_price,
+            range: 'min',
+            create: function() {
+                slide_price = $( this ).slider( 'value' );
+                handle.text( currency_label + slide_price );
+                tracking_price.text(slide_price);
+                price.text(currency_label + max_price);
+
+                // caculate
+                discount = max_price-slide_price;
+                discount_price.text(currency_label+discount);
+                //percent
+                percent = (slide_price/max_price)*100;
+                percent = 100-Math.ceil(percent);
+                discount_price_percent.text(' ('+percent+'%)');
+                $( '#track-price .price_slider .ui-slider-range' ).css( 'background-color', getColor( 100-percent ) );
+            },
+            slide: function( event, ui ) {
+                handle.text( currency_label+ui.value );
+                $(tracking_price).text(currency_label+ui.value);
+                $(discount_price).text(currency_label+(max_price-ui.value));
+
+                //percent
+                percent = (ui.value/max_price)*100;
+                percent = 100-Math.ceil(percent);
+                discount_price_percent.text(' ('+percent+'%)');
+                //update color
+                $( '#track-price .price_slider .ui-slider-range' ).css( 'background-color', getColor( 100-percent ) );
+            }
+        });
+    }
+
+    function getColor( v ) {
+        if ( v < 80 ) {
+            r = 255; g = parseInt( ( ( v * 2 ) * 255 ) / 100 );
+        }
+        else  {
+            r = parseInt( ( ( 100 - v ) * 2 ) * 255 / 100 ); g = 255;
+        }
+        return "rgb(" + r + "," + g + ",0)";
+    }
+ </script>
+</body>
+</html>
