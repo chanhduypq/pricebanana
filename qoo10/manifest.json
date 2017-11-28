@@ -1,0 +1,26 @@
+{
+    "name": "Qoo10 Price Tracker",
+    "manifest_version": 2,
+    "version": "1.0",
+    "description": "Add price history chart and Tracking price on Qoo10 site.",
+    "icons": {
+        "128": "img/icon-128.png",
+        "48": "img/icon-48.png",
+        "32": "img/icon-32.png",
+        "16": "img/icon-16.png"
+    },
+    "content_scripts": [{
+        "js": ["js/lib/jquery.js","js/content.js"],
+        "css": ["css/content.css"],
+        "matches": [
+            "*://*.qoo10.sg/item/*",
+            "*://*.qoo10.sg/Goods/*"
+        ],
+        "all_frames": true,
+        "run_at": "document_end"
+    }],
+    "permissions": [
+            "*://*.qoo10.sg/*",
+            "*://*.pricebanana.maitrongtung.com/*"
+    ]
+}
