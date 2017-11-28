@@ -92,28 +92,32 @@ module.exports = function(app){
                     var current_price = product.current_price;
                     var tracked_price = current_price;
                     var user_email = '';
-                    User.findById(req.session.userId).exec(function (error, user) {                        
+                    User.findById(req.session.userId).exec(function (error, user) { 
                         if (error) {} else {
                             if (user === null) {} else {
                                 user_email = user.email;
                             }
                         }
+                        TrackingPrice.findOne({product_id: product_id,user_id:req.session.userId}, function (error, trackingPrice) {
+                            if (error) {} else {
+                                if (trackingPrice === null) {} else {
+                                    tracked_price = trackingPrice.tracked_price;
+                                }
+                            }
+                            
+                            return res.render('banana', {
+                                price_history:helper.build_price_history(price_histories),
+                                user_email: user_email,
+                                current_price: current_price,
+                                tracked_price: tracked_price,
+                                isLogin: req.session.hasOwnProperty("userId")
+                            });
+
+                        });
                     });
                     
-                    TrackingPrice.findOne({product_id: product_id,user_id:req.session.userId}, function (error, trackingPrice) {
-                        if (error) {} else {
-                            if (trackingPrice === null) {} else {
-                                tracked_price = trackingPrice.tracked_price;
-                            }
-                        }
-                        
-                    });
-                    return res.render('banana', {
-                        price_history:helper.build_price_history(price_histories),
-                        user_email: user_email,
-                        current_price: current_price,
-                        tracked_price: tracked_price
-                    });
+                    
+                    
                 }
             }
         });

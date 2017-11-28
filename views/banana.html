@@ -127,7 +127,7 @@
 </div>
  
  <script>
-     var isLogin=false;
+     var isLogin= <%= isLogin %>;
      function showTrackProductTab(result,logemail,current_price){
         $('#acount-form').hide();
         $('#track-price').show();
@@ -157,10 +157,13 @@
         var price_history='<%= price_history %>';
         
 	$( function() {
+            var user_email ='<%= user_email %>';
+            if(isLogin){
+                $("#user_email").html(user_email).append(' (<a href="/logout">Logout</a>)');
+            }
 		//tab and slider
 		$( "#tabs" ).tabs();
 		$('#tracking_tab').click(function() {
-			var user_email = '<%= user_email %>';
 			if(isLogin == false) {
 				$('#track-price').hide();
 				$('#acount-form').show();
