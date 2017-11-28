@@ -2,6 +2,7 @@ var User = require(__dirname + '/models/user');
 var Product = require(__dirname + '/models/product');
 var TrackingPrice = require(__dirname + '/models/tracking_price');
 var helper = require(__dirname + '/helpers/functions');
+var config = require(__dirname + '/config');
 
 module.exports = function(app){
 
@@ -13,7 +14,7 @@ module.exports = function(app){
     app.get('/create_price/:domain/:id/:price/:price_date', function (req, res) {
         var domain = req.params.domain;
         var id = req.params.id;
-        if(domain != 'qoo10') {
+        if(config.domains.indexOf(domain) == -1) {
             return res.send('Wrong domain name');
         }
         var product_id = domain+'_'+id;
@@ -76,7 +77,7 @@ module.exports = function(app){
     app.get('/banana/:domain/:id', function (req, res) {
         var domain = req.params.domain;        
         var id = req.params.id;
-        if(domain != 'qoo10') {
+        if(config.domains.indexOf(domain) == -1) {
             return res.send('Wrong domain name');
         }
         var product_id = domain+'_'+id;
@@ -122,7 +123,7 @@ module.exports = function(app){
         var domain = req.params.domain;
         var id = req.params.id;
         var tracked_price = req.params.tracked_price;
-        if(domain != 'qoo10') {
+        if(config.domains.indexOf(domain) == -1) {
             var obj = {success:false};
             return res.send(JSON.stringify(obj));
         }
