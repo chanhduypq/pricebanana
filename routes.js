@@ -56,7 +56,9 @@ module.exports = function(app){
                         if(!find) {
                             price_histories.push({date: price_date, price: price});
                         }
-                        Product.findOneAndUpdate({ "_id" : product._id }, {price_history: JSON.stringify(helper.sort_price_history(price_histories))}, function (err, product) {
+                        price_history=helper.sort_price_history(price_histories);
+                        current_price=price_history[price_history.length-1].price;
+                        Product.findOneAndUpdate({ "_id" : product._id }, {price_history: JSON.stringify(price_history),"current_price":current_price}, function (err, product) {
                             if (error) {
                                 res.send('Can not update product');
                             } else {
