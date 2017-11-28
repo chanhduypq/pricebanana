@@ -45,11 +45,13 @@ module.exports.build_price_history = function(price_histories) {
     if(price_histories == '' || typeof(price_histories) == 'undefined' || price_histories == null) {
         return result;
     }
-    for(var i=0; i<price_histories.length;i++) {
+    for(var i=0; i<price_histories.length-1;i++) {
         var price = price_histories[i];
 //        result += price.date+'-'+price.price+'_';
         result += new Date(price.date).getTime()+'-'+price.price+'_';
     }
+    price = price_histories[price_histories.length-1];
+    result += new Date(price.date).getTime()+'-'+price.price;
     return result;
 };
 
