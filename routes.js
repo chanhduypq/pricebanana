@@ -168,6 +168,53 @@ module.exports = function(app){
     //POST route for updating data
     app.post('/login', function (req, res) {
         var err = '';
+        
+
+        if (req.body.logemail && req.body.logpassword) {
+            // login
+            User.authenticate(req.body.logemail, req.body.logpassword, function (error, user) {
+                if (error || !user) {
+                    if(req.body.is_ajax) {
+                        var obj = {success:false,message:"Wrong email or password."};
+                        return res.send(JSON.stringify(obj));
+                    } else {
+                        return res.send("Wrong email or password.");
+                    }
+                } else {
+                    req.session.userId = user._id;
+                    if(req.body.rememberme) {
+                        req.session.cookie.maxAge = 30 * 24 * 60 * 60 * 1000;
+                    } else {
+                        req.session.cookie.expires = false; // Cookie expires at end of session
+                    }
+                    if(req.body.is_ajax) {
+                        var obj = {success:true};
+                        TrackingPrice.findOne({product_id: req.body.product_id,user_id:req.session.userId}, function (error, trackingPrice) {
+                            if (error) { obj.tracked_price = 0; } else {
+                                if (trackingPrice === null) { obj.tracked_price = 0; } else {
+                                    obj.tracked_price = trackingPrice.tracked_price;
+                                }
+                            }
+                            res.send(JSON.stringify(obj));
+                        });
+                        
+                    } else {
+                        return res.redirect('/');
+                    }
+                }
+            });
+        } else {
+            if(req.body.is_ajax) {
+                var obj = {success:false,message:'All fields required.'};
+                res.send(JSON.stringify(obj));
+            } else {
+                res.send('All fields required.');
+            }
+        }
+    });
+    
+    app.post('/register', function (req, res) {
+        var err = '';
         // confirm that user typed same password twice
         if (req.body.password !== req.body.passwordConf) {
             if(req.body.is_ajax) {
@@ -249,40 +296,7 @@ module.exports = function(app){
                     }
                 }
             });
-        } else if (req.body.logemail && req.body.logpassword) {
-            // login
-            User.authenticate(req.body.logemail, req.body.logpassword, function (error, user) {
-                if (error || !user) {
-                    if(req.body.is_ajax) {
-                        var obj = {success:false,message:"Wrong email or password."};
-                        return res.send(JSON.stringify(obj));
-                    } else {
-                        return res.send("Wrong email or password.");
-                    }
-                } else {
-                    req.session.userId = user._id;
-                    if(req.body.rememberme) {
-                        req.session.cookie.maxAge = 30 * 24 * 60 * 60 * 1000;
-                    } else {
-                        req.session.cookie.expires = false; // Cookie expires at end of session
-                    }
-                    if(req.body.is_ajax) {
-                        var obj = {success:true};
-                        TrackingPrice.findOne({product_id: req.body.product_id,user_id:req.session.userId}, function (error, trackingPrice) {
-                            if (error) { obj.tracked_price = 0; } else {
-                                if (trackingPrice === null) { obj.tracked_price = 0; } else {
-                                    obj.tracked_price = trackingPrice.tracked_price;
-                                }
-                            }
-                            res.send(JSON.stringify(obj));
-                        });
-                        
-                    } else {
-                        return res.redirect('/');
-                    }
-                }
-            });
-        } else {
+        }  else {
             if(req.body.is_ajax) {
                 var obj = {success:false,message:'All fields required.'};
                 res.send(JSON.stringify(obj));
