@@ -33,7 +33,8 @@ module.exports = function(app){
                         ];
                         var productData = {
                             product_id: product_id,
-                            price_history: JSON.stringify(price_histories)
+                            price_history: JSON.stringify(price_histories),
+                            current_price: price
                         };
                         Product.create(productData, function (error, product) {
                             if (error) {
@@ -85,22 +86,30 @@ module.exports = function(app){
                     res.send('Don\'t find product');
                 } else {
                     var price_histories = JSON.parse(product.price_history);
-                    User.findById(req.session.userId).exec(function (error, user) {
-                        var user_email = '';
-                        var current_price = 500;
-                        var tracked_price = 500;
+                    var current_price = product.current_price;
+                    var tracked_price = current_price;
+                    var user_email = '';
+                    User.findById(req.session.userId).exec(function (error, user) {                        
                         if (error) {} else {
                             if (user === null) {} else {
                                 user_email = user.email;
-                                tracked_price = 333;
                             }
                         }
-                        return res.render('banana', {
-                            price_history:helper.build_price_history(price_histories),
-                            user_email: user_email,
-                            current_price: current_price,
-                            tracked_price: tracked_price
-                        });
+                    });
+                    
+                    TrackingPrice.findOne({product_id: product_id,user_id:req.session.userId}, function (error, trackingPrice) {
+                        if (error) {} else {
+                            if (trackingPrice === null) {} else {
+                                tracked_price = trackingPrice.tracked_price;
+                            }
+                        }
+                        
+                    });
+                    return res.render('banana', {
+                        price_history:helper.build_price_history(price_histories),
+                        user_email: user_email,
+                        current_price: current_price,
+                        tracked_price: tracked_price
                     });
                 }
             }
@@ -255,8 +264,15 @@ module.exports = function(app){
                     }
                     if(req.body.is_ajax) {
                         var obj = {success:true};
-                        obj.tracked_price = 450;
-                        res.send(JSON.stringify(obj));
+                        TrackingPrice.findOne({product_id: req.body.product_id,user_id:req.session.userId}, function (error, trackingPrice) {
+                            if (error) { obj.tracked_price = 0; } else {
+                                if (trackingPrice === null) { obj.tracked_price = 0; } else {
+                                    obj.tracked_price = trackingPrice.tracked_price;
+                                }
+                            }
+                            res.send(JSON.stringify(obj));
+                        });
+                        
                     } else {
                         return res.redirect('/');
                     }

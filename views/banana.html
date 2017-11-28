@@ -132,6 +132,10 @@
         href=href.split('/');
         domain=href[0];
         id=href[1].replace("/","");
+        var current_price = parseFloat('<%= current_price %>');
+        var tracked_price = parseFloat('<%= tracked_price %>');
+        var price_history='<%= price_history %>';
+        
 	$( function() {
 		//tab and slider
 		$( "#tabs" ).tabs();
@@ -147,8 +151,7 @@
 		});
 
         //Q-Price
-        var current_price = parseFloat('<%= current_price %>');
-        var tracked_price = parseFloat('<%= tracked_price %>');
+        
         trackingPriceSlide(tracked_price,0,current_price);
 
 		//login
@@ -192,7 +195,8 @@
 						logemail: logemail,
 						logpassword: logpassword,
 						rememberme: rememberme,
-						is_ajax: true
+						is_ajax: true,
+                                                product_id: domain+'_'+id
 					},
 					dataType: 'json',
 					success: function(result) {
@@ -200,7 +204,18 @@
 							$('#acount-form').hide();
 							$('#track-price').show();
 							$('#user_email').html(logemail+' (<a href="/logout">Logout</a>)');
-                            updatePriceSlide(result.tracked_price);
+                                                        updatePriceSlide(result.tracked_price);
+                                                        var discount_price  = $( '#track-price .discount_price span' );
+                                                        var discount_price_percent  = $( '#track-price .discount_price i' );
+                                                        var currency = '$';
+                                                        var currency_label  = currency+' ';
+                                                        // caculate
+                                                        discount = current_price-result.tracked_price;
+                                                        discount_price.text(currency_label+discount);
+                                                        //percent
+                                                        percent = (result.tracked_price/current_price)*100;
+                                                        percent = 100-Math.ceil(percent);
+                                                        discount_price_percent.text(' ('+percent+'%)');
 						} else {
 							alert(result.message);
 						}
@@ -272,7 +287,8 @@
                         email: email,
                         password: password,
                         passwordConf: passwordConf,
-                        is_ajax: true
+                        is_ajax: true,
+                        product_id: domain+'_'+id
                     },
                     dataType: 'json',
                     success: function(result) {
@@ -280,6 +296,18 @@
                             $('#acount-form').hide();
                             $('#track-price').show();
                             $('#user_email').html(email+' (<a href="/logout">Logout</a>)');
+                            updatePriceSlide(result.tracked_price);
+                            var discount_price  = $( '#track-price .discount_price span' );
+                            var discount_price_percent  = $( '#track-price .discount_price i' );
+                            var currency = '$';
+                            var currency_label  = currency+' ';
+                            // caculate
+                            discount = current_price-result.tracked_price;
+                            discount_price.text(currency_label+discount);
+                            //percent
+                            percent = (result.tracked_price/current_price)*100;
+                            percent = 100-Math.ceil(percent);
+                            discount_price_percent.text(' ('+percent+'%)');
                         } else {
                             alert(result.message);
                         }
@@ -300,8 +328,19 @@
 	};
 
 
-	var data_price = [[1495786560000,29.99],[1499893920000,29.99],[1501413600000,29.99],[1504706160000,89.99],[1504754400000,29.99],[1506440880000,19.99],[1506488880000,29.99],[1506758160000,89.99],[1507028160000,18.99],[1509076560000,15.99],[1509412560000,13.99],[1511081280000,200.12],[1511231040000,13.99],[1511327040000,10.99],[1511402880000,41.99]];
+//	var data_price = [[1495786560000,29.99],[1499893920000,29.99],[1501413600000,29.99],[1504706160000,89.99],[1504754400000,29.99],[1506440880000,19.99],[1506488880000,29.99],[1506758160000,89.99],[1507028160000,18.99],[1509076560000,15.99],[1509412560000,13.99],[1511081280000,200.12],[1511231040000,13.99],[1511327040000,10.99],[1511402880000,41.99]];
 
+        var data_price=[];
+        temp=price_history.split('_');
+        for(i=0;i<temp.length;i++){
+            if(temp[i]!=''){
+                date_and_price=temp[i].split('-');
+                date=parseInt(date_and_price[0]);
+                price=parseFloat(date_and_price[1]);
+                data_price.push([date,price]);
+            }
+            
+        }
 	Highcharts.stockChart({
 		chart: {
 			borderColor: 'white',
@@ -361,9 +400,15 @@
 	});
 	
 	function updatePriceSlide(track_value) {
+            if(track_value==0){
+                track_value=$( '#track-price .price span' ).html();
+                track_value=track_value.replace("$","");
+                track_value=$.trim(track_value);
+            }
         $( '#track-price .price_slider' ).slider('option','value',track_value);
-        $( '#track-price .tracking_price span' ). text('$ '+track_value);
-	}
+        $('.ui-slider-handle.custom-handle.ui-corner-all.ui-state-default').html("$ "+track_value);
+        
+    }
     function trackingPriceSlide(current_price,min_price,max_price){
         //slider
         var currency = '$';

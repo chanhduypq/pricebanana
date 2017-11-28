@@ -14,6 +14,9 @@ var ProductSchema = new mongoose.Schema({
     },
     createdDate: {
         type: String
+    },
+    current_price: {
+        type: String
     }
 });
 

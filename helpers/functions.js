@@ -47,7 +47,8 @@ module.exports.build_price_history = function(price_histories) {
     }
     for(var i=0; i<price_histories.length;i++) {
         var price = price_histories[i];
-        result += price.date+'-'+price.price+'_';
+//        result += price.date+'-'+price.price+'_';
+        result += new Date(price.date).getTime()+'-'+price.price+'_';
     }
     return result;
 };
