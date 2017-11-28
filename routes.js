@@ -1,5 +1,6 @@
 var User = require(__dirname + '/models/user');
 var Product = require(__dirname + '/models/product');
+var TrackingPrice = require(__dirname + '/models/tracking_price');
 var helper = require(__dirname + '/helpers/functions');
 
 module.exports = function(app){
@@ -70,7 +71,7 @@ module.exports = function(app){
     });
 
     app.get('/banana/:domain/:id', function (req, res) {
-        var domain = req.params.domain;
+        var domain = req.params.domain;        
         var id = req.params.id;
         if(domain != 'qoo10') {
             return res.send('Wrong domain name');
@@ -100,6 +101,52 @@ module.exports = function(app){
                             current_price: current_price,
                             tracked_price: tracked_price
                         });
+                    });
+                }
+            }
+        });
+    });
+    
+    app.get('/tracking/:domain/:id/:tracked_price', function (req, res) {
+        var domain = req.params.domain;
+        var id = req.params.id;
+        var tracked_price = req.params.tracked_price;
+        if(domain != 'qoo10') {
+            var obj = {success:false};
+            return res.send(JSON.stringify(obj));
+        }
+        var product_id = domain+'_'+id;
+        var user_id = req.session.userId;
+        TrackingPrice.findOne({product_id: product_id,user_id:user_id}, function (error, trackingPrice) {
+            if (error) {
+                var obj = {success:false};
+                return res.send(JSON.stringify(obj));
+            } else {
+                
+                if (trackingPrice === null) {
+                    var trackingPriceData = {
+                        product_id: product_id,
+                        user_id: user_id,
+                        tracked_price: tracked_price
+                    };
+                    TrackingPrice.create(trackingPriceData, function (error, trackingPrice) {
+                        if (error) {
+                            var obj = {success:false};
+                            return res.send(JSON.stringify(obj));
+                        } else {
+                            var obj = {success:true};
+                            return res.send(JSON.stringify(obj));
+                        }
+                    });
+                } else {
+                    TrackingPrice.findOneAndUpdate({ "_id" : trackingPrice._id }, {tracked_price: tracked_price}, function (err, product) {
+                        if (error) {
+                            var obj = {success:false};
+                            return res.send(JSON.stringify(obj));
+                        } else {
+                            var obj = {success:true};
+                            return res.send(JSON.stringify(obj));
+                        }
                     });
                 }
             }

@@ -127,6 +127,11 @@
 </div>
  
  <script>
+        var href=window.location.href.split('banana/');
+        href=href[1];
+        href=href.split('/');
+        domain=href[0];
+        id=href[1].replace("/","");
 	$( function() {
 		//tab and slider
 		$( "#tabs" ).tabs();
@@ -207,6 +212,30 @@
 			}
 		});
 
+        $('.ui-button.ui-widget.ui-corner-all').click(function(e) {
+            e.preventDefault();
+            price = $(".tracking_price span").html();
+            price = price.replace("$","");
+            price = $.trim(price);
+            $.ajax({
+                type: "GET",
+                url: '/tracking/'+domain+'/'+id+'/'+price,
+                dataType: 'json',
+                success: function(result) {
+                    if(result.success) {
+                        alert('success');
+                    } else {
+                        alert('error');
+                    }
+                },
+                error: function (request, status, error) {
+                    console.log(request.responseText);
+                    console.log(status);
+                    console.log(error);
+                }
+            });
+        });
+        
         $('#register-submit').click(function() {
             var checked = true;
             var username = $.trim($('input[name=username]').val());
