@@ -207,6 +207,7 @@ module.exports = function(app){
                             } else {
                                 if (user === null) {
                                     User.create(userData, function (error, user) {
+                                        
                                         if (error) {
                                             if (req.body.is_ajax) {
                                                 var obj = {success: false, message: "Can not create user"};
@@ -216,7 +217,7 @@ module.exports = function(app){
                                             }
                                         } else {
                                             if (req.body.is_ajax) {
-                                                var obj = {success: true};
+                                                var obj = {success: true,tracked_price: 0};
                                                 req.session.userId = user._id;
                                                 return res.send(JSON.stringify(obj));
                                             } else {
