@@ -34,7 +34,8 @@ module.exports = function(app){
                                 user_email: user_email,
                                 current_price: 0,
                                 tracked_price: 0,
-                                isLogin: req.session.hasOwnProperty("userId")
+                                isLogin: req.session.hasOwnProperty("userId"),
+                                label_for_action_tracking: 'Start tracking'
                             });
                 });
             } else {
@@ -52,7 +53,8 @@ module.exports = function(app){
                                 user_email: user_email,
                                 current_price: 0,
                                 tracked_price: 0,
-                                isLogin: req.session.hasOwnProperty("userId")
+                                isLogin: req.session.hasOwnProperty("userId"),
+                                label_for_action_tracking: 'Start tracking'
                             });
                     });
                     
@@ -78,7 +80,8 @@ module.exports = function(app){
                                 user_email: user_email,
                                 current_price: current_price,
                                 tracked_price: tracked_price,
-                                isLogin: req.session.hasOwnProperty("userId")
+                                isLogin: req.session.hasOwnProperty("userId"),
+                                label_for_action_tracking: 'Update tracking'
                             });
 
                         });
@@ -153,17 +156,13 @@ module.exports = function(app){
         
         UrlContent.create(data, function (error, urlContent) {
             if (error) {
-                if (error.code == '11000') {
-                    var obj = {success: true};
+                if (error.code == '11000') { 
                 } else {
                     var obj = {success: false};
+                    return res.send(JSON.stringify(obj));
                 }
-                return res.send(JSON.stringify(obj));
-            } else {
-                var info=helper.get_info_from_html(content);
-                var obj = {success:true,sell_price:info.sell_price,retail_price:info.retail_price,time_sell_price:info.time_sell_price,id:id,domain:domain};
-                return res.send(JSON.stringify(obj));
-            }
+                
+            } 
         });
         
         var product_id = domain + "_" + id;
@@ -217,6 +216,9 @@ module.exports = function(app){
                 }
             }
         });
+        
+        var obj = {success: true};
+        return res.send(JSON.stringify(obj));
         
     });
 

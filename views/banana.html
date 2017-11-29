@@ -118,7 +118,7 @@
 					  <div class="ui-slider-handle custom-handle"></div>
 					</div>
 					<div class="action">
-						<button class="ui-button ui-widget ui-corner-all">Start tracking</button>
+						<button class="ui-button ui-widget ui-corner-all"><%= label_for_action_tracking %></button>
 					</div>
 				</form>
 			</div>
@@ -263,6 +263,7 @@
                     console.log(error);
                 }
             });
+            $(this).html("Update tracking");
         });
         
         
