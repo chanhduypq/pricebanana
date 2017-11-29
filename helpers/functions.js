@@ -41,6 +41,7 @@ module.exports.get_today = function() {
 };
 
 module.exports.build_price_history = function(price_histories) {
+    
     var result = '';
     if(price_histories == '' || typeof(price_histories) == 'undefined' || price_histories == null) {
         return result;
@@ -75,4 +76,22 @@ module.exports.sort_price_history = function(price_histories) {
     }
     result.push(price_histories[price_histories.length - 1]);
     return result;
+};
+
+module.exports.get_info_from_html = function(html) {
+    var DomParser = require('dom-parser');
+    var parser = new DomParser();
+    var dom = parser.parseFromString(html);
+    var dl_sell_price=dom.getElementById('dl_sell_price');
+    var sell_price = dl_sell_price.childNodes[1].childNodes[0].getAttribute('data-price');
+    
+    var div_retailPrice=dom.getElementById('ctl00_ctl00_MainContentHolder_MainContentHolderNoForm_retailPricePanel');
+    var retail_price = div_retailPrice.childNodes[0].childNodes[1].innerHTML;
+    retail_price=retail_price.replace("$","");
+    
+    var span_time_sell_price=dom.getElementById('ctl00_ctl00_MainContentHolder_MainContentHolderNoForm_discount_info');
+    var time_sell_price = span_time_sell_price.childNodes[0].childNodes[1].childNodes[0].innerHTML;
+    time_sell_price=time_sell_price.replace("$","");
+    
+    return {sell_price:sell_price,retail_price:retail_price,time_sell_price:time_sell_price};    
 };

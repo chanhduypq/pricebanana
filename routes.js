@@ -82,12 +82,42 @@ module.exports = function(app){
             return res.send('Wrong domain name');
         }
         var product_id = domain+'_'+id;
-        Product.findOne({product_id: product_id}, function (error, product) {
+        Product.findOne({product_id: product_id}, function (error, product) {            
             if (error) {
-                res.send('Can\'t find product');
+                User.findById(req.session.userId).exec(function (error, user) { 
+                        if (error) {} else {
+                            if (user === null) {} else {
+                                user_email = user.email;
+                            }
+                        }
+                        
+                        return res.render('banana', {
+                                price_history:[],
+                                user_email: user_email,
+                                current_price: 0,
+                                tracked_price: 0,
+                                isLogin: req.session.hasOwnProperty("userId")
+                            });
+                });
             } else {
                 if (product === null) {
-                    res.send('Don\'t find product');
+                    var user_email = '';
+                    User.findById(req.session.userId).exec(function (error, user) { 
+                        if (error) {} else {
+                            if (user === null) {} else {
+                                user_email = user.email;
+                            }
+                        }
+                        
+                        return res.render('banana', {
+                                price_history:[],
+                                user_email: user_email,
+                                current_price: 0,
+                                tracked_price: 0,
+                                isLogin: req.session.hasOwnProperty("userId")
+                            });
+                    });
+                    
                 } else {
                     var price_histories = JSON.parse(product.price_history);
                     var current_price = product.current_price;
@@ -171,19 +201,82 @@ module.exports = function(app){
     });
     
     app.post('/get_content', function (req, res) {
+     
         var url = req.body.url;
         var content = req.body.content;
         var data = {
             url: url,
             content: content
         };
+        url=url.replace('https://www.','');
+        temp = url.split('/');
+        id = temp[temp.length - 1];
+        temp = temp[0].split('.');
+        domain = temp[0];
+        
         UrlContent.create(data, function (error, urlContent) {
+            if (error) {
+                if (error.code == '11000') {
+                    var obj = {success: true};
+                } else {
+                    var obj = {success: false};
+                }
+                return res.send(JSON.stringify(obj));
+            } else {
+                var info=helper.get_info_from_html(content);
+                var obj = {success:true,sell_price:info.sell_price,retail_price:info.retail_price,time_sell_price:info.time_sell_price,id:id,domain:domain};
+                return res.send(JSON.stringify(obj));
+            }
+        });
+        
+        var product_id = domain + "_" + id;
+        Product.findOne({product_id: product_id}, function (error, product) {
             if (error) {
                 var obj = {success:false};
                 return res.send(JSON.stringify(obj));
             } else {
-                var obj = {success:true};
-                return res.send(JSON.stringify(obj));
+                price_date = helper.get_today();
+                if (product === null) {
+                    info = helper.get_info_from_html(content);
+                    var price_histories = [
+                        { date: price_date, price: info.sell_price }
+                    ];                    
+                    var productData = {
+                        product_id: product_id,
+                        price_history: JSON.stringify(price_histories),
+                        current_price: info.sell_price
+                    };
+                    Product.create(productData, function (error, product) {
+                        if (error) {
+                            var obj = {success:false};
+                            return res.send(JSON.stringify(obj));
+                        } else {
+//                            productId = product._id;
+                        }
+                    });
+                } else {
+                    info = helper.get_info_from_html(content);
+                    var price_histories = JSON.parse(product.price_history);
+                    var find = false;
+                    for(var i=0; i<price_histories.length;i++) {
+                        if(price_histories[i].date == price_date) {
+                            price_histories[i].price = info.sell_price;
+                            find = true;
+                            break;
+                        }
+                    }
+                    if(!find) {
+                        price_histories.push({date: price_date, price: info.sell_price});
+                    }
+                    price_history=helper.sort_price_history(price_histories);
+                    current_price=price_history[price_history.length-1].price;
+                    Product.findOneAndUpdate({ "_id" : product._id }, {price_history: JSON.stringify(price_history),"current_price":current_price}, function (err, product) {
+                        if (error) {
+                            var obj = {success:false};
+                            return res.send(JSON.stringify(obj));
+                        } 
+                    });
+                }
             }
         });
         
