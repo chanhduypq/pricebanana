@@ -254,6 +254,21 @@ module.exports = function(app){
                     }
                     price_history=helper.sort_price_history(price_histories);
                     current_price=price_history[price_history.length-1].price;
+                    
+                    TrackingPrice.find({product_id: product_id}, function (error, allTrackingPrice) {
+                        if (error) {
+                            
+                        } else {
+                            for(i = 0; i < allTrackingPrice.length; i++) {
+                                temp = allTrackingPrice[i];
+                                if(info.sell_price<=temp.tracked_price){
+                                    console.log(temp.user_id);
+                                }
+                            }
+                        }
+                        
+                    });
+                    
                     Product.findOneAndUpdate({ "_id" : product._id }, {price_history: JSON.stringify(price_history),"current_price":current_price}, function (err, product) {
                         if (error) {
                             var obj = {success:false};
