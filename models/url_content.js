@@ -4,6 +4,7 @@ var helper = require('../helpers/functions');
 var UrlContentSchema = new mongoose.Schema({
     url: {
         type: String,
+        unique: true,
         required: true,
         trim: true
     },
