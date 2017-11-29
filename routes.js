@@ -12,68 +12,6 @@ module.exports = function(app){
         res.send('Pending..');
     });
 
-    app.get('/create_price/:domain/:id/:price/:price_date', function (req, res) {
-        var domain = req.params.domain;
-        var id = req.params.id;
-        if(config.domains.indexOf(domain) == -1) {
-            return res.send('Wrong domain name');
-        }
-        var product_id = domain+'_'+id;
-        var price = req.params.price;
-        var price_date = req.params.price_date;
-        if(domain && id && price) {
-            Product.findOne({product_id: product_id}, function (error, product) {
-                if (error) {
-                    res.send('Can\'t find product');
-                } else {
-                    if(!price_date) {
-                        price_date = helper.get_today();
-                    }
-                    if (product === null) {
-                        var price_histories = [
-                            { date: price_date, price: price }
-                        ];
-                        var productData = {
-                            product_id: product_id,
-                            price_history: JSON.stringify(price_histories),
-                            current_price: price
-                        };
-                        Product.create(productData, function (error, product) {
-                            if (error) {
-                                res.send('Can not create product');
-                            } else {
-                                res.send('Created product id = '+product._id);
-                            }
-                        });
-                    } else {
-                        var price_histories = JSON.parse(product.price_history);
-                        var find = false;
-                        for(var i=0; i<price_histories.length;i++) {
-                            if(price_histories[i].date == price_date) {
-                                price_histories[i].price = price;
-                                find = true;
-                                break;
-                            }
-                        }
-                        if(!find) {
-                            price_histories.push({date: price_date, price: price});
-                        }
-                        price_history=helper.sort_price_history(price_histories);
-                        current_price=price_history[price_history.length-1].price;
-                        Product.findOneAndUpdate({ "_id" : product._id }, {price_history: JSON.stringify(price_history),"current_price":current_price}, function (err, product) {
-                            if (error) {
-                                res.send('Can not update product');
-                            } else {
-                                res.send('Updated product id = '+product._id);
-                            }
-                        });
-                    }
-                }
-            });
-        } else {
-            res.send('Not enough data');
-        }
-    });
 
     app.get('/banana/:domain/:id', function (req, res) {
         var domain = req.params.domain;        
