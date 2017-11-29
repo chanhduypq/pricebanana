@@ -132,7 +132,7 @@
         $('#acount-form').hide();
         $('#track-price').show();
         isLogin=true;
-        $('#user_email').html(logemail+' (<a href="/logout">Logout</a>)');
+        $('#user_email').html(logemail+' (<a href="/logout/'+domain+'/'+id+'">Logout</a>)');
         updatePriceSlide(result.tracked_price);
         var discount_price  = $( '#track-price .discount_price span' );
         var discount_price_percent  = $( '#track-price .discount_price i' );
@@ -142,8 +142,13 @@
         discount = current_price-result.tracked_price;
         discount_price.text(currency_label+discount);
         //percent
-        percent = (result.tracked_price/current_price)*100;
-        percent = 100-Math.ceil(percent);
+        if(current_price==0){
+            percent=0;
+        }
+        else{
+            percent = (result.tracked_price/current_price)*100;
+            percent = 100-Math.ceil(percent);
+        }
         discount_price_percent.text(' ('+percent+'%)');
      }
      
@@ -159,7 +164,7 @@
 	$( function() {
             var user_email ='<%= user_email %>';
             if(isLogin){
-                $("#user_email").html(user_email).append(' (<a href="/logout">Logout</a>)');
+                $("#user_email").html(user_email).append(' (<a href="/logout/'+domain+'/'+id+'">Logout</a>)');
             }
 		//tab and slider
 		$( "#tabs" ).tabs();
@@ -259,6 +264,8 @@
                 }
             });
         });
+        
+        
         
         $('#register-submit').click(function() {
             var checked = true;
@@ -414,15 +421,22 @@
             create: function() {
                 slide_price = $( this ).slider( 'value' );
                 handle.text( currency_label + slide_price );
-                tracking_price.text(slide_price);
+                tracking_price.text(current_price);
                 price.text(currency_label + max_price);
 
                 // caculate
-                discount = max_price-slide_price;
+                discount = max_price-current_price;
                 discount_price.text(currency_label+discount);
                 //percent
-                percent = (slide_price/max_price)*100;
-                percent = 100-Math.ceil(percent);
+                
+                if(max_price==0){
+                    percent=0;
+                }
+                else{
+                    percent = (current_price/max_price)*100;
+                    percent = 100-Math.ceil(percent);                            
+
+                }
                 discount_price_percent.text(' ('+percent+'%)');
                 $( '#track-price .price_slider .ui-slider-range' ).css( 'background-color', getColor( 100-percent ) );
             },

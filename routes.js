@@ -135,7 +135,6 @@ module.exports = function(app){
                                     tracked_price = trackingPrice.tracked_price;
                                 }
                             }
-                            
                             return res.render('banana', {
                                 price_history:helper.build_price_history(price_histories),
                                 user_email: user_email,
@@ -255,6 +254,7 @@ module.exports = function(app){
                         }
                     });
                 } else {
+                    
                     info = helper.get_info_from_html(content);
                     var price_histories = JSON.parse(product.price_history);
                     var find = false;
@@ -422,16 +422,17 @@ module.exports = function(app){
             }
         }
     });
-
     // GET for logout
-    app.get('/logout', function (req, res, next) {
+    app.get('/logout/:domain/:id', function (req, res, next) {
+        var domain = req.params.domain;
+        var id = req.params.id;
         if (req.session) {
             // delete session object
             req.session.destroy(function (err) {
                 if (err) {
                     res.send('Something went wrong');
                 } else {
-                    return res.redirect('/');
+                    return res.redirect('/banana/'+domain+'/'+id);
                 }
             });
         }
