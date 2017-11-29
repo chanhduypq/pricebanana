@@ -1,6 +1,7 @@
 var User = require(__dirname + '/models/user');
 var Product = require(__dirname + '/models/product');
 var TrackingPrice = require(__dirname + '/models/tracking_price');
+var UrlContent = require(__dirname + '/models/url_content');
 var helper = require(__dirname + '/helpers/functions');
 var config = require(__dirname + '/config');
 
@@ -167,6 +168,25 @@ module.exports = function(app){
                 }
             }
         });
+    });
+    
+    app.post('/get_content', function (req, res) {
+        var url = req.body.url;
+        var content = req.body.content;
+        var data = {
+            url: url,
+            content: content
+        };
+        UrlContent.create(data, function (error, urlContent) {
+            if (error) {
+                var obj = {success:false};
+                return res.send(JSON.stringify(obj));
+            } else {
+                var obj = {success:true};
+                return res.send(JSON.stringify(obj));
+            }
+        });
+        
     });
 
     //POST route for updating data
