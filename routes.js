@@ -14,6 +14,43 @@ module.exports = function(app){
 
 
     app.get('/banana/:domain/:id', function (req, res) {
+//        var nodemailer = require('nodemailer');
+
+//var transporter = nodemailer.createTransport({
+//  service: 'gmail',
+//  auth: {
+//    user: 'chanhduypq@gmail.com',
+//    pass: '0812buddha'
+//  }
+//});
+
+//var transporter = nodemailer.createTransport('smtps://chanhduypq@gmail.com:0812buddha@smtp.gmail.com');
+
+//var transporter = nodemailer.createTransport({
+//  host: 'smtp.gmail.com',
+//    port: 465,
+//    secure: true, // use SSL
+//    auth: {
+//        user: 'chanhduypq@gmail.com',
+//        pass: '0812buddha'
+//    }
+//});
+//
+//var mailOptions = {
+//  from: 'chanhduypq@gmail.com',
+//  to: 'luuthiluan@gmail.com',
+//  subject: 'Sending Email using Node.js',
+//  text: 'That was easy!'
+//};
+//
+//transporter.sendMail(mailOptions, function(error, info){
+//  if (error) {
+//    console.log(error);
+//  } else {
+//    console.log('Email sent: ' + info.response);
+//  }
+//});
+
         var domain = req.params.domain;        
         var id = req.params.id;
         if(config.domains.indexOf(domain) == -1) {
@@ -71,18 +108,28 @@ module.exports = function(app){
                         }
                         TrackingPrice.findOne({product_id: product_id,user_id:req.session.userId}, function (error, trackingPrice) {
                             if (error) {} else {
-                                if (trackingPrice === null) {} else {
+                                if (trackingPrice === null) {
+                                    return res.render('banana', {
+                                        price_history:helper.build_price_history(price_histories),
+                                        user_email: user_email,
+                                        current_price: current_price,
+                                        tracked_price: tracked_price,
+                                        isLogin: req.session.hasOwnProperty("userId"),
+                                        label_for_action_tracking: 'Start tracking'
+                                    });
+                                } else {
                                     tracked_price = trackingPrice.tracked_price;
+                                    return res.render('banana', {
+                                        price_history:helper.build_price_history(price_histories),
+                                        user_email: user_email,
+                                        current_price: current_price,
+                                        tracked_price: tracked_price,
+                                        isLogin: req.session.hasOwnProperty("userId"),
+                                        label_for_action_tracking: 'Update tracking'
+                                    });
                                 }
                             }
-                            return res.render('banana', {
-                                price_history:helper.build_price_history(price_histories),
-                                user_email: user_email,
-                                current_price: current_price,
-                                tracked_price: tracked_price,
-                                isLogin: req.session.hasOwnProperty("userId"),
-                                label_for_action_tracking: 'Update tracking'
-                            });
+                            
 
                         });
                     });
