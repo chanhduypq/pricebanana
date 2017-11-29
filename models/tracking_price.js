@@ -12,7 +12,7 @@ var TrackingPriceSchema = new mongoose.Schema({
         trim: true
     },
     tracked_price:{
-        type: String,
+        type: Number,
         required: true
     }
 });
