@@ -128,6 +128,100 @@
  
  <script>
      var isLogin= <%= isLogin %>;
+     function regist(){
+             var checked = true;
+            var username = $.trim($('input[name=username]').val());
+            $('input[name=username]').css('border-color','#ccc');
+            if(username == '') {
+                $('input[name=username]').css('border-color','red');
+                checked = false;
+            }
+            var email = $.trim($('input[name=email]').val());
+            $('input[name=email]').css('border-color','#ccc');
+            if(email == '' || email.indexOf('@') === -1) {
+                $('input[name=email]').css('border-color','red');
+                checked = false;
+            }
+            var password = $.trim($('input[name=password]').val());
+            $('input[name=password]').css('border-color','#ccc');
+            if(password == '') {
+                $('input[name=password]').css('border-color','red');
+                checked = false;
+            }
+            var passwordConf = $.trim($('input[name=passwordConf]').val());
+            $('input[name=passwordConf]').css('border-color','#ccc');
+            if(passwordConf == '') {
+                $('input[name=passwordConf]').css('border-color','red');
+                checked = false;
+            }
+
+            if(checked) {
+                $.ajax({
+                    type: "POST",
+                    url: '/register',
+                    data: {
+                        username: username,
+                        email: email,
+                        password: password,
+                        passwordConf: passwordConf,
+                        is_ajax: true,
+                        product_id: domain+'_'+id
+                    },
+                    dataType: 'json',
+                    success: function(result) {
+                        if(result.success) {
+                            showTrackProductTab(result,email,current_price);
+                        } else {
+                            alert(result.message);
+                        }
+                    },
+                    error: function() {
+                        alert('ajax error');
+                    }
+                });
+            }
+     }
+     function login(){
+        var checked = true;
+        var logemail = $.trim($('input[name=logemail]').val());
+$('input[name=logemail]').css('border-color','#ccc');
+        if(logemail == '' || logemail.indexOf('@') === -1) {
+                $('input[name=logemail]').css('border-color','red');
+                checked = false;
+        }
+        var logpassword = $.trim($('input[name=logpassword]').val());
+$('input[name=logpassword]').css('border-color','#ccc');
+        if(logpassword == '') {
+                $('input[name=logpassword]').css('border-color','red');
+                checked = false;
+        }
+        var rememberme = $('input[name=rememberme]').is(":checked");
+        if(checked) {
+                $.ajax({
+                        type: "POST",
+                        url: '/login',
+                        data: {
+                                logemail: logemail,
+                                logpassword: logpassword,
+                                rememberme: rememberme,
+                                is_ajax: true,
+                                product_id: domain+'_'+id
+                        },
+                        dataType: 'json',
+                        success: function(result) {
+                                if(result.success) {
+                                    showTrackProductTab(result,logemail,current_price);
+                                } else {
+                                        alert(result.message);
+                                }
+                        },
+                        error: function() {
+                                alert('ajax error');
+                        }
+                });
+        }
+}
+                
      function showTrackProductTab(result,logemail,current_price){
         $('#acount-form').hide();
         $('#track-price').show();
@@ -199,46 +293,18 @@
 			$(this).addClass('active');
 			e.preventDefault();
 		});
+                
+                
 
 		$('#login-submit').click(function() {
-			var checked = true;
-			var logemail = $.trim($('input[name=logemail]').val());
-            $('input[name=logemail]').css('border-color','#ccc');
-			if(logemail == '' || logemail.indexOf('@') === -1) {
-				$('input[name=logemail]').css('border-color','red');
-				checked = false;
-			}
-			var logpassword = $.trim($('input[name=logpassword]').val());
-            $('input[name=logpassword]').css('border-color','#ccc');
-			if(logpassword == '') {
-				$('input[name=logpassword]').css('border-color','red');
-				checked = false;
-			}
-			var rememberme = $('input[name=rememberme]').is(":checked");
-			if(checked) {
-				$.ajax({
-					type: "POST",
-					url: '/login',
-					data: {
-						logemail: logemail,
-						logpassword: logpassword,
-						rememberme: rememberme,
-						is_ajax: true,
-                                                product_id: domain+'_'+id
-					},
-					dataType: 'json',
-					success: function(result) {
-						if(result.success) {
-                                                    showTrackProductTab(result,logemail,current_price);
-						} else {
-							alert(result.message);
-						}
-					},
-					error: function() {
-						alert('ajax error');
-					}
-				});
-			}
+			login();
+		});
+                
+                $("#login-form input[type='text']").keyup(function(e) {
+                    var code = e.keyCode || e.which;
+                     if(code == 13) { //Enter keycode
+                       login();
+                     }			
 		});
 
         $('.ui-button.ui-widget.ui-corner-all').click(function(e) {
@@ -269,59 +335,16 @@
         
         
         $('#register-submit').click(function() {
-            var checked = true;
-            var username = $.trim($('input[name=username]').val());
-            $('input[name=username]').css('border-color','#ccc');
-            if(username == '') {
-                $('input[name=username]').css('border-color','red');
-                checked = false;
-            }
-            var email = $.trim($('input[name=email]').val());
-            $('input[name=email]').css('border-color','#ccc');
-            if(email == '' || email.indexOf('@') === -1) {
-                $('input[name=email]').css('border-color','red');
-                checked = false;
-            }
-            var password = $.trim($('input[name=password]').val());
-            $('input[name=password]').css('border-color','#ccc');
-            if(password == '') {
-                $('input[name=password]').css('border-color','red');
-                checked = false;
-            }
-            var passwordConf = $.trim($('input[name=passwordConf]').val());
-            $('input[name=passwordConf]').css('border-color','#ccc');
-            if(passwordConf == '') {
-                $('input[name=passwordConf]').css('border-color','red');
-                checked = false;
-            }
-
-            if(checked) {
-                $.ajax({
-                    type: "POST",
-                    url: '/register',
-                    data: {
-                        username: username,
-                        email: email,
-                        password: password,
-                        passwordConf: passwordConf,
-                        is_ajax: true,
-                        product_id: domain+'_'+id
-                    },
-                    dataType: 'json',
-                    success: function(result) {
-                        if(result.success) {
-                            showTrackProductTab(result,email,current_price);
-                        } else {
-                            alert(result.message);
-                        }
-                    },
-                    error: function() {
-                        alert('ajax error');
-                    }
-                });
-            }
+            regist();
         });
-	});
+        $("#register-form input").keyup(function(e) {
+            var code = e.keyCode || e.which;
+             if(code == 13) { //Enter keycode
+               regist();
+             }			
+        });
+                
+    });
 
 
 
