@@ -116,6 +116,7 @@ module.exports = function(app){
         }
         var product_id = domain+'_'+id;
         var user_id = req.session.userId;
+        var user_email = req.session.userEmail;
         TrackingPrice.findOne({product_id: product_id,user_id:user_id}, function (error, trackingPrice) {
             if (error) {
                 var obj = {success:false};
@@ -126,6 +127,7 @@ module.exports = function(app){
                     var trackingPriceData = {
                         product_id: product_id,
                         user_id: user_id,
+                        user_email: user_email,
                         tracked_price: tracked_price
                     };
                     TrackingPrice.create(trackingPriceData, function (error, trackingPrice) {
@@ -254,6 +256,7 @@ module.exports = function(app){
                     }
                 } else {
                     req.session.userId = user._id;
+                    req.session.userEmail = req.body.logemail;
                     if(req.body.rememberme) {
                         req.session.cookie.maxAge = 30 * 24 * 60 * 60 * 1000;
                     } else {
@@ -341,6 +344,7 @@ module.exports = function(app){
                                             if (req.body.is_ajax) {
                                                 var obj = {success: true,tracked_price: 0};
                                                 req.session.userId = user._id;
+                                                req.session.userEmail = req.body.email;
                                                 return res.send(JSON.stringify(obj));
                                             } else {
                                                 req.session.userId = user._id;

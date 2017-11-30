@@ -26,7 +26,7 @@ module.exports.send_mail_for_tracking_price_fixed = function (product_id, sell_p
             for (i = 0; i < allTrackingPrice.length; i++) {
                 temp = allTrackingPrice[i];
                 if (sell_price <= temp.tracked_price) {
-                    sendMail(temp.user_id,temp.tracked_price,sell_price);
+                    sendMail(temp.user_email,temp.tracked_price,sell_price);
                 }
             }
         }
@@ -34,8 +34,8 @@ module.exports.send_mail_for_tracking_price_fixed = function (product_id, sell_p
     });
 };
 
-function sendMail(user_id,tracked_price,sell_price) {
-    console.log(user_id + ' '+tracked_price+' '+sell_price);
+function sendMail(user_email,tracked_price,sell_price) {
+    console.log(user_email + ' '+tracked_price+' '+sell_price);
     var nodemailer = require('nodemailer');
 //    var transporter = nodemailer.createTransport({
 //        service: 'gmail',

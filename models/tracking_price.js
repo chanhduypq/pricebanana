@@ -11,6 +11,11 @@ var TrackingPriceSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
+    user_email: {
+        type: String,
+        required: true,
+        trim: true
+    },
     tracked_price:{
         type: Number,
         required: true
