@@ -44,30 +44,22 @@ module.exports.get_domain_and_id_from_url = function (url) {
 };
 
 function sendMail(user_email,tracked_price,sell_price) {
-    console.log(user_email + ' '+tracked_price+' '+sell_price);
+    var config = require('../config');
     var nodemailer = require('nodemailer');
-//    var transporter = nodemailer.createTransport({
-//        service: 'gmail',
-//        auth: {
-//            user: 'chanhduypq@gmail.com',
-//            pass: '0812buddha'
-//        }
-//    });
-    var transporter = nodemailer.createTransport('smtps://chanhduypq@gmail.com:0812buddha');
-//    var transporter = nodemailer.createTransport({
-//        host: 'smtp.gmail.com',
-//        port: 465,
-//        secure: true, // use SSL
-//        auth: {
-//            user: 'chanhduypq@gmail.com',
-//            pass: '0812buddha'
-//        }
-//    });
+    var transporter = nodemailer.createTransport({
+        host: config.host,
+        port: config.port,
+        secure: true, // use SSL
+        auth: {
+            user: config.user,
+            pass: config.pass
+        }
+    });
     var mailOptions = {
-        from: 'chanhduypq@gmail.com',
-        to: 'tue@24x7studios.com',
+        from: 'tue@24x7studios.com',
+        to: 'chanhduypq@gmail.com',
         subject: 'Sending Email using Node.js',
-        text: 'That was easy!'
+        text: 'ok man'
     };
     transporter.sendMail(mailOptions, function (error, info) {
         if (error) {
