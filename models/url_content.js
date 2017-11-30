@@ -2,13 +2,17 @@ var mongoose = require('mongoose');
 var helper = require('../helpers/functions');
 
 var UrlContentSchema = new mongoose.Schema({
-    url: {
+    content: {
         type: String,
-        unique: true,
         required: true,
         trim: true
     },
-    content: {
+    domain: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    id: {
         type: String,
         required: true,
         trim: true
@@ -21,7 +25,7 @@ var UrlContentSchema = new mongoose.Schema({
 UrlContentSchema.pre('save', function (next) {
     var urlContent = this;
     if(typeof urlContent.createdDate == 'undefined' || urlContent.createdDate == null) {
-        urlContent.createdDate = helper.get_current_date();
+        urlContent.createdDate = helper.get_today();
     }
     next();
 });

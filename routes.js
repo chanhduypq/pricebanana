@@ -9,7 +9,7 @@ var config = require(__dirname + '/config');
 module.exports = function(app){
 
     app.get('/banana/:domain/:id', function (req, res) {
-        
+                
         var domain = req.params.domain;        
         var id = req.params.id;
         if(config.domains.indexOf(domain) == -1) {
@@ -117,83 +117,68 @@ module.exports = function(app){
     });
     
     app.post('/get_content', function (req, res) {
-     
+        
         var url = req.body.url;
         var content = req.body.content;
-        var data = {
-            url: url,
-            content: content
-        };
-
+        
         arr = helperGetContent.get_domain_and_id_from_url(url);
         domain = arr.domain;
         id = arr.id;
         
-        UrlContent.create(data, function (error, urlContent) {
-            if (error) {
-                if (error.code == '11000') { 
-                } else {
-                    var obj = {success: false};
-                    return res.send(JSON.stringify(obj));
-                }
+        var data = {
+            domain: domain,
+            id: id,
+            content: content
+        };
+        today = helper.get_today();
+        UrlContent.findOne({domain: domain,id:id,createdDate: today}, function (error, urlContent) {
+            if (urlContent === null){
+                UrlContent.create(data, function (error, urlContent) {
+                });  
                 
-            } 
-        });
-        
-        var product_id = domain + "_" + id;
-        Product.findOne({product_id: product_id}, function (error, product) {
-            if (error) {
-                var obj = {success:false};
-                return res.send(JSON.stringify(obj));
-            } else {
-                price_date = helper.get_today();
-                if (product === null) {
-                    info = helperGetContent.get_info_from_html(content);
-                    var price_histories = [
-                        { date: price_date, price: info.sell_price }
-                    ];                    
-                    var productData = {
-                        product_id: product_id,
-                        price_history: JSON.stringify(price_histories),
-                        current_price: info.sell_price
-                    };
-                    Product.create(productData, function (error, product) {
-                        if (error) {
-                            var obj = {success:false};
-                            return res.send(JSON.stringify(obj));
-                        } else {
-//                            productId = product._id;
-                        }
-                    });
-                } else {
+                var product_id = domain + "_" + id;
+                Product.findOne({product_id: product_id}, function (error, product) {
                     
                     info = helperGetContent.get_info_from_html(content);
-                    var price_histories = JSON.parse(product.price_history);
-                    var find = false;
-                    for(var i=0; i<price_histories.length;i++) {
-                        if(price_histories[i].date == price_date) {
-                            price_histories[i].price = info.sell_price;
-                            find = true;
-                            break;
+                    if (product === null){
+                        var price_histories = [
+                            { date: today, price: info.sell_price }
+                        ];                    
+                        var productData = {
+                            product_id: product_id,
+                            price_history: JSON.stringify(price_histories),
+                            current_price: info.sell_price
+                        };
+                        Product.create(productData, function (error, product) {
+                        });
+                    } else {
+                        var price_histories = JSON.parse(product.price_history);
+                        var find = false;
+                        for(var i=0; i<price_histories.length;i++) {
+                            if(price_histories[i].date == today) {
+                                price_histories[i].price = info.sell_price;
+                                find = true;
+                                break;
+                            }
                         }
+                        if(!find) {
+                            price_histories.push({date: today, price: info.sell_price});
+                        }
+                        price_history=helper.sort_price_history(price_histories);
+                        current_price=price_history[price_history.length-1].price;
+
+                        helperGetContent.send_mail_for_tracking_price_fixed(product_id,info.sell_price);
+
+                        Product.findOneAndUpdate({ "_id" : product._id }, {price_history: JSON.stringify(price_history),"current_price":current_price}, function (err, product) {
+                        });
                     }
-                    if(!find) {
-                        price_histories.push({date: price_date, price: info.sell_price});
-                    }
-                    price_history=helper.sort_price_history(price_histories);
-                    current_price=price_history[price_history.length-1].price;
-                    
-                    helperGetContent.send_mail_for_tracking_price_fixed(product_id,info.sell_price);
-                    
-                    Product.findOneAndUpdate({ "_id" : product._id }, {price_history: JSON.stringify(price_history),"current_price":current_price}, function (err, product) {
-                        if (error) {
-                            var obj = {success:false};
-                            return res.send(JSON.stringify(obj));
-                        } 
-                    });
-                }
+                });
             }
         });
+        
+        
+        
+        
         
         var obj = {success: true};
         return res.send(JSON.stringify(obj));
