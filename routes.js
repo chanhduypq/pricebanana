@@ -8,12 +8,6 @@ var config = require(__dirname + '/config');
 
 module.exports = function(app){
 
-    //GET price banana history
-    app.get('/', function (req, res) {
-        res.send('Pending..');
-    });
-
-
     app.get('/banana/:domain/:id', function (req, res) {
         
         var domain = req.params.domain;        
