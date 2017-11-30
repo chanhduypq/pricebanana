@@ -3,6 +3,7 @@ var Product = require(__dirname + '/models/product');
 var TrackingPrice = require(__dirname + '/models/tracking_price');
 var UrlContent = require(__dirname + '/models/url_content');
 var helper = require(__dirname + '/helpers/functions');
+var helperGetContent = require(__dirname + '/helpers/get_content');
 var config = require(__dirname + '/config');
 
 module.exports = function(app){
@@ -14,43 +15,7 @@ module.exports = function(app){
 
 
     app.get('/banana/:domain/:id', function (req, res) {
-//        var nodemailer = require('nodemailer');
-
-//var transporter = nodemailer.createTransport({
-//  service: 'gmail',
-//  auth: {
-//    user: 'chanhduypq@gmail.com',
-//    pass: '0812buddha'
-//  }
-//});
-
-//var transporter = nodemailer.createTransport('smtps://chanhduypq@gmail.com:0812buddha@smtp.gmail.com');
-
-//var transporter = nodemailer.createTransport({
-//  host: 'smtp.gmail.com',
-//    port: 465,
-//    secure: true, // use SSL
-//    auth: {
-//        user: 'chanhduypq@gmail.com',
-//        pass: '0812buddha'
-//    }
-//});
-//
-//var mailOptions = {
-//  from: 'chanhduypq@gmail.com',
-//  to: 'luuthiluan@gmail.com',
-//  subject: 'Sending Email using Node.js',
-//  text: 'That was easy!'
-//};
-//
-//transporter.sendMail(mailOptions, function(error, info){
-//  if (error) {
-//    console.log(error);
-//  } else {
-//    console.log('Email sent: ' + info.response);
-//  }
-//});
-
+        
         var domain = req.params.domain;        
         var id = req.params.id;
         if(config.domains.indexOf(domain) == -1) {
@@ -220,7 +185,7 @@ module.exports = function(app){
             } else {
                 price_date = helper.get_today();
                 if (product === null) {
-                    info = helper.get_info_from_html(content);
+                    info = helperGetContent.get_info_from_html(content);
                     var price_histories = [
                         { date: price_date, price: info.sell_price }
                     ];                    
@@ -239,7 +204,7 @@ module.exports = function(app){
                     });
                 } else {
                     
-                    info = helper.get_info_from_html(content);
+                    info = helperGetContent.get_info_from_html(content);
                     var price_histories = JSON.parse(product.price_history);
                     var find = false;
                     for(var i=0; i<price_histories.length;i++) {
@@ -255,19 +220,7 @@ module.exports = function(app){
                     price_history=helper.sort_price_history(price_histories);
                     current_price=price_history[price_history.length-1].price;
                     
-                    TrackingPrice.find({product_id: product_id}, function (error, allTrackingPrice) {
-                        if (error) {
-                            
-                        } else {
-                            for(i = 0; i < allTrackingPrice.length; i++) {
-                                temp = allTrackingPrice[i];
-                                if(info.sell_price<=temp.tracked_price){
-                                    console.log(temp.user_id);
-                                }
-                            }
-                        }
-                        
-                    });
+                    helperGetContent.send_mail_for_tracking_price_fixed(product_id,info.sell_price);
                     
                     Product.findOneAndUpdate({ "_id" : product._id }, {price_history: JSON.stringify(price_history),"current_price":current_price}, function (err, product) {
                         if (error) {
