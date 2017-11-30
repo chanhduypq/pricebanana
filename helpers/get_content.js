@@ -34,6 +34,15 @@ module.exports.send_mail_for_tracking_price_fixed = function (product_id, sell_p
     });
 };
 
+module.exports.get_domain_and_id_from_url = function (url) {
+    url = url.replace('https://www.', '');
+    temp = url.split('/');
+    id = temp[temp.length - 1];
+    temp = temp[0].split('.');
+    domain = temp[0];
+    return {'domain': domain, 'id': id};
+};
+
 function sendMail(user_email,tracked_price,sell_price) {
     console.log(user_email + ' '+tracked_price+' '+sell_price);
     var nodemailer = require('nodemailer');

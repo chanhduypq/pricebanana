@@ -124,11 +124,10 @@ module.exports = function(app){
             url: url,
             content: content
         };
-        url=url.replace('https://www.','');
-        temp = url.split('/');
-        id = temp[temp.length - 1];
-        temp = temp[0].split('.');
-        domain = temp[0];
+
+        arr = helperGetContent.get_domain_and_id_from_url(url);
+        domain = arr.domain;
+        id = arr.id;
         
         UrlContent.create(data, function (error, urlContent) {
             if (error) {
