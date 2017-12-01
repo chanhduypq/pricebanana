@@ -13,7 +13,7 @@ var MongoStore = require('connect-mongo')(session);
 
 //connect to MongoDB
 mongoose.Promise = require('bluebird');
-mongoose.connect('mongodb://localhost/banana');
+mongoose.connect('mongodb://localhost/price_banana');
 var db = mongoose.connection;
 
 //handle mongo error
