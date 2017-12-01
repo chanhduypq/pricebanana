@@ -1,10 +1,17 @@
 var express = require('express');
 var app = express();
-//var fs = require('fs');
-//
-//var key = fs.readFileSync('pricebanana.key');
-//var cert = fs.readFileSync( 'pricebanana.crt' );
+var fs = require('fs');
+var https = require('https');
+
+
+var key = fs.readFileSync('privkey.pem');
+var cert = fs.readFileSync('fullchain.pem');
 //var ca = '';
+var options = {
+  key: key,
+  cert: cert,
+  //ca: ca
+};
 
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
@@ -69,6 +76,8 @@ app.use(function (err, req, res, next) {
 //https.createServer(options, app).listen(443);
 
 // listen on port 3000
- app.listen(3000, function() {
-     console.log('Server is running on port 3000');
- });
+// app.listen(3000, function() {
+  //   console.log('Server is running on port 3000');
+// });
+
+https.createServer(options, app).listen(443);
