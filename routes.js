@@ -9,7 +9,7 @@ var config = require(__dirname + '/config');
 module.exports = function(app){
 
     app.get('/banana/:domain/:id', function (req, res) {
-        
+
         var domain = req.params.domain;        
         var id = req.params.id;
         if(config.domains.indexOf(domain) == -1) {
@@ -134,7 +134,8 @@ module.exports = function(app){
         var data = {
             domain: domain,
             id: id,
-            content: content
+            content: content,
+            item_types: info.item_types
         };
         today = helper.get_today();
         UrlContent.findOne({domain: domain,id:id,createdDate: today}, function (error, urlContent) {
@@ -148,7 +149,7 @@ module.exports = function(app){
                     info = helperGetContent.get_info_from_html(content);
                     if (product === null){
                         var price_histories = [
-                            { date: today, price: info.sell_price }
+                            { date: today, price: info.sell_price, item_types: info.item_types }
                         ];                    
                         var productData = {
                             product_id: product_id,
@@ -163,12 +164,13 @@ module.exports = function(app){
                         for(var i=0; i<price_histories.length;i++) {
                             if(price_histories[i].date == today) {
                                 price_histories[i].price = info.sell_price;
+                                price_histories[i].item_types = info.item_types;
                                 find = true;
                                 break;
                             }
                         }
                         if(!find) {
-                            price_histories.push({date: today, price: info.sell_price});
+                            price_histories.push({date: today, price: info.sell_price, item_types: info.item_types});
                         }
                         price_history=helper.sort_price_history(price_histories);
                         current_price=price_history[price_history.length-1].price;
@@ -181,10 +183,6 @@ module.exports = function(app){
                 });
             }
         });
-        
-        
-        
-        
         
         var obj = {success: true};
         return res.send(JSON.stringify(obj));

@@ -25,8 +25,42 @@ module.exports.get_info_from_html = function (html) {
         var time_sell_price = span_time_sell_price.childNodes[0].childNodes[1].childNodes[0].innerHTML;
         time_sell_price = time_sell_price.replace("$", "");
     }
-
-    return {sell_price: sell_price, retail_price: retail_price, time_sell_price: time_sell_price};
+    
+    var ul_content_inventory_0 = dom.getElementById('content_inventory_0');
+    if (ul_content_inventory_0 == null) {
+        var item_types = null;
+    } else {
+        var nodes = ul_content_inventory_0.getElementsByTagName('span');
+        item_types=[];
+        for(i=0;i<nodes.length;i++){
+            text=nodes[i].innerHTML;
+            temp=text.split(' - Qty : ');
+            text=temp[0];
+            quantity=temp[1];
+            if(text.indexOf('(')!=-1){
+                temp=text.split('(');
+                name=temp[0];
+                temp=temp[1];
+                temp=temp.replace('$','');
+                temp=temp.replace(')','');
+                price=parseFloat(temp.substr(1));
+                if(temp[0]=='+'){
+                    price=parseFloat(time_sell_price)+price;                    
+                }
+                else{
+                    price=parseFloat(time_sell_price)-price;    
+                }
+            }
+            else{
+                name=text;
+                price=time_sell_price;  
+            }
+            var obj = {name:name,quantity:quantity,price:price};
+            item_types.push(obj);
+        }
+        item_types=JSON.stringify(item_types);
+    }
+    return {sell_price: sell_price, retail_price: retail_price, time_sell_price: time_sell_price,item_types:item_types};
 };
 
 module.exports.send_mail_for_tracking_price_fixed = function (product_id, sell_price) {
