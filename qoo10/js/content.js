@@ -1,58 +1,38 @@
-$(function() {
+$(function () {
 
-	// contentFull
-	var contentFull = $("html").html();
-	//after
-	$('.goodsDetailWrap').after('<div id="pricebanana_ctn"><iframe src="https://pricebanana.maitrongtung.com?d=q10&id=77"></iframe></div>');
+    // contentFull
+    var contentFull = $(".goodsDetailWrap").html();
 
+    var apiUrl = 'https://pricebanana.com/get_content';
+    var current_url = window.location.href;
 
-	// send all page content
-//	 var apiUrl = 'https://pricebanana.maitrongtung.com/check.php';
-//	 var current_url = window.location.href;
-//	 $.ajax({
-//	 	url: apiUrl,
-//	 	method: "POST",
-//	 	crossDomain: true,
-//	 	async: true,
-//	 	data: {
-//	 		product_url: current_url,
-//	 		content: contentFull
-//	 	},
-//	 	success: function(result) {
-//	 		if(result.success){
-//	 			$('.goodsDetailWrap').after('<div id="pricebanana_ctn"><iframe src="https://pricebanana.maitrongtung.com?d=q10&id=77"></iframe></div>');
-//	 		}
-//	 		console.log(result);
-//	 	},
-//	 	error: function(xhr, status, error) {
-//	 		console.log(status);
-//	 		console.log(error);
-//	 		console.log(xhr);
-//	 	}
-//	 });
+    url = current_url.replace('https://www.', '');
+    temp = url.split('/');
+    id = temp[temp.length - 1];
+    temp = temp[0].split('.');
+    domain = temp[0];
 
-         var apiUrl = 'http://localhost:3000/get_content';
-	 var current_url = window.location.href;
-	 $.ajax({
-	 	url: apiUrl,
-	 	method: "POST",
-	 	crossDomain: true,
-	 	async: true,
-	 	data: {
-	 		product_url: current_url,
-	 		content: contentFull
-	 	},
-	 	success: function(result) {
-//	 		if(result.success){
-//	 			$('.goodsDetailWrap').after('<div id="pricebanana_ctn"><iframe src="https://pricebanana.maitrongtung.com?d=q10&id=77"></iframe></div>');
-//	 		}
-	 		console.log(result);
-	 	},
-	 	error: function(xhr, status, error) {
-	 		console.log(status);
-	 		console.log(error);
-	 		console.log(xhr);
-	 	}
-	 });
+    $.ajax({
+        url: apiUrl,
+        method: "POST",
+        crossDomain: true,
+        async: true,
+        dataType: 'json',
+        data: {
+            url: current_url,
+            content: contentFull
+        },
+        success: function (result) {
+            if (result.success) {
+                $('.goodsDetailWrap').after('<div id="pricebanana_ctn"><iframe src="https://pricebanana.com/banana/' + domain + '/' + id + '"></iframe></div>');
+            }
+
+        },
+        error: function (xhr, status, error) {
+            console.log(status);
+            console.log(error);
+            console.log(xhr.responseText);
+        }
+    });
 
 });
