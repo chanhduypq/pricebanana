@@ -8,13 +8,16 @@ module.exports.get_info_from_html = function (html) {
         sendError();
         return {sell_price: null, retail_price: null, time_sell_price: null};
     }
-    var sell_price = dl_sell_price.childNodes[1].childNodes[0].getAttribute('data-price');
+    strongs=dl_sell_price.getElementsByTagName('strong');
+    var sell_price = strongs[1].getAttribute('data-price');
 
     var div_retailPrice = dom.getElementById('ctl00_ctl00_MainContentHolder_MainContentHolderNoForm_retailPricePanel');
     if (div_retailPrice == null) {
         var retail_price = null;
     } else {
-        var retail_price = div_retailPrice.childNodes[0].childNodes[1].innerHTML;
+        dds = div_retailPrice.getElementsByTagName('dd');
+        dd = dds[0];
+        var retail_price = dd.innerHTML;
         retail_price = retail_price.replace("$", "");
     }
 
@@ -22,7 +25,8 @@ module.exports.get_info_from_html = function (html) {
     if (span_time_sell_price == null) {
         var time_sell_price = null;
     } else {
-        var time_sell_price = span_time_sell_price.childNodes[0].childNodes[1].childNodes[0].innerHTML;
+        strongs=span_time_sell_price.getElementsByTagName('strong');
+        var time_sell_price = strongs[1].innerHTML;
         time_sell_price = time_sell_price.replace("$", "");
     }
     
