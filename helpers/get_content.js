@@ -11,12 +11,20 @@ module.exports.get_info_from_html = function (html) {
     var sell_price = dl_sell_price.childNodes[1].childNodes[0].getAttribute('data-price');
 
     var div_retailPrice = dom.getElementById('ctl00_ctl00_MainContentHolder_MainContentHolderNoForm_retailPricePanel');
-    var retail_price = div_retailPrice.childNodes[0].childNodes[1].innerHTML;
-    retail_price = retail_price.replace("$", "");
+    if (div_retailPrice == null) {
+        var retail_price = null;
+    } else {
+        var retail_price = div_retailPrice.childNodes[0].childNodes[1].innerHTML;
+        retail_price = retail_price.replace("$", "");
+    }
 
     var span_time_sell_price = dom.getElementById('ctl00_ctl00_MainContentHolder_MainContentHolderNoForm_discount_info');
-    var time_sell_price = span_time_sell_price.childNodes[0].childNodes[1].childNodes[0].innerHTML;
-    time_sell_price = time_sell_price.replace("$", "");
+    if (span_time_sell_price == null) {
+        var time_sell_price = null;
+    } else {
+        var time_sell_price = span_time_sell_price.childNodes[0].childNodes[1].childNodes[0].innerHTML;
+        time_sell_price = time_sell_price.replace("$", "");
+    }
 
     return {sell_price: sell_price, retail_price: retail_price, time_sell_price: time_sell_price};
 };
