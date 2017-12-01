@@ -9,7 +9,6 @@ var config = require(__dirname + '/config');
 module.exports = function(app){
 
     app.get('/banana/:domain/:id', function (req, res) {
-
         var domain = req.params.domain;        
         var id = req.params.id;
         if(config.domains.indexOf(domain) == -1) {
@@ -117,10 +116,12 @@ module.exports = function(app){
     });
     
     app.post('/get_content', function (req, res) {
+        res.header("Access-Control-Allow-Origin", "*");
+        res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
         
         var url = req.body.url;
         var content = req.body.content;
-        
+
         info = helperGetContent.get_info_from_html(content);
         if (info.sell_price == null) {
             var obj = {success: false};

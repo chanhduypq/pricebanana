@@ -26,8 +26,14 @@ module.exports.get_info_from_html = function (html) {
         var time_sell_price = null;
     } else {
         strongs=span_time_sell_price.getElementsByTagName('strong');
-        var time_sell_price = strongs[1].innerHTML;
-        time_sell_price = time_sell_price.replace("$", "");
+        if(strongs.length>0){
+            var time_sell_price = strongs[1].innerHTML;
+            time_sell_price = time_sell_price.replace("$", "");
+        }
+        else{
+            var time_sell_price = null;
+        }
+        
     }
     
     var ul_content_inventory_0 = dom.getElementById('content_inventory_0');

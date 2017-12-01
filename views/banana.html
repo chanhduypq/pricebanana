@@ -300,7 +300,7 @@ $('input[name=logpassword]').css('border-color','#ccc');
 			login();
 		});
                 
-                $("#login-form input[type='text']").keyup(function(e) {
+                $("#login-form input").keyup(function(e) {
                     var code = e.keyCode || e.which;
                      if(code == 13) { //Enter keycode
                        login();
@@ -332,8 +332,7 @@ $('input[name=logpassword]').css('border-color','#ccc');
             $(this).html("Update tracking");
         });
         
-        
-        
+                
         $('#register-submit').click(function() {
             regist();
         });
