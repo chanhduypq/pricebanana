@@ -57,9 +57,9 @@ function sendMail(user_email,tracked_price,sell_price) {
     });
     var mailOptions = {
         from: 'tue@24x7studios.com',
-        to: 'chanhduypq@gmail.com',
-        subject: 'Sending Email using Node.js',
-        text: 'ok man'
+        to: user_email,
+        subject: 'Notification',
+        text: 'ok'
     };
     transporter.sendMail(mailOptions, function (error, info) {
         if (error) {
