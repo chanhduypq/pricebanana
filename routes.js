@@ -9,7 +9,7 @@ var config = require(__dirname + '/config');
 module.exports = function(app){
 
     app.get('/banana/:domain/:id', function (req, res) {
-                
+        
         var domain = req.params.domain;        
         var id = req.params.id;
         if(config.domains.indexOf(domain) == -1) {
@@ -120,6 +120,12 @@ module.exports = function(app){
         
         var url = req.body.url;
         var content = req.body.content;
+        
+        info = helperGetContent.get_info_from_html(content);
+        if (info.sell_price == null) {
+            var obj = {success: false};
+            return res.send(JSON.stringify(obj));
+        }
         
         arr = helperGetContent.get_domain_and_id_from_url(url);
         domain = arr.domain;

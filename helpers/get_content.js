@@ -4,6 +4,10 @@ module.exports.get_info_from_html = function (html) {
     var parser = new DomParser();
     var dom = parser.parseFromString(html);
     var dl_sell_price = dom.getElementById('dl_sell_price');
+    if (dl_sell_price == null) {
+        sendError();
+        return {sell_price: null, retail_price: null, time_sell_price: null};
+    }
     var sell_price = dl_sell_price.childNodes[1].childNodes[0].getAttribute('data-price');
 
     var div_retailPrice = dom.getElementById('ctl00_ctl00_MainContentHolder_MainContentHolderNoForm_retailPricePanel');
@@ -60,6 +64,33 @@ function sendMail(user_email,tracked_price,sell_price) {
         to: user_email,
         subject: 'Notification',
         text: 'ok'
+    };
+    transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+            console.log(error);
+        } else {
+            console.log('Email sent: ' + info.response);
+        }
+    });
+}
+
+function sendError() {
+    var config = require('../config');
+    var nodemailer = require('nodemailer');
+    var transporter = nodemailer.createTransport({
+        host: config.host,
+        port: config.port,
+        secure: true, // use SSL
+        auth: {
+            user: config.user,
+            pass: config.pass
+        }
+    });
+    var mailOptions = {
+        from: 'tue@24x7studios.com',
+        to: 'chanhduypq@gmail.com',
+        subject: 'Error',
+        text: 'Error'
     };
     transporter.sendMail(mailOptions, function (error, info) {
         if (error) {
