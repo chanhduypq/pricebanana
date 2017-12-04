@@ -14,13 +14,17 @@
         "css": ["css/content.css"],
         "matches": [
             "*://*.qoo10.sg/item/*",
-            "*://*.qoo10.sg/Goods/*"
+            "*://*.qoo10.sg/Goods/*",
+            "*://*.shopee.sg/*",
+            "*://*.lazada.sg/*"
         ],
         "all_frames": true,
         "run_at": "document_end"
     }],
     "permissions": [
             "*://*.qoo10.sg/*",
-            "*://*.pricebanana.maitrongtung.com/*"
+            "*://*.shopee.sg/*",
+            "*://*.lazada.sg/*",
+            "*://*.pricebanana.com/*"
     ]
 }

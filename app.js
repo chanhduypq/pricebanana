@@ -20,7 +20,7 @@ var MongoStore = require('connect-mongo')(session);
 
 //connect to MongoDB
 mongoose.Promise = require('bluebird');
-mongoose.connect('mongodb://localhost/price_banana');
+mongoose.connect('mongodb://localhost/pricebanana');
 var db = mongoose.connection;
 
 //handle mongo error

@@ -9,6 +9,66 @@ var config = require(__dirname + '/config');
 module.exports = function(app){
 
     app.get('/banana/:domain/:id', function (req, res) {
+//        requestify=require('requestify');
+//        requestify.request('https://www.qoo10.sg/gmkt.inc/swe_GoodsAjaxService.asmx/GetGoodsInventoryAvailableList', {
+//                method: 'POST',
+//                data:{
+//                    "inventory_no":'ST560300975',
+//                            "lang_cd":"en",
+//                            "inventory_yn":"",
+//                            "link_type":"N",
+//                            "gd_no":'560300975',
+//                            "global_order_type":"L",
+//                            "___cache_expire___":"3507155922359" 
+//                },
+//                headers: {
+//                    'Referer': "http://list.qoo10.sg"
+//                },
+//                dataType: 'json'        
+//            })
+//            .then(function(response) {
+//                console.log(response.getBody());
+//                console.log(response.body);
+//            }); 
+            
+            
+
+//        requestify.post('https://www.qoo10.sg/gmkt.inc/swe_GoodsAjaxService.asmx/GetGoodsInventoryAvailableList', {
+//            "inventory_no":'ST560300975',
+//                            "lang_cd":"en",
+//                            "inventory_yn":"",
+//                            "link_type":"N",
+//                            "gd_no":'560300975',
+//                            "global_order_type":"L",
+//                            "___cache_expire___":"3507155922359" 
+//         })
+//            .then(function(response) {
+//                // Get the response body (JSON parsed or jQuery object for XMLs)
+//                console.log(response.getBody());
+//
+//                // Get the raw response body
+//                console.log(response.body);
+//            });
+
+//var request = require('request');
+//
+//request.post(
+//    'https://www.qoo10.sg/gmkt.inc/swe_GoodsAjaxService.asmx/GetGoodsInventoryAvailableList',
+//    { json: { "inventory_no":'ST560300975',
+//                            "lang_cd":"en",
+//                            "inventory_yn":"",
+//                            "link_type":"N",
+//                            "gd_no":'560300975',
+//                            "global_order_type":"L",
+//                            "___cache_expire___":"3507155922359" } },
+//    function (error, response, body) {
+//        if (!error) {
+//            console.log(body)
+//        }
+//        console.log(error);
+//    }
+//);
+
         var domain = req.params.domain;        
         var id = req.params.id;
         if(config.domains.indexOf(domain) == -1) {
@@ -22,7 +82,7 @@ module.exports = function(app){
             var user_email = '';
         }
         Product.findOne({product_id: product_id}, function (error, product) {  
-            if (error || product === null) {
+            if (product === null) {
                 return res.render('banana', {
                                 price_history:[],
                                 user_email: user_email,
@@ -119,74 +179,83 @@ module.exports = function(app){
         res.header("Access-Control-Allow-Origin", "*");
         res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
         
-        var url = req.body.url;
-        var content = req.body.content;
+        requestify=require('requestify');
+        requestify.get(req.body.url).then(function(response) {
+            var content=response.getBody();
+            var url = req.body.url;
+            var id = req.body.id;
+            var domain = req.body.domain;
 
-        info = helperGetContent.get_info_from_html(content);
-        if (info.sell_price == null) {
-            var obj = {success: false};
-            return res.send(JSON.stringify(obj));
-        }
-        
-        arr = helperGetContent.get_domain_and_id_from_url(url);
-        domain = arr.domain;
-        id = arr.id;
-        
-        var data = {
-            domain: domain,
-            id: id,
-            content: content,
-            item_types: info.item_types
-        };
-        today = helper.get_today();
-        UrlContent.findOne({domain: domain,id:id,createdDate: today}, function (error, urlContent) {
-            if (urlContent === null){
-                UrlContent.create(data, function (error, urlContent) {
-                });  
-                
-                var product_id = domain + "_" + id;
-                Product.findOne({product_id: product_id}, function (error, product) {
-                    
-                    info = helperGetContent.get_info_from_html(content);
-                    if (product === null){
-                        var price_histories = [
-                            { date: today, price: info.sell_price, item_types: info.item_types }
-                        ];                    
-                        var productData = {
-                            product_id: product_id,
-                            price_history: JSON.stringify(price_histories),
-                            current_price: info.sell_price
-                        };
-                        Product.create(productData, function (error, product) {
-                        });
-                    } else {
-                        var price_histories = JSON.parse(product.price_history);
-                        var find = false;
-                        for(var i=0; i<price_histories.length;i++) {
-                            if(price_histories[i].date == today) {
-                                price_histories[i].price = info.sell_price;
-                                price_histories[i].item_types = info.item_types;
-                                find = true;
-                                break;
-                            }
-                        }
-                        if(!find) {
-                            price_histories.push({date: today, price: info.sell_price, item_types: info.item_types});
-                        }
-                        price_history=helper.sort_price_history(price_histories);
-                        current_price=price_history[price_history.length-1].price;
-
-                        helperGetContent.send_mail_for_tracking_price_fixed(product_id,info.sell_price);
-
-                        Product.findOneAndUpdate({ "_id" : product._id }, {price_history: JSON.stringify(price_history),"current_price":current_price}, function (err, product) {
-                        });
-                    }
-                });
+            if (domain == 'qoo10') {
+                info = helperGetContent.get_info_from_qoo10(content);
+            } else if (domain == 'lazada') {
+                info = helperGetContent.get_info_from_lazada(req.body.content);
+            } else if (domain == 'shopee') {
+                info = helperGetContent.get_info_from_shopee(content);
             }
+            
+            var data = {
+                domain: domain,
+                id: id,
+                content: content,
+                item_types: info.item_types
+            };
+            today = helper.get_today();
+            UrlContent.findOne({domain: domain,id:id,createdDate: today}, function (error, urlContent) {
+                if (urlContent === null){
+                    UrlContent.create(data, function (error, urlContent) {
+                    });  
+
+                    var product_id = domain + "_" + id;
+                    Product.findOne({product_id: product_id}, function (error, product) {
+
+                        if (product === null){
+                            var price_histories = [
+                                { date: today, price: info.sell_price, item_types: info.item_types }
+                            ];                    
+                            var productData = {
+                                product_id: product_id,
+                                price_history: JSON.stringify(price_histories),
+                                current_price: info.sell_price
+                            };
+                            Product.create(productData, function (error, product) {
+                            });
+                        } else {
+                            var price_histories = JSON.parse(product.price_history);
+                            var find = false;
+                            for(var i=0; i<price_histories.length;i++) {
+                                if(price_histories[i].date == today) {
+                                    price_histories[i].price = info.sell_price;
+                                    price_histories[i].item_types = info.item_types;
+                                    find = true;
+                                    break;
+                                }
+                            }
+                            if(!find) {
+                                price_histories.push({date: today, price: info.sell_price, item_types: info.item_types});
+                            }
+                            price_history=helper.sort_price_history(price_histories);
+                            current_price=price_history[price_history.length-1].price;
+
+                            helperGetContent.send_mail_for_tracking_price_fixed(product_id,info.sell_price);
+
+                            Product.findOneAndUpdate({ "_id" : product._id }, {price_history: JSON.stringify(price_history),"current_price":current_price}, function (err, product) {
+                            });
+                        }
+                    });
+                }
+            });
+
+            var obj = {success: true};
+            return res.send(JSON.stringify(obj));
+            
         });
         
-        var obj = {success: true};
-        return res.send(JSON.stringify(obj));
+        
+        
+        
+        
+        
         
     });
 
