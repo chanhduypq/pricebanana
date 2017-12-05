@@ -1,5 +1,5 @@
 
-module.exports.get_info_from_qoo10 = function (html) {
+module.exports.get_info_from_qoo10 = function (html,inventoryList) {
     var sell_price = null;
     var retail_price = null;
     var time_sell_price = null;
@@ -83,62 +83,40 @@ module.exports.get_info_from_qoo10 = function (html) {
        
         
     }
+    
+    var item_types = null;
+    dom = parser.parseFromString(inventoryList);
     var tb_OptAllVw_op_list=dom.getElementById('tb_OptAllVw_op_list');
     if (tb_OptAllVw_op_list != null) {
-        var item_types=[];
+        item_types=[];
         trs=tb_OptAllVw_op_list.getElementsByTagName('tr');
         for(i=0;i<trs.length;i++){
             spans = trs[i].getElementsByTagName('span');
-            quantity = spans[4].innerHTML;
-            price = spans[3].innerHTML;
-            price = price.replace('$', '');
-            if (price[0] == '+') {
-                price = parseFloat(time_sell_price) + parseFloat(price.substr(1));
-            } else {
-                price = parseFloat(time_sell_price) - parseFloat(price.substr(1));
+            quantity='';
+            price='';
+            name='';
+            if (spans.length == 5) {
+                quantity = spans[4].innerHTML;
+                price = spans[3].innerHTML;
+                price = price.replace('$', '');
+                if (price[0] == '+') {
+                    price = parseFloat(sell_price) + parseFloat(price.substr(1));
+                } else if (price[0] == '-') {
+                    price = parseFloat(sell_price) - parseFloat(price.substr(1));
+                } else {
+                    price = parseFloat(sell_price);
+                }
+                name = spans[1].innerHTML;
             }
-            name=spans[1].innerHTML;
+            
             var obj = {name:name,quantity:quantity,price:price};
             item_types.push(obj);
         }
+        item_types=JSON.stringify(item_types);
     }
-    else{
-        var ul_content_inventory_0 = dom.getElementById('content_inventory_0');
-        if (ul_content_inventory_0 == null) {
-            var item_types = null;
-        } else {
-            var nodes = ul_content_inventory_0.getElementsByTagName('span');
-            item_types=[];
-            for(i=0;i<nodes.length;i++){
-                text=nodes[i].innerHTML;
-                temp=text.split(' - Qty : ');
-                text=temp[0];
-                quantity=temp[1];
-                if(text.indexOf('(')!=-1){
-                    temp=text.split('(');
-                    name=temp[0];
-                    temp=temp[1];
-                    temp=temp.replace('$','');
-                    temp=temp.replace(')','');
-                    price=parseFloat(temp.substr(1));
-                    if(temp[0]=='+'){
-                        price=parseFloat(time_sell_price)+price;                    
-                    }
-                    else{
-                        price=parseFloat(time_sell_price)-price;    
-                    }
-                }
-                else{
-                    name=text;
-                    price=time_sell_price;  
-                }
-                var obj = {name:name,quantity:quantity,price:price};
-                item_types.push(obj);
-            }
-            item_types=JSON.stringify(item_types);
 
-        }
-    }
+    
+    console.log(item_types);
     return {sell_price: sell_price, retail_price: retail_price, time_sell_price: time_sell_price,item_types:item_types};
 };
 
@@ -166,25 +144,33 @@ module.exports.get_info_from_lazada = function (html) {
 };
 
 module.exports.get_info_from_shopee = function (html) {
-    var sell_price = 100;
-    var retail_price = 100;
-    var time_sell_price = 100;
+    var sell_price = null;
+    var retail_price = null;
+    var time_sell_price = null;
     
-//    var DomParser = require('dom-parser');
-//    var parser = new DomParser();
-//    var dom = parser.parseFromString(html);
-//    var special_price_box = dom.getElementById('special_price_box');
-//    if (special_price_box != null) {
-//        special_price_box = special_price_box.innerHTML;
-//        sell_price = parseFloat(special_price_box.replace(/[^0-9\.]*/, ''));
-//    }
-//
-//    var price_box = dom.getElementById('price_box');
-//    if (price_box != null) {
-//        price_box = price_box.innerHTML;
-//        retail_price = parseFloat(price_box.replace(/[^0-9\.]*/, ''));
-//    }
-    
+    var DomParser = require('dom-parser');
+    var parser = new DomParser();
+    var dom = parser.parseFromString(html);
+    var special_price_box = dom.getElementsByClassName('shopee-product-info__header__real-price');
+    if (special_price_box.length>0) {
+        special_price_box=special_price_box[0];        
+        special_price_box = special_price_box.innerHTML;
+        for(i=0;i<special_price_box.length;i++){
+            if(special_price_box[i]=='$'){
+                sell_price='';
+                for(j=i+1;j<special_price_box.length;j++){
+                    if(special_price_box[j]=='.'||isFinite(special_price_box[j])){
+                        sell_price+=special_price_box[j];
+                    }
+                    else{
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+    }
+
     var item_types = null;
     
     return {sell_price: sell_price, retail_price: retail_price, time_sell_price: time_sell_price,item_types:item_types};
