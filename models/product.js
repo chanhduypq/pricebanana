@@ -13,7 +13,7 @@ var ProductSchema = new mongoose.Schema({
         trim: true
     },
     createdDate: {
-        type: String
+        type: Date
     },
     current_price: {
         type: String
@@ -23,7 +23,7 @@ var ProductSchema = new mongoose.Schema({
 ProductSchema.pre('save', function (next) {
     var product = this;
     if(typeof product.createdDate == 'undefined' || product.createdDate == null) {
-        product.createdDate = helper.get_current_date();
+        product.createdDate = helper.get_today();
     }
     next();
 });

@@ -92,17 +92,21 @@ OptAllVw.SortArrVal = function(a, b){if (a[OptAllVw.SortAName] > b[OptAllVw.Sort
 OptAllVw.ReverseArrVal = function(a, b){if (a[OptAllVw.SortAName] > b[OptAllVw.SortBName])return - 1; if (a[OptAllVw.SortAName] < b[OptAllVw.SortBName])return 1; return 0; }
 }
 
+var domain=false;
+var product_id = false;
+var apiUrl = 'https://localhost/get_content';
+var current_url = window.location.href;
 
 $(function () {
 
 // contentFull
 
-    var product_id = false;
-    var domain = false;
+    product_id = false;
+    domain = false;
     var iframe_node = false;
-    var apiUrl = 'https://localhost/get_content';
-    var current_url = window.location.href;
-            //check qoo10
+    var contentFull = $("html").html();
+    var inventoryList = '';
+    //check qoo10
     if (current_url.indexOf("www.qoo10.sg") > - 1) {
         var asin = $("#gd_no").val();
         if (asin != ''){
@@ -110,10 +114,6 @@ $(function () {
             domain = 'qoo10';
             iframe_node = '.goodsDetailWrap';
         }
-//        var contentFull = $(".goodsDetailWrap").html();
-//        if($.trim(contentFull)==''){
-//            contentFull=$(".detailsArea").parent().html();
-//        }
         OptAllVw.GetInventoryList();
         if (OptAllVw.OptionArray != null && OptAllVw.OptionArray.length > 0) {
             if (OptAllVw.OptionArray[0].sel_name5 != null && OptAllVw.OptionArray[0].sel_name5 != "") {
@@ -130,17 +130,12 @@ $(function () {
 
         }
         OptAllVw.MakeTable(OptAllVw.OptionArray);
-        console.log(OptAllVw.OptionArray[0].sel_name5);
         $("#div_OptAllVw_scroll").find("colgroup").remove();
         $("#div_OptAllVw_scroll").find("thead").remove();
         $("#div_OptAllVw_scroll").find("input").remove();
         $("#div_OptAllVw_scroll").find("tr").removeAttr('onclick').removeAttr('onmouseout').removeAttr('onmouseover');
         $("#div_OptAllVw_scroll").find("table").removeAttr('summary');
-        trs = $("#div_OptAllVw_scroll").find("tr");
-        for (i = 100; i <= trs.length; i++){
-            $(trs[i]).remove();
-        }
-        var contentFull = $("#div_OptAllVw_scroll").html();
+        inventoryList = $("#div_OptAllVw_scroll").html();
     }
     //check lazada
     if (current_url.indexOf("www.lazada.sg") > - 1) {
@@ -150,11 +145,10 @@ $(function () {
             domain = 'lazada';
             iframe_node = '#prodinfo';
         }
-        var contentFull = $("#product-price-box").html();
     }
     //check shopee
     var shopeeRegex = /shopee.sg\/[\S]*(-i.)([0-9]{5}).([0-9]{8})/i;
-    if (true){//shopeeRegex.test(current_url)){
+    if (current_url.indexOf("shopee.sg") > - 1){//shopeeRegex.test(current_url)){
         var asin = current_url.match(shopeeRegex);
 //        if (typeof asin[3] != 'undefined'){
 //            product_id = asin[3];
@@ -164,69 +158,90 @@ $(function () {
         product_id = '123456';
         domain = 'shopee';
         iframe_node = '.product-page__top-section';
-        var contentFull = '';
         
-        contentFull='contentFull';
     }
 
     //check march domain to send full page to server by ajax
-    if (domain != false && product_id != false && iframe_node != false){
-        if (current_url.indexOf("www.qoo10.sg") > - 1) {
-//            for(i=0;i<8;i++){
-                $.ajax({
-                    url: apiUrl,
-                    method: "POST",
-                    crossDomain: true,
-                    async: false,
-                    dataType: 'json',
-                    data: {
-                        id:product_id,
-                        url:current_url,
-                        domain:domain,
-                        content:contentFull
-                    },
-                    success: function (result) {
-                        if (result.success) {
-                            $(iframe_node).after('<div id="pricebanana_ctn"><iframe src="https://localhost/banana/' + domain + '/' + product_id + '"></iframe></div>');
-                        }
-                    },
-                    error: function (xhr, status, error) {
-                        console.log(status);
-                        console.log(error);
-                        console.log(xhr.responseText);
-                    }
-                });
-//            }
-        }
-        else{
-            $.ajax({
-                url: apiUrl,
-                method: "POST",
-                crossDomain: true,
-                async: true,
-                dataType: 'json',
-                data: {
-                    id:product_id,
-                    url:current_url,
-                    domain:domain,
-                    content:contentFull
-                },
-                success: function (result) {
-                    if (result.success) {
-                        $(iframe_node).after('<div id="pricebanana_ctn"><iframe src="https://localhost/banana/' + domain + '/' + product_id + '"></iframe></div>');
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.log(status);
-                    console.log(error);
-                    console.log(xhr.responseText);
+    if (domain != false && domain != 'shopee' && product_id != false && iframe_node != false){
+        $.ajax({
+            url: apiUrl,
+            method: "POST",
+            crossDomain: true,
+            async: false,
+            dataType: 'json',
+            data: {
+                id:product_id,
+                url:current_url,
+                domain:domain,
+                content:contentFull,
+                inventoryList:inventoryList
+            },
+            success: function (result) {
+                if (result.success) {
+                    $(iframe_node).after('<div id="pricebanana_ctn"><iframe src="https://localhost/banana/' + domain + '/' + product_id + '"></iframe></div>');
                 }
-            });
-        }
+            },
+            error: function (xhr, status, error) {
+                console.log(status);
+                console.log(error);
+                console.log(xhr.responseText);
+            }
+        });
         
     }
 
-
-
-
 });
+
+
+function showIframeForShopee() {
+    if ($('.product-page__top-section').html() != undefined) {
+        $('.product-page__top-section').after('<div id="pricebanana_ctn"><iframe src="https://localhost/banana/'+domain+'/'+ product_id + '"></iframe></div>');
+        clearInterval(timer);
+    }
+}
+
+var shopeeRegex = /shopee.sg\/[\S]*(-i.)([0-9]{5}).([0-9]{8})/i;
+if (current_url.indexOf("shopee.sg") > - 1){//shopeeRegex.test(current_url)){
+    timer = setInterval(runShopee, 2000);
+}
+
+
+function runShopee() {
+    if ($('.product-page__top-section').html() != undefined) {
+        clearInterval(timer);
+        contentFull = $("html").html();
+        var asin = current_url.match(shopeeRegex);
+//        if (typeof asin[3] != 'undefined'){
+//            product_id = asin[3];
+//            domain = 'shopee';
+//            iframe_node = '.product-page__top-section';
+//        }
+        product_id = '123456';
+        iframe_node = '.product-page__top-section';
+        $.ajax({
+            url: apiUrl,
+            method: "POST",
+            crossDomain: true,
+            async: false,
+            dataType: 'json',
+            data: {
+                id:product_id,
+                url:current_url,
+                domain:'shopee',
+                content:contentFull,
+                inventoryList:''
+            },
+            success: function (result) {
+                if (result.success) {
+                    $(iframe_node).after('<div id="pricebanana_ctn"><iframe src="https://localhost/banana/shopee/' + product_id + '"></iframe></div>');
+                }
+            },
+            error: function (xhr, status, error) {
+                console.log(status);
+                console.log(error);
+                console.log(xhr.responseText);
+            }
+        });
+        
+    }
+}

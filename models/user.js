@@ -24,7 +24,7 @@ var UserSchema = new mongoose.Schema({
         required: true
     },
     createdDate: {
-        type: String
+        type: Date
     }
 });
 

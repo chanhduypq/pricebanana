@@ -114,9 +114,6 @@ module.exports.get_info_from_qoo10 = function (html,inventoryList) {
         }
         item_types=JSON.stringify(item_types);
     }
-
-    
-    console.log(item_types);
     return {sell_price: sell_price, retail_price: retail_price, time_sell_price: time_sell_price,item_types:item_types};
 };
 
