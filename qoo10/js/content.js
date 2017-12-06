@@ -130,11 +130,6 @@ $(function () {
 
         }
         OptAllVw.MakeTable(OptAllVw.OptionArray);
-        $("#div_OptAllVw_scroll").find("colgroup").remove();
-        $("#div_OptAllVw_scroll").find("thead").remove();
-        $("#div_OptAllVw_scroll").find("input").remove();
-        $("#div_OptAllVw_scroll").find("tr").removeAttr('onclick').removeAttr('onmouseout').removeAttr('onmouseover');
-        $("#div_OptAllVw_scroll").find("table").removeAttr('summary');
         inventoryList = $("#div_OptAllVw_scroll").html();
     }
     //check lazada
@@ -146,21 +141,6 @@ $(function () {
             iframe_node = '#prodinfo';
         }
     }
-    //check shopee
-    var shopeeRegex = /shopee.sg\/[\S]*(-i.)([0-9]{5}).([0-9]{8})/i;
-    if (current_url.indexOf("shopee.sg") > - 1){//shopeeRegex.test(current_url)){
-        var asin = current_url.match(shopeeRegex);
-//        if (typeof asin[3] != 'undefined'){
-//            product_id = asin[3];
-//            domain = 'shopee';
-//            iframe_node = '.product-page__top-section';
-//        }
-        product_id = '123456';
-        domain = 'shopee';
-        iframe_node = '.product-page__top-section';
-        
-    }
-
     //check march domain to send full page to server by ajax
     if (domain != false && domain != 'shopee' && product_id != false && iframe_node != false){
         $.ajax({
@@ -200,9 +180,10 @@ function showIframeForShopee() {
     }
 }
 
-var shopeeRegex = /shopee.sg\/[\S]*(-i.)([0-9]{5}).([0-9]{8})/i;
-if (current_url.indexOf("shopee.sg") > - 1){//shopeeRegex.test(current_url)){
-    timer = setInterval(runShopee, 2000);
+//var shopeeRegex = /shopee.sg\/[\S]*(-i.)([0-9]{6}).([0-9]{9})/i;
+var shopeeRegex = /shopee.sg\/[\S]*(-i.)([0-9]).([0-9])/i;
+if (shopeeRegex.test(current_url)){
+    timer = setInterval(runShopee, 5000);
 }
 
 
@@ -210,13 +191,15 @@ function runShopee() {
     if ($('.product-page__top-section').html() != undefined) {
         clearInterval(timer);
         contentFull = $("html").html();
-        var asin = current_url.match(shopeeRegex);
+        var asin = current_url.split('.');
+        product_id = asin[3];
+//        var asin = current_url.match(shopeeRegex);
 //        if (typeof asin[3] != 'undefined'){
 //            product_id = asin[3];
-//            domain = 'shopee';
-//            iframe_node = '.product-page__top-section';
 //        }
-        product_id = '123456';
+//        else{
+//            return;
+//        }
         iframe_node = '.product-page__top-section';
         $.ajax({
             url: apiUrl,
@@ -233,7 +216,7 @@ function runShopee() {
             },
             success: function (result) {
                 if (result.success) {
-                    $(iframe_node).after('<div id="pricebanana_ctn"><iframe src="https://localhost/banana/shopee/' + product_id + '"></iframe></div>');
+                    $(iframe_node).after('<div id="pricebanana_ctn"><iframe src="https://pricebanana.com/banana/shopee/' + product_id + '"></iframe></div>');
                 }
             },
             error: function (xhr, status, error) {
