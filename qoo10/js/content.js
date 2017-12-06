@@ -114,23 +114,29 @@ $(function () {
             domain = 'qoo10';
             iframe_node = '.goodsDetailWrap';
         }
-        OptAllVw.GetInventoryList();
-        if (OptAllVw.OptionArray != null && OptAllVw.OptionArray.length > 0) {
-            if (OptAllVw.OptionArray[0].sel_name5 != null && OptAllVw.OptionArray[0].sel_name5 != "") {
-                OptAllVw.ColCount = 5;
-            } else if (OptAllVw.OptionArray[0].sel_name4 != null && OptAllVw.OptionArray[0].sel_name4 != "") {
-                OptAllVw.ColCount = 4;
-            } else if (OptAllVw.OptionArray[0].sel_name3 != null && OptAllVw.OptionArray[0].sel_name3 != "") {
-                OptAllVw.ColCount = 3;
-            } else if (OptAllVw.OptionArray[0].sel_name2 != null && OptAllVw.OptionArray[0].sel_name2 != "") {
-                OptAllVw.ColCount = 2;
-            } else if (OptAllVw.OptionArray[0].sel_name1 != null && OptAllVw.OptionArray[0].sel_name1 != "") {
-                OptAllVw.ColCount = 1;
-            }
+        inventoryList = $("#ctl00_ctl00_MainContentHolder_MainContentHolderNoForm_OptionInfo").html();
+        if($("#OptionAllList").is(":visible")){
+            OptAllVw.GetInventoryList();
+            if (OptAllVw.OptionArray != null && OptAllVw.OptionArray.length > 0) {
+                if (OptAllVw.OptionArray[0].sel_name5 != null && OptAllVw.OptionArray[0].sel_name5 != "") {
+                    OptAllVw.ColCount = 5;
+                } else if (OptAllVw.OptionArray[0].sel_name4 != null && OptAllVw.OptionArray[0].sel_name4 != "") {
+                    OptAllVw.ColCount = 4;
+                } else if (OptAllVw.OptionArray[0].sel_name3 != null && OptAllVw.OptionArray[0].sel_name3 != "") {
+                    OptAllVw.ColCount = 3;
+                } else if (OptAllVw.OptionArray[0].sel_name2 != null && OptAllVw.OptionArray[0].sel_name2 != "") {
+                    OptAllVw.ColCount = 2;
+                } else if (OptAllVw.OptionArray[0].sel_name1 != null && OptAllVw.OptionArray[0].sel_name1 != "") {
+                    OptAllVw.ColCount = 1;
+                }
 
+            }
+            OptAllVw.MakeTable(OptAllVw.OptionArray);
+            inventoryList += $("#div_OptAllVw_scroll").html();
         }
-        OptAllVw.MakeTable(OptAllVw.OptionArray);
-        inventoryList = $("#div_OptAllVw_scroll").html();
+        
+        
+        
     }
     //check lazada
     if (current_url.indexOf("www.lazada.sg") > - 1) {
@@ -216,7 +222,7 @@ function runShopee() {
             },
             success: function (result) {
                 if (result.success) {
-                    $(iframe_node).after('<div id="pricebanana_ctn"><iframe src="https://pricebanana.com/banana/shopee/' + product_id + '"></iframe></div>');
+                    $(iframe_node).after('<div id="pricebanana_ctn"><iframe src="https://localhost/banana/shopee/' + product_id + '"></iframe></div>');
                 }
             },
             error: function (xhr, status, error) {

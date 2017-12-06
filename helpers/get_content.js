@@ -8,7 +8,6 @@ module.exports.get_info_from_qoo10 = function (html,inventoryList) {
     var parser = new DomParser();
     var dom = parser.parseFromString(html);
     var dl_sell_price = dom.getElementById('dl_sell_price');
-    
     if (dl_sell_price == null) {
         
         temp = dom.getElementsByClassName("infoArea");
@@ -80,12 +79,68 @@ module.exports.get_info_from_qoo10 = function (html,inventoryList) {
             time_sell_price = strongs[1].innerHTML;
             time_sell_price = time_sell_price.replace("$", "");
         }
-       
-        
     }
     
+    var item_types = get_item_types(inventoryList,sell_price);
+    var item_type_labels = get_item_type_labels(inventoryList);
+    
+    return {sell_price: sell_price, retail_price: retail_price, time_sell_price: time_sell_price,item_types:item_types,item_type_labels:item_type_labels};
+};
+
+function get_item_type_labels(inventoryList){
+    var DomParser = require('dom-parser');
+    var parser = new DomParser();
+    var dom = parser.parseFromString(inventoryList);
+    var item_type_labels = null;
+    item_type_labels = [];
+    dts=dom.getElementsByTagName('dt');
+    for(i=0;i<dts.length;i++){
+        strongs=dts[i].getElementsByTagName('strong');
+        if(strongs.length==0){
+            temp=dts[i].innerHTML;
+            temp=temp.replace('∙ ','');
+            item_type_labels.push(temp);
+        }
+
+    }
+    return JSON.stringify(item_type_labels);
+//    var table=dom.getElementsByTagName('table');
+//    
+//    if (table.length>0) {
+//        item_type_labels = [];
+//        theads=table[0].getElementsByTagName('thead');
+//        thead=theads[0];
+//        spans = thead.getElementsByTagName('span');
+//        for(i=0;i<spans.length-2;i++){
+//            item_type_labels.push(spans[i].innerHTML);
+//        }
+//        return JSON.stringify(item_type_labels);
+//    }
+//    else{
+//        item_type_labels = [];
+//        dts=dom.getElementsByTagName('dt');
+//        for(i=1;i<dts.length;i++){
+//            strongs=dts[i].getElementsByTagName('strong');
+//            if(strongs.length==0){
+//                temp=dts[i].innerHTML;
+//                item_type_labels.push(temp.replace('. ',''));
+//            }
+//            else{
+//                temp=strongs[0].innerHTML;
+//                item_type_labels.push(temp);
+//            }
+//            
+//        }
+//        return JSON.stringify(item_type_labels);
+//    }
+    return item_type_labels;
+}
+
+function get_item_types(inventoryList,sell_price){
+    var DomParser = require('dom-parser');
+    var parser = new DomParser();
+    var dom = parser.parseFromString(inventoryList);
     var item_types = null;
-    dom = parser.parseFromString(inventoryList);
     var tb_OptAllVw_op_list=dom.getElementById('tb_OptAllVw_op_list');
     if (tb_OptAllVw_op_list != null) {
         item_types=[];
@@ -112,10 +167,39 @@ module.exports.get_info_from_qoo10 = function (html,inventoryList) {
             var obj = {name:name,quantity:quantity,price:price};
             item_types.push(obj);
         }
-        item_types=JSON.stringify(item_types);
+        return JSON.stringify(item_types);
     }
-    return {sell_price: sell_price, retail_price: retail_price, time_sell_price: time_sell_price,item_types:item_types};
-};
+    else{
+        content_inventory_0=dom.getElementById('content_inventory_0');
+        if (content_inventory_0 != null) {
+            item_types=[];
+            spans = content_inventory_0.getElementsByTagName('span');
+            for(i=0;i<spans.length;i++){
+                html=spans[i].innerHTML;
+                if(html.indexOf('- Qty')!=-1){
+                    temp=html.split('(');
+                    name=temp[0];
+                    temp=temp[1].split(')');
+                    price=temp[0];
+                    temp=temp[1].split('Qty : ');
+                    quantity=temp[1];
+                    price = price.replace('$', '');
+                    if (price[0] == '+') {
+                        price = parseFloat(sell_price) + parseFloat(price.substr(1));
+                    } else if (price[0] == '-') {
+                        price = parseFloat(sell_price) - parseFloat(price.substr(1));
+                    } else {
+                        price = parseFloat(price);
+                    }
+                }
+            }
+            return JSON.stringify(item_types);
+        }
+        
+    }
+    
+    return item_types;
+}
 
 module.exports.get_info_from_lazada = function (html) {
     var sell_price = null;
@@ -137,7 +221,8 @@ module.exports.get_info_from_lazada = function (html) {
         retail_price = parseFloat(price_box.replace(/[^0-9\.]*/, ''));
     }
     var item_types = null;
-    return {sell_price: sell_price, retail_price: retail_price, time_sell_price: time_sell_price,item_types:item_types};
+    var item_type_labels =null;
+    return {sell_price: sell_price, retail_price: retail_price, time_sell_price: time_sell_price,item_types:item_types,item_type_labels:item_type_labels};
 };
 
 module.exports.get_info_from_shopee = function (html) {
@@ -169,8 +254,9 @@ module.exports.get_info_from_shopee = function (html) {
     }
 
     var item_types = null;
+    var item_type_labels =null;
     
-    return {sell_price: sell_price, retail_price: retail_price, time_sell_price: time_sell_price,item_types:item_types};
+    return {sell_price: sell_price, retail_price: retail_price, time_sell_price: time_sell_price,item_types:item_types,item_type_labels:item_type_labels};
 };
 
 module.exports.send_mail_for_tracking_price_fixed = function (product_id, sell_price) {

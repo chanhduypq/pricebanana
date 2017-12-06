@@ -9,65 +9,6 @@ var config = require(__dirname + '/config');
 module.exports = function(app){
 
     app.get('/banana/:domain/:id', function (req, res) {
-//        requestify=require('requestify');
-//        requestify.request('https://www.qoo10.sg/gmkt.inc/swe_GoodsAjaxService.asmx/GetGoodsInventoryAvailableList', {
-//                method: 'POST',
-//                data:{
-//                    "inventory_no":'ST560300975',
-//                            "lang_cd":"en",
-//                            "inventory_yn":"",
-//                            "link_type":"N",
-//                            "gd_no":'560300975',
-//                            "global_order_type":"L",
-//                            "___cache_expire___":"3507155922359" 
-//                },
-//                headers: {
-//                    'Referer': "http://list.qoo10.sg"
-//                },
-//                dataType: 'json'        
-//            })
-//            .then(function(response) {
-//                console.log(response.getBody());
-//                console.log(response.body);
-//            }); 
-            
-            
-
-//        requestify.post('https://www.qoo10.sg/gmkt.inc/swe_GoodsAjaxService.asmx/GetGoodsInventoryAvailableList', {
-//            "inventory_no":'ST560300975',
-//                            "lang_cd":"en",
-//                            "inventory_yn":"",
-//                            "link_type":"N",
-//                            "gd_no":'560300975',
-//                            "global_order_type":"L",
-//                            "___cache_expire___":"3507155922359" 
-//         })
-//            .then(function(response) {
-//                // Get the response body (JSON parsed or jQuery object for XMLs)
-//                console.log(response.getBody());
-//
-//                // Get the raw response body
-//                console.log(response.body);
-//            });
-
-//var request = require('request');
-//
-//request.post(
-//    'https://www.qoo10.sg/gmkt.inc/swe_GoodsAjaxService.asmx/GetGoodsInventoryAvailableList',
-//    { json: { "inventory_no":'ST560300975',
-//                            "lang_cd":"en",
-//                            "inventory_yn":"",
-//                            "link_type":"N",
-//                            "gd_no":'560300975',
-//                            "global_order_type":"L",
-//                            "___cache_expire___":"3507155922359" } },
-//    function (error, response, body) {
-//        if (!error) {
-//            console.log(body)
-//        }
-//        console.log(error);
-//    }
-//);
 
         var domain = req.params.domain;        
         var id = req.params.id;
@@ -214,7 +155,8 @@ module.exports = function(app){
                         var productData = {
                             product_id: product_id,
                             price_history: JSON.stringify(price_histories),
-                            current_price: info.sell_price
+                            current_price: info.sell_price,
+                            item_type_labels: info.item_type_labels
                         };
                         Product.create(productData, function (error, product) {
                         });

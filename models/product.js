@@ -17,6 +17,9 @@ var ProductSchema = new mongoose.Schema({
     },
     current_price: {
         type: String
+    },
+    item_type_labels: {
+        type: String
     }
 });
 
