@@ -81,8 +81,9 @@ module.exports.get_info_from_qoo10 = function (html,inventoryList) {
         }
     }
     
-    var item_types = get_item_types(inventoryList,sell_price);
+    
     var item_type_labels = get_item_type_labels(inventoryList);
+    var item_types = get_item_types(inventoryList,sell_price,item_type_labels);
     
     return {sell_price: sell_price, retail_price: retail_price, time_sell_price: time_sell_price,item_types:item_types,item_type_labels:item_type_labels};
 };
@@ -91,8 +92,7 @@ function get_item_type_labels(inventoryList){
     var DomParser = require('dom-parser');
     var parser = new DomParser();
     var dom = parser.parseFromString(inventoryList);
-    var item_type_labels = null;
-    item_type_labels = [];
+    var item_type_labels = [];
     dts=dom.getElementsByTagName('dt');
     for(i=0;i<dts.length;i++){
         strongs=dts[i].getElementsByTagName('strong');
@@ -103,97 +103,97 @@ function get_item_type_labels(inventoryList){
         }
 
     }
-    return JSON.stringify(item_type_labels);
-//    var table=dom.getElementsByTagName('table');
-//    
-//    if (table.length>0) {
-//        item_type_labels = [];
-//        theads=table[0].getElementsByTagName('thead');
-//        thead=theads[0];
-//        spans = thead.getElementsByTagName('span');
-//        for(i=0;i<spans.length-2;i++){
-//            item_type_labels.push(spans[i].innerHTML);
-//        }
-//        return JSON.stringify(item_type_labels);
-//    }
-//    else{
-//        item_type_labels = [];
-//        dts=dom.getElementsByTagName('dt');
-//        for(i=1;i<dts.length;i++){
-//            strongs=dts[i].getElementsByTagName('strong');
-//            if(strongs.length==0){
-//                temp=dts[i].innerHTML;
-//                item_type_labels.push(temp.replace('. ',''));
-//            }
-//            else{
-//                temp=strongs[0].innerHTML;
-//                item_type_labels.push(temp);
-//            }
-//            
-//        }
-//        return JSON.stringify(item_type_labels);
-//    }
-    return item_type_labels;
+    if(item_type_labels.length>0){
+        return JSON.stringify(item_type_labels);
+    }
+    else{
+        return null;
+    }
+    
+
 }
 
-function get_item_types(inventoryList,sell_price){
+function get_item_types(inventoryList,sell_price,item_type_labels){
+    item_type_labels = JSON.parse(item_type_labels);
+    
     var DomParser = require('dom-parser');
     var parser = new DomParser();
     var dom = parser.parseFromString(inventoryList);
-    var item_types = null;
+    var item_types = {};
     var tb_OptAllVw_op_list=dom.getElementById('tb_OptAllVw_op_list');
     if (tb_OptAllVw_op_list != null) {
-        item_types=[];
         trs=tb_OptAllVw_op_list.getElementsByTagName('tr');
         for(i=0;i<trs.length;i++){
             spans = trs[i].getElementsByTagName('span');
-            quantity='';
-            price='';
-            name='';
-            if (spans.length == 5) {
-                quantity = spans[4].innerHTML;
-                price = spans[3].innerHTML;
-                price = price.replace('$', '');
-                if (price[0] == '+') {
-                    price = parseFloat(sell_price) + parseFloat(price.substr(1));
-                } else if (price[0] == '-') {
-                    price = parseFloat(sell_price) - parseFloat(price.substr(1));
-                } else {
-                    price = parseFloat(sell_price);
-                }
-                name = spans[1].innerHTML;
+            
+            quantity = spans[item_type_labels.length+1].innerHTML;
+            price = spans[item_type_labels.length].innerHTML;
+            price = price.replace('$', '');
+            if (price[0] == '+') {
+                price = parseFloat(sell_price) + parseFloat(price.substr(1));
+            } else if (price[0] == '-') {
+                price = parseFloat(sell_price) - parseFloat(price.substr(1));
+            } else {
+                price = parseFloat(sell_price);
             }
             
-            var obj = {name:name,quantity:quantity,price:price};
-            item_types.push(obj);
+            price=price.toFixed(2);
+            
+            key='';
+            for(j=0;j<item_type_labels.length-1;j++){
+                key+=spans[j].innerHTML+"|";
+                 
+            }
+            key+=spans[item_type_labels.length-1].innerHTML;
+            item_types[key]={quantity:quantity,price:price};
         }
-        return JSON.stringify(item_types);
     }
     else{
         content_inventory_0=dom.getElementById('content_inventory_0');
         if (content_inventory_0 != null) {
-            item_types=[];
-            spans = content_inventory_0.getElementsByTagName('span');
+            spans=content_inventory_0.getElementsByTagName('span');
             for(i=0;i<spans.length;i++){
                 html=spans[i].innerHTML;
                 if(html.indexOf('- Qty')!=-1){
-                    temp=html.split('(');
-                    name=temp[0];
-                    temp=temp[1].split(')');
-                    price=temp[0];
-                    temp=temp[1].split('Qty : ');
-                    quantity=temp[1];
-                    price = price.replace('$', '');
-                    if (price[0] == '+') {
-                        price = parseFloat(sell_price) + parseFloat(price.substr(1));
-                    } else if (price[0] == '-') {
-                        price = parseFloat(sell_price) - parseFloat(price.substr(1));
-                    } else {
-                        price = parseFloat(price);
+                    if(html.indexOf('$')!=-1){
+                        temp = html.split(' - Qty : ');
+                        html = temp[0];
+                        quantity = temp[1];
+                        
+                        temp=html.split('$');
+                        price=temp[1].replace(')','');
+                        if (temp[0][temp[0].length-1] == '+') {
+                            price = parseFloat(sell_price) + parseFloat(price);
+                            name=temp[0].replace('(+','');
+                        } else if (temp[0][temp[0].length-1] == '-') {
+                            price = parseFloat(sell_price) - parseFloat(price);
+                            name=temp[0].replace('(-','');
+                        } else {
+                            price = parseFloat(price);
+                            name=temp[0].replace('(','');
+                        }
+                        
                     }
+                    else{
+                        temp = html.split('- Qty : ');
+                        price = parseFloat(sell_price);
+                        name = temp[0];
+                        quantity = temp[1];
+                    }
+                    
+                    
+                    
                 }
+                else{
+                    quantity=0;
+                    price = parseFloat(sell_price);
+                    name=html.replace('- Sold Out','');
+                }
+                price=price.toFixed(2);                    
+                item_types[name]={quantity:quantity,price:price};
+                
             }
-            return JSON.stringify(item_types);
+            
         }
         
     }

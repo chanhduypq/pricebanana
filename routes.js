@@ -1,5 +1,6 @@
 var User = require(__dirname + '/models/user');
 var Product = require(__dirname + '/models/product');
+var ProductItemType = require(__dirname + '/models/product_item_type');
 var TrackingPrice = require(__dirname + '/models/tracking_price');
 var UrlContent = require(__dirname + '/models/url_content');
 var helper = require(__dirname + '/helpers/functions');
@@ -136,12 +137,12 @@ module.exports = function(app){
         var data = {
             domain: domain,
             id: id,
-            content: req.body.content,
-            item_types: info.item_types
+            content: req.body.content
         };
         today = helper.get_today();
         UrlContent.findOne({domain: domain,id:id,createdDate: today}, function (error, urlContent) {
             if (urlContent === null){
+                
                 UrlContent.create(data, function (error, urlContent) {
                 });  
 
@@ -150,7 +151,7 @@ module.exports = function(app){
 
                     if (product === null){
                         var price_histories = [
-                            { date: today, price: info.sell_price, item_types: info.item_types }
+                            { date: today, price: info.sell_price}
                         ];                    
                         var productData = {
                             product_id: product_id,
@@ -172,7 +173,7 @@ module.exports = function(app){
                             }
                         }
                         if(!find) {
-                            price_histories.push({date: today, price: info.sell_price, item_types: info.item_types});
+                            price_histories.push({date: today, price: info.sell_price});
                         }
                         price_history=helper.sort_price_history(price_histories);
                         current_price=price_history[price_history.length-1].price;
@@ -182,6 +183,45 @@ module.exports = function(app){
                         Product.findOneAndUpdate({ "_id" : product._id }, {price_history: JSON.stringify(price_history),"current_price":current_price}, function (err, product) {
                         });
                     }
+                    
+                    item_types=info.item_types;
+                    ProductItemType.findOne({product_id: product_id}, function (error, productItemType) {
+                        var all={};
+                        
+                        if (productItemType === null){
+                            for(key in item_types){
+                                all[key]=[{ date: today, price: item_types[key]['price'], quantity: item_types[key]['quantity'] }];
+                            }
+                            var productData = {
+                                product_id: product_id,
+                                item_type_history: JSON.stringify(all)
+                            };
+                            ProductItemType.create(productData, function (error, product) {
+                            });
+                        } else {
+                            var all=JSON.parse(productItemType.item_type_history);
+                            for(key in all){
+                                var price_histories = all[key];
+                                var find = false;
+                                for(var i=0; i<price_histories.length;i++) {
+                                    if(price_histories[i].date == today) {
+                                        price_histories[i].price = item_types[key]['price'];
+                                        price_histories[i].quantity = item_types[key]['quantity'];
+                                        find = true;
+                                        break;
+                                    }
+                                }
+                                if(!find) {
+                                    price_histories.push({date: today, price: item_types[key]['price'], quantity: item_types[key]['quantity']});
+                                }
+                                all[key]=helper.sort_price_history(price_histories);
+                            }
+                            
+
+                            ProductItemType.findOneAndUpdate({ "_id" : productItemType._id }, {item_type_history: JSON.stringify(all)}, function (err, product) {
+                            });
+                        }
+                    });
                 });
             }
         });

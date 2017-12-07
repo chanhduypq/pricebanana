@@ -19,10 +19,6 @@ var UrlContentSchema = new mongoose.Schema({
     },
     createdDate: {
         type: Date
-    },
-    item_types: {
-        type: String,
-        trim: true
     }
 });
 

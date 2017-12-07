@@ -114,26 +114,32 @@ $(function () {
             domain = 'qoo10';
             iframe_node = '.goodsDetailWrap';
         }
-        inventoryList = $("#ctl00_ctl00_MainContentHolder_MainContentHolderNoForm_OptionInfo").html();
-        if($("#OptionAllList").is(":visible")){
-            OptAllVw.GetInventoryList();
-            if (OptAllVw.OptionArray != null && OptAllVw.OptionArray.length > 0) {
-                if (OptAllVw.OptionArray[0].sel_name5 != null && OptAllVw.OptionArray[0].sel_name5 != "") {
-                    OptAllVw.ColCount = 5;
-                } else if (OptAllVw.OptionArray[0].sel_name4 != null && OptAllVw.OptionArray[0].sel_name4 != "") {
-                    OptAllVw.ColCount = 4;
-                } else if (OptAllVw.OptionArray[0].sel_name3 != null && OptAllVw.OptionArray[0].sel_name3 != "") {
-                    OptAllVw.ColCount = 3;
-                } else if (OptAllVw.OptionArray[0].sel_name2 != null && OptAllVw.OptionArray[0].sel_name2 != "") {
-                    OptAllVw.ColCount = 2;
-                } else if (OptAllVw.OptionArray[0].sel_name1 != null && OptAllVw.OptionArray[0].sel_name1 != "") {
-                    OptAllVw.ColCount = 1;
-                }
+        if ($('#ctl00_ctl00_MainContentHolder_MainContentHolderNoForm_OptionInfo').html() != undefined) {
+            inventoryList = $("#ctl00_ctl00_MainContentHolder_MainContentHolderNoForm_OptionInfo").html();
+            if($("#OptionAllList").is(":visible")){
+                OptAllVw.GetInventoryList();
+                if (OptAllVw.OptionArray != null && OptAllVw.OptionArray.length > 0) {
+                    if (OptAllVw.OptionArray[0].sel_name5 != null && OptAllVw.OptionArray[0].sel_name5 != "") {
+                        OptAllVw.ColCount = 5;
+                    } else if (OptAllVw.OptionArray[0].sel_name4 != null && OptAllVw.OptionArray[0].sel_name4 != "") {
+                        OptAllVw.ColCount = 4;
+                    } else if (OptAllVw.OptionArray[0].sel_name3 != null && OptAllVw.OptionArray[0].sel_name3 != "") {
+                        OptAllVw.ColCount = 3;
+                    } else if (OptAllVw.OptionArray[0].sel_name2 != null && OptAllVw.OptionArray[0].sel_name2 != "") {
+                        OptAllVw.ColCount = 2;
+                    } else if (OptAllVw.OptionArray[0].sel_name1 != null && OptAllVw.OptionArray[0].sel_name1 != "") {
+                        OptAllVw.ColCount = 1;
+                    }
 
+                }
+                OptAllVw.MakeTable(OptAllVw.OptionArray);
+                inventoryList += $("#div_OptAllVw_scroll").html();
             }
-            OptAllVw.MakeTable(OptAllVw.OptionArray);
-            inventoryList += $("#div_OptAllVw_scroll").html();
         }
+        else{
+            inventoryList='';
+        }
+        
         
         
         
