@@ -93,20 +93,19 @@ function get_item_type_labels(inventoryList){
     var parser = new DomParser();
     var dom = parser.parseFromString(inventoryList);
     var item_type_labels = [];
-    dts=dom.getElementsByTagName('dt');
+    dts = dom.getElementsByTagName('dt');
     for(i=0;i<dts.length;i++){
-        strongs=dts[i].getElementsByTagName('strong');
-        if(strongs.length==0){
-            temp=dts[i].innerHTML;
-            temp=temp.replace('∙ ','');
+        strongs = dts[i].getElementsByTagName('strong');
+        if (strongs.length == 0) {
+            temp = dts[i].innerHTML;
+            temp = temp.replace('∙ ', '');
             item_type_labels.push(temp);
         }
 
     }
-    if(item_type_labels.length>0){
+    if (item_type_labels.length > 0) {
         return JSON.stringify(item_type_labels);
-    }
-    else{
+    } else {
         return null;
     }
     

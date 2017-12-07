@@ -28,6 +28,7 @@
 	<ul>
 		<li><a href="#tabs-price-history">Price History</a></li>
 		<li><a id="tracking_tab" href="#tabs-track-product">Track Product</a></li>
+                <li><a id="inventoryList" href="#tabs-inventoryList">Inventory list</a></li>
 	</ul>
 	<div id="tabs-price-history">
 		<div id="chartContainer"></div>
@@ -124,6 +125,14 @@
 			</div>
 			<!-- end track-price -->
 	</div>
+        <div id="tabs-inventoryList">
+            <div id="form_inventoryList">
+                
+            </div>
+            <div id="chartContainer-inventoryList">
+            </div>
+	</div>
+    
 </div>
  
  <script>
@@ -256,6 +265,44 @@ $('input[name=logpassword]').css('border-color','#ccc');
         var price_history='<%= price_history %>';
         
 	$( function() {
+        
+            var find = '&#34;';
+            var re = new RegExp(find, 'g');
+        
+
+            var item_type_html='';
+            var selectAll='<select>';
+            item_type_history= '<%= item_type_history %>';
+            item_type_labels= '<%= item_type_labels %>';
+            
+            item_type_history = item_type_history.replace(re, '"');
+            item_type_labels = item_type_labels.replace(re, '"');
+            
+            
+            item_type_history=$.parseJSON(item_type_history);
+            item_type_labels=$.parseJSON(item_type_labels);
+            
+            for(i=0;i<item_type_labels.length;i++){
+                item_type_html+=item_type_labels[i]+' <select>';
+                level={};
+                for(key in item_type_history){
+                    temp=key.split('|');
+                    level[temp[i]]='';
+                }
+                for(key in level){
+                    item_type_html+='<option>'+key+'</option>';
+                }
+                item_type_html+='</select><br>';
+            }
+            
+            for(key in item_type_history){
+                selectAll+='<option>'+key.split('|').join(' ')+'</option>';
+            }
+            selectAll+='</select><br>';
+            
+            $("#form_inventoryList").html(selectAll+item_type_html);
+        
+        
             var user_email ='<%= user_email %>';
             if(isLogin){
                 $("#user_email").html(user_email).append(' (<a href="/logout/'+domain+'/'+id+'">Logout</a>)');
@@ -363,6 +410,64 @@ $('input[name=logpassword]').css('border-color','#ccc');
 			borderColor: 'white',
 			borderWidth: 1,
 			renderTo: 'chartContainer',
+			style: {
+				fontFamily: 'Arial,Helvetica,sans-serif'
+			}
+		},
+		rangeSelector: {
+			selected: 3,
+			buttonTheme: { width: 50 },
+			buttons: [
+				{type: 'week',count: 1,text: '1w'},
+				{type: 'month',count: 1,text: '1m'}, 
+				{type: 'month',count: 3,text: '3m'}, 
+				{type: 'month',count: 6,text: '6m'}, 
+				{type: 'ytd',text: 'YTD'}, 
+				{type: 'year',count: 1,text: '1y'}, 
+				{type: 'all',text: 'All'}
+			]
+		},
+		yAxis: {
+			title: {
+				text: 'Price',
+				style: { "color": "#333", "fontSize": "22px" }
+			}
+		},
+		title: {
+				text: '<b>Price History<b>',
+				style: { "color": "#333", "fontSize": "30px" }
+		},
+		plotOptions: {
+			line: {
+				color: '#ff6347',
+				marker: { enabled: false}
+			}
+		},
+		credits: { enabled: false},
+		navigator: { enabled: false},
+		scrollbar: { enabled: false},
+		series: [{
+				name: 'Price',
+				data: data_price,
+				tooltip: {
+					valueDecimals: 2,
+					pointFormat: '{series.name}: <b>${point.y}</b><br/>',
+					shared: true,
+					xDateFormat: '%b %e %Y'
+				}
+			}]
+	}, function (chart) {
+		// apply the date pickers
+		setTimeout(function () {
+			$('input.highcharts-range-selector', $('#' + chart.options.chart.renderTo)).datepicker()
+		}, 0)
+	});
+        
+        Highcharts.stockChart({
+		chart: {
+			borderColor: 'white',
+			borderWidth: 1,
+			renderTo: 'chartContainer-inventoryList',
 			style: {
 				fontFamily: 'Arial,Helvetica,sans-serif'
 			}

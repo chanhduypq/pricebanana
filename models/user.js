@@ -24,7 +24,8 @@ var UserSchema = new mongoose.Schema({
         required: true
     },
     createdDate: {
-        type: Date
+        type: Date,
+        default:Date.now
     }
 });
 
@@ -51,9 +52,6 @@ UserSchema.statics.authenticate = function (email, password, callback) {
 //hashing a password before saving it to the database
 UserSchema.pre('save', function (next) {
     var user = this;
-    if(typeof user.createdDate == 'undefined' || user.createdDate == null) {
-        user.createdDate = helper.get_current_date();
-    }
     bcrypt.hash(user.password, 10, function (err, hash) {
         if (err) {
             return next(err);

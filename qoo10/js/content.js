@@ -135,6 +135,21 @@ $(function () {
                 OptAllVw.MakeTable(OptAllVw.OptionArray);
                 inventoryList += $("#div_OptAllVw_scroll").html();
             }
+            else{
+                if($("ul[optiontype='inventory']").length>1){//https://www.qoo10.sg/item/ONEPLUS-689-ONE-DAY-ONLY-PRE-ORDER-ONE-PLUS-5T-64GB-128GB-LAVA-RED-BLACK/575680492
+                    console.log($("#content_inventory_2").html());
+//                    $("#li_inventory_0_64GB").trigger("onclick");
+//                    $("#li_inventory_1_Black").trigger("onclick");
+                    setTimeout(function (){
+                        console.log($("#content_inventory_2").html());
+                    },10000);
+//                    if(window.optLayerOver_thum) optLayerOver_thum(this,'0','inventory',  '64GB');
+//                    if(window.optLayerOver_thum) optLayerOver_thum(this,'1','inventory',  'Black');
+//                    if(window.selectedOptReverse) selectedOptReverse('I', '0', '318707390', '64GB','64GB', 'content_inventory_0_64GB', '64GB', '0.00', '0', '0.00')
+//                    if(window.selectedOptReverse) selectedOptReverse('I', '1', '0', 'Black','Black', 'content_inventory_1_Black', 'Black', '0', '0', '0');
+                    
+                }
+            }
         }
         else{
             inventoryList='';

@@ -5,6 +5,7 @@ var TrackingPrice = require(__dirname + '/models/tracking_price');
 var UrlContent = require(__dirname + '/models/url_content');
 var helper = require(__dirname + '/helpers/functions');
 var helperGetContent = require(__dirname + '/helpers/get_content');
+var helperBanana = require(__dirname + '/helpers/banana');
 var config = require(__dirname + '/config');
 
 module.exports = function(app){
@@ -38,18 +39,26 @@ module.exports = function(app){
                 var price_histories = JSON.parse(product.price_history);
                 var current_price = product.current_price;
                 var tracked_price = current_price;
+                
                 TrackingPrice.findOne({product_id: product_id,user_id:req.session.userId}, function (error, trackingPrice) {
-                        if (error) {} else {
-                            if (trackingPrice === null) {
+                        if (trackingPrice === null) {
+                            ProductItemType.findOne({product_id: product_id}, function (error, productItemType) {
+                                
                                 return res.render('banana', {
                                     price_history:helper.build_price_history(price_histories),
                                     user_email: user_email,
                                     current_price: current_price,
                                     tracked_price: tracked_price,
                                     isLogin: req.session.hasOwnProperty("userId"),
-                                    label_for_action_tracking: 'Start tracking'
+                                    label_for_action_tracking: 'Start tracking',
+                                    item_type_history: productItemType.item_type_history,
+                                    item_type_labels:product.item_type_labels
                                 });
-                            } else {
+
+                            });
+                            
+                        } else {
+                            ProductItemType.findOne({product_id: product_id}, function (error, productItemType) {
                                 tracked_price = trackingPrice.tracked_price;
                                 return res.render('banana', {
                                     price_history:helper.build_price_history(price_histories),
@@ -57,9 +66,13 @@ module.exports = function(app){
                                     current_price: current_price,
                                     tracked_price: tracked_price,
                                     isLogin: req.session.hasOwnProperty("userId"),
-                                    label_for_action_tracking: 'Update tracking'
+                                    label_for_action_tracking: 'Update tracking',
+                                    item_type_history: productItemType.item_type_history,
+                                    item_type_labels:product.item_type_labels
                                 });
-                            }
+
+                            });
+                            
                         }
 
 
