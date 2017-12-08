@@ -24,6 +24,19 @@ module.exports = function(app){
         else{
             var user_email = '';
         }
+        
+        if (domain == 'qoo10') {
+            var is_qoo10 = '1';
+        } else {
+            var is_qoo10 = '0';
+        }
+        
+        if (req.session.hasOwnProperty("userEmail") && req.session.is24x7=='1') {
+            var is_show_quantity = '1';
+        } else {
+            var is_show_quantity = '0';
+        }
+        
         Product.findOne({product_id: product_id}, function (error, product) {  
             if (product === null) {
                 return res.render('banana', {
@@ -32,7 +45,9 @@ module.exports = function(app){
                                 current_price: 0,
                                 tracked_price: 0,
                                 isLogin: req.session.hasOwnProperty("userId"),
-                                label_for_action_tracking: 'Start tracking'
+                                label_for_action_tracking: 'Start tracking',
+                                is_qoo10:is_qoo10,
+                                is_show_quantity:is_show_quantity
                             });
             }
             else{
@@ -52,7 +67,9 @@ module.exports = function(app){
                                     isLogin: req.session.hasOwnProperty("userId"),
                                     label_for_action_tracking: 'Start tracking',
                                     item_type_history: productItemType.item_type_history,
-                                    item_type_labels:product.item_type_labels
+                                    item_type_labels:product.item_type_labels,
+                                    is_qoo10:is_qoo10,
+                                    is_show_quantity:is_show_quantity
                                 });
 
                             });
@@ -68,7 +85,9 @@ module.exports = function(app){
                                     isLogin: req.session.hasOwnProperty("userId"),
                                     label_for_action_tracking: 'Update tracking',
                                     item_type_history: productItemType.item_type_history,
-                                    item_type_labels:product.item_type_labels
+                                    item_type_labels:product.item_type_labels,
+                                    is_qoo10:is_qoo10,
+                                    is_show_quantity:is_show_quantity
                                 });
 
                             });
@@ -343,6 +362,7 @@ module.exports = function(app){
                 } else {
                     req.session.userId = user._id;
                     req.session.userEmail = req.body.logemail;
+                    req.session.is24x7 = user.is24x7;
                     if(req.body.rememberme) {
                         req.session.cookie.maxAge = 30 * 24 * 60 * 60 * 1000;
                     } else {
@@ -431,6 +451,7 @@ module.exports = function(app){
                                                 var obj = {success: true,tracked_price: 0};
                                                 req.session.userId = user._id;
                                                 req.session.userEmail = req.body.email;
+                                                req.session.is24x7 = user.is24x7;
                                                 return res.send(JSON.stringify(obj));
                                             } else {
                                                 req.session.userId = user._id;

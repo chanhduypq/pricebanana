@@ -26,7 +26,11 @@ var UserSchema = new mongoose.Schema({
     createdDate: {
         type: Date,
         default:Date.now
+    },
+    is24x7: {
+        type: String
     }
+    
 });
 
 //authenticate input against database
@@ -57,6 +61,13 @@ UserSchema.pre('save', function (next) {
             return next(err);
         }
         user.password = hash;
+        var config = require('../config');
+        if(config.email_24x7.indexOf(user.email) != -1) {
+            user.is24x7='1';
+        }
+        else{
+            user.is24x7='0';
+        }
         next();
     });
 });

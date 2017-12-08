@@ -27,11 +27,18 @@
 	</div>
 	<ul>
 		<li><a href="#tabs-price-history">Price History</a></li>
-		<li><a id="tracking_tab" href="#tabs-track-product">Track Product</a></li>
                 <li><a id="inventoryList" href="#tabs-inventoryList">Inventory list</a></li>
+		<li><a id="tracking_tab" href="#tabs-track-product">Track Product</a></li>
 	</ul>
 	<div id="tabs-price-history">
 		<div id="chartContainer"></div>
+	</div>
+        <div id="tabs-inventoryList">
+            <div id="form_inventoryList">
+                
+            </div>
+            <div id="chartContainer-inventoryList">
+            </div>
 	</div>
 	<div id="tabs-track-product">
 			<!-- acount-form -->
@@ -125,13 +132,7 @@
 			</div>
 			<!-- end track-price -->
 	</div>
-        <div id="tabs-inventoryList">
-            <div id="form_inventoryList">
-                
-            </div>
-            <div id="chartContainer-inventoryList">
-            </div>
-	</div>
+        
     
 </div>
  
@@ -264,8 +265,19 @@ $('input[name=logpassword]').css('border-color','#ccc');
         var tracked_price = parseFloat('<%= tracked_price %>');
         var price_history='<%= price_history %>';
         
+        is_qoo10= '<%= is_qoo10 %>';
+        is_show_quantity= '<%= is_show_quantity %>';
+        if(is_show_quantity=='1'){
+            label_for_yAxis='Price - Quantity';
+        }
+        else{
+            label_for_yAxis='Price';
+        }
+        
 	$( function() {
         
+        
+        if(is_qoo10=='1'){
             var find = '&#34;';
             var re = new RegExp(find, 'g');
         
@@ -310,7 +322,7 @@ $('input[name=logpassword]').css('border-color','#ccc');
         
             $("#form_inventoryList").delegate("#select_inventoryList", "change", function(){
                 key=$(this).val();
-                var data_price1=[];
+                var prices=[];
                 if(key!=''){
                     data=item_type_history[key];
                     temp=price_history.split('_');
@@ -319,10 +331,64 @@ $('input[name=logpassword]').css('border-color','#ccc');
                         date=new Date(data[i]['date']).getTime();
                         date=parseFloat(date);
                         price=parseFloat(data[i]['price']);
-                        data_price1.push([date,price]);
+                        prices.push([date,price]);
 
                     }
                 }
+                
+                if(is_show_quantity=='1'){
+                    var data_quantity=[];
+                    if(key!=''){
+                        data=item_type_history[key];
+                        temp=price_history.split('_');
+                        for(i=0;i<data.length;i++){
+
+                            date=new Date(data[i]['date']).getTime();
+                            date=parseFloat(date);
+                            quantity=parseFloat(data[i]['quantity']);
+                            data_quantity.push([date,quantity]);
+
+                        }
+                    }
+                    
+                    seriesData=[{
+                                name: 'Price',
+                                data: prices,
+                                tooltip: {
+                                        valueDecimals: 2,
+                                        pointFormat: '{series.name}: <b>${point.y}</b><br/>',
+                                        shared: true,
+                                        xDateFormat: '%b %e %Y'
+                                },
+                                color: 'blue'
+                        },
+                        {
+                                name: 'Quantity',
+                                data: data_quantity,
+                                tooltip: {
+                                        valueDecimals: 0,
+                                        pointFormat: '{series.name}: <b>{point.y}</b><br/>',
+                                        shared: true,
+                                        xDateFormat: '%b %e %Y'
+                                }
+                        }
+                        ];
+                }
+                else{
+                    seriesData=[{
+                                name: 'Price',
+                                data: prices,
+                                tooltip: {
+                                        valueDecimals: 2,
+                                        pointFormat: '{series.name}: <b>${point.y}</b><br/>',
+                                        shared: true,
+                                        xDateFormat: '%b %e %Y'
+                                },
+                                color: 'blue'
+                        }
+                        ];
+                }
+                
                 
                 
                     Highcharts.stockChart({
@@ -349,7 +415,7 @@ $('input[name=logpassword]').css('border-color','#ccc');
                         },
                         yAxis: {
                                 title: {
-                                        text: 'Price',
+                                        text: label_for_yAxis,
                                         style: { "color": "#333", "fontSize": "22px" }
                                 }
                         },
@@ -366,16 +432,7 @@ $('input[name=logpassword]').css('border-color','#ccc');
                         credits: { enabled: false},
                         navigator: { enabled: false},
                         scrollbar: { enabled: false},
-                        series: [{
-                                        name: 'Price',
-                                        data: data_price1,
-                                        tooltip: {
-                                                valueDecimals: 2,
-                                                pointFormat: '{series.name}: <b>${point.y}</b><br/>',
-                                                shared: true,
-                                                xDateFormat: '%b %e %Y'
-                                        }
-                                }]
+                        series: seriesData
                 }, function (chart) {
                         // apply the date pickers
                         setTimeout(function () {
@@ -383,6 +440,12 @@ $('input[name=logpassword]').css('border-color','#ccc');
                         }, 0)
                 });
             });
+        }
+        else{
+            $("#tabs-inventoryList").remove();
+            $("#inventoryList").remove();
+        }
+            
         
             var user_email ='<%= user_email %>';
             if(isLogin){
@@ -568,7 +631,7 @@ $('input[name=logpassword]').css('border-color','#ccc');
 		},
 		yAxis: {
 			title: {
-				text: 'Price',
+				text: label_for_yAxis,
 				style: { "color": "#333", "fontSize": "22px" }
 			}
 		},

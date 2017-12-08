@@ -3,7 +3,8 @@ var config = {
     'host': 'smtp.fastmail.com',
     'port': 465,
     'user': 'jack@24x7studios.com',
-    'pass': 'wq3rtfyupvsdnwg4'
+    'pass': 'wq3rtfyupvsdnwg4',
+    'email_24x7': ['tue@24x7studios.com', 'jack@24x7studios.com', 'loc@24x7studios.com']
 };
 
 module.exports = config;
