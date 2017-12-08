@@ -271,7 +271,7 @@ $('input[name=logpassword]').css('border-color','#ccc');
         
 
             var item_type_html='';
-            var selectAll='<select>';
+            var selectAll='<select id="select_inventoryList"><option value="">----------------';
             item_type_history= '<%= item_type_history %>';
             item_type_labels= '<%= item_type_labels %>';
             
@@ -283,6 +283,11 @@ $('input[name=logpassword]').css('border-color','#ccc');
             item_type_labels=$.parseJSON(item_type_labels);
             
             for(i=0;i<item_type_labels.length;i++){
+                selectAll+=item_type_labels[i];
+                if(i<item_type_labels.length-1){
+                    selectAll+="&nbsp;&nbsp;&nbsp;";
+                }
+                
                 item_type_html+=item_type_labels[i]+' <select>';
                 level={};
                 for(key in item_type_history){
@@ -295,13 +300,89 @@ $('input[name=logpassword]').css('border-color','#ccc');
                 item_type_html+='</select><br>';
             }
             
+            selectAll+="----------------</option>";
             for(key in item_type_history){
-                selectAll+='<option>'+key.split('|').join(' ')+'</option>';
+                selectAll+='<option value="'+key+'">'+key.split('|').join('&nbsp;&nbsp;&nbsp;')+'</option>';
             }
             selectAll+='</select><br>';
             
-            $("#form_inventoryList").html(selectAll+item_type_html);
+            $("#form_inventoryList").html(selectAll);
         
+            $("#form_inventoryList").delegate("#select_inventoryList", "change", function(){
+                key=$(this).val();
+                var data_price1=[];
+                if(key!=''){
+                    data=item_type_history[key];
+                    temp=price_history.split('_');
+                    for(i=0;i<data.length;i++){
+
+                        date=new Date(data[i]['date']).getTime();
+                        date=parseFloat(date);
+                        price=parseFloat(data[i]['price']);
+                        data_price1.push([date,price]);
+
+                    }
+                }
+                
+                
+                    Highcharts.stockChart({
+                        chart: {
+                                borderColor: 'white',
+                                borderWidth: 1,
+                                renderTo: 'chartContainer-inventoryList',
+                                style: {
+                                        fontFamily: 'Arial,Helvetica,sans-serif'
+                                }
+                        },
+                        rangeSelector: {
+                                selected: 3,
+                                buttonTheme: { width: 50 },
+                                buttons: [
+                                        {type: 'week',count: 1,text: '1w'},
+                                        {type: 'month',count: 1,text: '1m'}, 
+                                        {type: 'month',count: 3,text: '3m'}, 
+                                        {type: 'month',count: 6,text: '6m'}, 
+                                        {type: 'ytd',text: 'YTD'}, 
+                                        {type: 'year',count: 1,text: '1y'}, 
+                                        {type: 'all',text: 'All'}
+                                ]
+                        },
+                        yAxis: {
+                                title: {
+                                        text: 'Price',
+                                        style: { "color": "#333", "fontSize": "22px" }
+                                }
+                        },
+                        title: {
+                                        text: '<b>Price History<b>',
+                                        style: { "color": "#333", "fontSize": "30px" }
+                        },
+                        plotOptions: {
+                                line: {
+                                        color: '#ff6347',
+                                        marker: { enabled: false}
+                                }
+                        },
+                        credits: { enabled: false},
+                        navigator: { enabled: false},
+                        scrollbar: { enabled: false},
+                        series: [{
+                                        name: 'Price',
+                                        data: data_price1,
+                                        tooltip: {
+                                                valueDecimals: 2,
+                                                pointFormat: '{series.name}: <b>${point.y}</b><br/>',
+                                                shared: true,
+                                                xDateFormat: '%b %e %Y'
+                                        }
+                                }]
+                }, function (chart) {
+                        // apply the date pickers
+                        setTimeout(function () {
+                                $('input.highcharts-range-selector', $('#' + chart.options.chart.renderTo)).datepicker()
+                        }, 0)
+                });
+            });
         
             var user_email ='<%= user_email %>';
             if(isLogin){
@@ -506,7 +587,7 @@ $('input[name=logpassword]').css('border-color','#ccc');
 		scrollbar: { enabled: false},
 		series: [{
 				name: 'Price',
-				data: data_price,
+				data: [],
 				tooltip: {
 					valueDecimals: 2,
 					pointFormat: '{series.name}: <b>${point.y}</b><br/>',
