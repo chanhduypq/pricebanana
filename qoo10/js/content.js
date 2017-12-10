@@ -225,7 +225,8 @@ function showIframeForShopee() {
 
 //var shopeeRegex = /shopee.sg\/[\S]*(-i.)([0-9]{6}).([0-9]{9})/i;
 var shopeeRegex = /shopee.sg\/[\S]*(-i.)([0-9]).([0-9])/i;
-if (shopeeRegex.test(current_url)){
+//if (shopeeRegex.test(current_url)){
+if (current_url.indexOf("shopee.sg") > - 1) {
     timer = setInterval(runShopee, 5000);
 }
 
