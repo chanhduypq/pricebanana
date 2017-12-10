@@ -10,7 +10,7 @@
         "16": "img/icon-16.png"
     },
     "content_scripts": [{
-        "js": ["js/lib/jquery.js","js/content.js"],
+        "js": ["js/lib/jquery.js","js/lib/xml2json.js","js/content.js"],
         "css": ["css/content.css"],
         "matches": [
             "*://*.qoo10.sg/item/*",
