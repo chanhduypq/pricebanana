@@ -276,16 +276,16 @@ $('input[name=logpassword]').css('border-color','#ccc');
         
 	$( function() {
         
-        
-        if(is_qoo10=='1'){
+        item_type_history= '<%= item_type_history %>';
+        item_type_labels= '<%= item_type_labels %>';
+        if(is_qoo10=='1'&&item_type_history!=''&&item_type_history!='{}'){
             var find = '&#34;';
             var re = new RegExp(find, 'g');
         
 
             var item_type_html='';
             var selectAll='<select id="select_inventoryList"><option value="">----------------';
-            item_type_history= '<%= item_type_history %>';
-            item_type_labels= '<%= item_type_labels %>';
+            
             
             item_type_history = item_type_history.replace(re, '"');
             item_type_labels = item_type_labels.replace(re, '"');
@@ -318,6 +318,7 @@ $('input[name=logpassword]').css('border-color','#ccc');
             }
             selectAll+='</select><br>';
             
+            <!--$("#form_inventoryList").html(item_type_html+selectAll);-->
             $("#form_inventoryList").html(selectAll);
         
             $("#form_inventoryList").delegate("#select_inventoryList", "change", function(){
@@ -607,63 +608,7 @@ $('input[name=logpassword]').css('border-color','#ccc');
 		}, 0)
 	});
         
-        Highcharts.stockChart({
-		chart: {
-			borderColor: 'white',
-			borderWidth: 1,
-			renderTo: 'chartContainer-inventoryList',
-			style: {
-				fontFamily: 'Arial,Helvetica,sans-serif'
-			}
-		},
-		rangeSelector: {
-			selected: 3,
-			buttonTheme: { width: 50 },
-			buttons: [
-				{type: 'week',count: 1,text: '1w'},
-				{type: 'month',count: 1,text: '1m'}, 
-				{type: 'month',count: 3,text: '3m'}, 
-				{type: 'month',count: 6,text: '6m'}, 
-				{type: 'ytd',text: 'YTD'}, 
-				{type: 'year',count: 1,text: '1y'}, 
-				{type: 'all',text: 'All'}
-			]
-		},
-		yAxis: {
-			title: {
-				text: label_for_yAxis,
-				style: { "color": "#333", "fontSize": "22px" }
-			}
-		},
-		title: {
-				text: '<b>Price History<b>',
-				style: { "color": "#333", "fontSize": "30px" }
-		},
-		plotOptions: {
-			line: {
-				color: '#ff6347',
-				marker: { enabled: false}
-			}
-		},
-		credits: { enabled: false},
-		navigator: { enabled: false},
-		scrollbar: { enabled: false},
-		series: [{
-				name: 'Price',
-				data: [],
-				tooltip: {
-					valueDecimals: 2,
-					pointFormat: '{series.name}: <b>${point.y}</b><br/>',
-					shared: true,
-					xDateFormat: '%b %e %Y'
-				}
-			}]
-	}, function (chart) {
-		// apply the date pickers
-		setTimeout(function () {
-			$('input.highcharts-range-selector', $('#' + chart.options.chart.renderTo)).datepicker()
-		}, 0)
-	});
+        
 	
 	function updatePriceSlide(track_value) {
             if(track_value==0){
