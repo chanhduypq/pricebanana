@@ -119,83 +119,104 @@ function get_item_types(inventoryList,sell_price,item_type_labels){
     var parser = new DomParser();
     var dom = parser.parseFromString(inventoryList);
     var item_types = {};
-    var tb_OptAllVw_op_list=dom.getElementById('tb_OptAllVw_op_list');
-    if (tb_OptAllVw_op_list != null) {
-        trs=tb_OptAllVw_op_list.getElementsByTagName('tr');
-        for(i=0;i<trs.length;i++){
-            spans = trs[i].getElementsByTagName('span');
-            
-            quantity = spans[item_type_labels.length+1].innerHTML;
-            price = spans[item_type_labels.length].innerHTML;
-            price = price.replace('$', '');
-            if (price[0] == '+') {
-                price = parseFloat(sell_price) + parseFloat(price.substr(1));
-            } else if (price[0] == '-') {
-                price = parseFloat(sell_price) - parseFloat(price.substr(1));
-            } else {
-                price = parseFloat(sell_price);
+    var inventoryListOther=dom.getElementById('inventoryListOther');
+    if(inventoryListOther!=null){
+        json = JSON.parse(inventoryListOther.innerHTML);
+        for(i=0;i<json.length;i++){
+            temp=json[i].GoodsAddInfo;
+            for(j=0;j<temp.length;j++){
+                console.log(temp[j].sel_value);
+                key = temp[j].sel_value;
+                quantity = temp[j].remain_cnt;
+                price = parseFloat(temp[j].sel_item_price_oc);
+                price = parseFloat(sell_price) + price;
+                price=price.toFixed(2);
+                
+                item_types[key]={quantity:quantity,price:price};
             }
-            
-            price=price.toFixed(2);
-            
-            key='';
-            for(j=0;j<item_type_labels.length-1;j++){
-                key+=spans[j].innerHTML+"|";
-                 
-            }
-            key+=spans[item_type_labels.length-1].innerHTML;
-            item_types[key]={quantity:quantity,price:price};
         }
     }
     else{
-        content_inventory_0=dom.getElementById('content_inventory_0');
-        if (content_inventory_0 != null) {
-            spans=content_inventory_0.getElementsByTagName('span');
-            for(i=0;i<spans.length;i++){
-                html=spans[i].innerHTML;
-                if(html.indexOf('- Qty')!=-1){
-                    if(html.indexOf('$')!=-1){
-                        temp = html.split(' - Qty : ');
-                        html = temp[0];
-                        quantity = temp[1];
-                        
-                        temp=html.split('$');
-                        price=temp[1].replace(')','');
-                        if (temp[0][temp[0].length-1] == '+') {
-                            price = parseFloat(sell_price) + parseFloat(price);
-                            name=temp[0].replace('(+','');
-                        } else if (temp[0][temp[0].length-1] == '-') {
-                            price = parseFloat(sell_price) - parseFloat(price);
-                            name=temp[0].replace('(-','');
-                        } else {
-                            price = parseFloat(price);
-                            name=temp[0].replace('(','');
+        var tb_OptAllVw_op_list=dom.getElementById('tb_OptAllVw_op_list');
+        if (tb_OptAllVw_op_list != null) {
+            trs=tb_OptAllVw_op_list.getElementsByTagName('tr');
+            for(i=0;i<trs.length;i++){
+                spans = trs[i].getElementsByTagName('span');
+
+                quantity = spans[item_type_labels.length+1].innerHTML;
+                price = spans[item_type_labels.length].innerHTML;
+                price = price.replace('$', '');
+                if (price[0] == '+') {
+                    price = parseFloat(sell_price) + parseFloat(price.substr(1));
+                } else if (price[0] == '-') {
+                    price = parseFloat(sell_price) - parseFloat(price.substr(1));
+                } else {
+                    price = parseFloat(sell_price);
+                }
+
+                price=price.toFixed(2);
+
+                key='';
+                for(j=0;j<item_type_labels.length-1;j++){
+                    key+=spans[j].innerHTML+"|";
+
+                }
+                key+=spans[item_type_labels.length-1].innerHTML;
+                item_types[key]={quantity:quantity,price:price};
+            }
+        }
+        else{
+            content_inventory_0=dom.getElementById('content_inventory_0');
+            if (content_inventory_0 != null) {
+                spans=content_inventory_0.getElementsByTagName('span');
+                for(i=0;i<spans.length;i++){
+                    html=spans[i].innerHTML;
+                    if(html.indexOf('- Qty')!=-1){
+                        if(html.indexOf('$')!=-1){
+                            temp = html.split(' - Qty : ');
+                            html = temp[0];
+                            quantity = temp[1];
+
+                            temp=html.split('$');
+                            price=temp[1].replace(')','');
+                            if (temp[0][temp[0].length-1] == '+') {
+                                price = parseFloat(sell_price) + parseFloat(price);
+                                name=temp[0].replace('(+','');
+                            } else if (temp[0][temp[0].length-1] == '-') {
+                                price = parseFloat(sell_price) - parseFloat(price);
+                                name=temp[0].replace('(-','');
+                            } else {
+                                price = parseFloat(price);
+                                name=temp[0].replace('(','');
+                            }
+
                         }
-                        
+                        else{
+                            temp = html.split('- Qty : ');
+                            price = parseFloat(sell_price);
+                            name = temp[0];
+                            quantity = temp[1];
+                        }
+
+
+
                     }
                     else{
-                        temp = html.split('- Qty : ');
+                        quantity=0;
                         price = parseFloat(sell_price);
-                        name = temp[0];
-                        quantity = temp[1];
+                        name=html.replace('- Sold Out','');
                     }
-                    
-                    
-                    
+                    price=price.toFixed(2);                    
+                    item_types[name]={quantity:quantity,price:price};
+
                 }
-                else{
-                    quantity=0;
-                    price = parseFloat(sell_price);
-                    name=html.replace('- Sold Out','');
-                }
-                price=price.toFixed(2);                    
-                item_types[name]={quantity:quantity,price:price};
-                
+
             }
-            
+
         }
-        
     }
+    
+    
     
     return item_types;
 }

@@ -167,26 +167,120 @@ $(function () {
             }
             else{
                 if($("ul[optiontype='inventory']").length>1){
-                    console.log('ok man');
-                    $.ajax({
-                        url: 'https://www.qoo10.sg/gmkt.inc/swe_GoodsAjaxService.asmx/GetGoodsInventoryEachLevelNameByKeyword',
-                        method: "POST",
-                        crossDomain: true,
-                        async: false,
-                        dataType: 'xml',
-                        data: {
-                            "inventory_no":"ST575680492 ","sel_value1":"64GB","sel_value2":"Black","sel_value3":"","sel_value4":"","level":3,"sel_count":3,"keyword":"","lang_cd":"en","global_order_type":"L","gd_no":"575680492","inventory_yn":"","link_type":"N","___cache_expire___":"1512836967428"
-                        },
-                        success: function (xml) {
-                            var obj=xml2json(xml);
-                            console.log(obj.ArrayOfGoodsAddInfo);
-                        },
-                        error: function (xhr, status, error) {
-                            console.log(status);
-                            console.log(error);
-                            console.log(xhr.responseText);
+                    var result=[];
+                    var ar={};
+                    optiontypes=$("ul[optiontype='inventory']");
+                    for(i=0;i<optiontypes.length-1;i++){
+                        level='level'+i;
+                        lis=$(optiontypes[i]).find('li');
+                        var temp=[];
+                        for(j=0;j<lis.length;j++){
+                            temp.push($(lis[j]).attr('sel_value'));
                         }
-                    });
+                        ar["level"+i]=temp;
+                    }
+                    console.log(ar);
+                    
+                    if(optiontypes.length-1==2){
+                        level0=ar['level0'];
+                        for(i=0;i<level0.length;i++){
+                            level1=ar['level1'];
+                            for(j=0;j<level1.length;j++){
+                                
+                                sel_value1=level0[i];
+                                sel_value2=level1[j];
+                                console.log(sel_value1);
+                                console.log(sel_value2);
+                                $.ajax({
+                                    url: 'https://www.qoo10.sg/gmkt.inc/swe_GoodsAjaxService.asmx/GetGoodsInventoryEachLevelNameByKeyword',
+                                    method: "POST",
+                                    crossDomain: true,
+                                    async: false,
+                                    dataType: 'xml',
+                                    data: {
+                                        "inventory_no":"ST575680492 ","sel_value1":sel_value1,"sel_value2":sel_value2,"sel_value3":"","sel_value4":"","level":3,"sel_count":3,"keyword":"","lang_cd":"en","global_order_type":"L","gd_no":"575680492","inventory_yn":"","link_type":"N","___cache_expire___":"1512836967428"
+                                    },
+                                    success: function (xml) {
+                                        var obj=xml2json(xml);
+                                        arr=obj.ArrayOfGoodsAddInfo;
+                                        temp=arr.GoodsAddInfo;
+                                        for(k=0;k<temp.length;k++){
+                                            temp[k].sel_value=sel_value1+"|"+sel_value2+"|"+temp[k].sel_value;
+                                        }
+                                        result.push(obj.ArrayOfGoodsAddInfo);
+                                    },
+                                    error: function (xhr, status, error) {
+                                        console.log(status);
+                                        console.log(error);
+                                        console.log(xhr.responseText);
+                                    }
+                                });
+                            }
+                        }
+                    }
+                    else if(optiontypes.length-1==3){
+                        level0=ar['level0'];
+                        for(i=0;i<level0.length;i++){
+                            level1=ar['level1'];
+                            for(j=0;j<level1.length;j++){
+                               
+                                level2=ar['level2'];
+                                for(k=0;k<level2.length;k++){
+                                    sel_value1=level0[i];
+                                    sel_value2=level1[j];
+                                    sel_value3=level2[k];
+                                    $.ajax({
+                                        url: 'https://www.qoo10.sg/gmkt.inc/swe_GoodsAjaxService.asmx/GetGoodsInventoryEachLevelNameByKeyword',
+                                        method: "POST",
+                                        crossDomain: true,
+                                        async: false,
+                                        dataType: 'xml',
+                                        data: {
+                                            "inventory_no":"ST575680492 ","sel_value1":sel_value1,"sel_value2":sel_value2,"sel_value3":sel_value3,"sel_value4":"","level":3,"sel_count":3,"keyword":"","lang_cd":"en","global_order_type":"L","gd_no":"575680492","inventory_yn":"","link_type":"N","___cache_expire___":"1512836967428"
+                                        },
+                                        success: function (xml) {
+                                            var obj=xml2json(xml);
+                                            arr=obj.ArrayOfGoodsAddInfo;
+                                            temp=arr.GoodsAddInfo;
+                                            for(k=0;k<temp.length;k++){
+                                                temp[k].sel_value=sel_value1+"|"+sel_value2+"|"+temp[k].sel_value;
+                                            }
+                                            result.push(obj.ArrayOfGoodsAddInfo);
+                                        },
+                                        error: function (xhr, status, error) {
+                                            console.log(status);
+                                            console.log(error);
+                                            console.log(xhr.responseText);
+                                        }
+                                    });
+                                }
+                                
+                            }
+                        }
+                    }
+                    
+                    console.log(result);
+                    inventoryList+='<div id="inventoryListOther">'+JSON.stringify(result)+'</div>';
+                    
+//                    $.ajax({
+//                        url: 'https://www.qoo10.sg/gmkt.inc/swe_GoodsAjaxService.asmx/GetGoodsInventoryEachLevelNameByKeyword',
+//                        method: "POST",
+//                        crossDomain: true,
+//                        async: false,
+//                        dataType: 'xml',
+//                        data: {
+//                            "inventory_no":"ST575680492 ","sel_value1":"64GB","sel_value2":"Black","sel_value3":"","sel_value4":"","level":3,"sel_count":3,"keyword":"","lang_cd":"en","global_order_type":"L","gd_no":"575680492","inventory_yn":"","link_type":"N","___cache_expire___":"1512836967428"
+//                        },
+//                        success: function (xml) {
+//                            var obj=xml2json(xml);
+//                            console.log(obj.ArrayOfGoodsAddInfo);
+//                        },
+//                        error: function (xhr, status, error) {
+//                            console.log(status);
+//                            console.log(error);
+//                            console.log(xhr.responseText);
+//                        }
+//                    });
                 }
             }
         }
