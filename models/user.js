@@ -61,13 +61,19 @@ UserSchema.pre('save', function (next) {
             return next(err);
         }
         user.password = hash;
-        var config = require('../config');
-        if(config.email_24x7.indexOf(user.email) != -1) {
-            user.is24x7='1';
+        temp = user.email.split('@');
+        if (temp[1] == '24x7studios.com') {
+            user.is24x7 = '1';
+        } else {
+            user.is24x7 = '0';
         }
-        else{
-            user.is24x7='0';
-        }
+//        var config = require('../config');
+//        if(config.email_24x7.indexOf(user.email) != -1) {
+//            user.is24x7='1';
+//        }
+//        else{
+//            user.is24x7='0';
+//        }
         next();
     });
 });
