@@ -414,8 +414,7 @@ module.exports = function(app){
             var userData = {
                 email: req.body.email,
                 username: req.body.username,
-                password: req.body.password,
-                passwordConf: req.body.passwordConf
+                password: req.body.password
             };
             User.findOne({email: req.body.email}, function (error, user) {
                 if (error) {

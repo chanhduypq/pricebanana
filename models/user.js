@@ -19,10 +19,6 @@ var UserSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    passwordConf: {
-        type: String,
-        required: true
-    },
     createdDate: {
         type: Date,
         default:Date.now
