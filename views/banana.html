@@ -89,9 +89,6 @@
 									<div class="row">
 										<div class="col-lg-12">
 											<div class="form-group">
-												<input type="text" name="username" tabindex="5" class="form-control" placeholder="Username">
-											</div>
-											<div class="form-group">
 												<input type="email" name="email" tabindex="6" class="form-control" placeholder="Email Address">
 											</div>
 											<div class="form-group">
@@ -140,12 +137,6 @@
      var isLogin= <%= isLogin %>;
      function regist(){
              var checked = true;
-            var username = $.trim($('input[name=username]').val());
-            $('input[name=username]').css('border-color','#ccc');
-            if(username == '') {
-                $('input[name=username]').css('border-color','red');
-                checked = false;
-            }
             var email = $.trim($('input[name=email]').val());
             $('input[name=email]').css('border-color','#ccc');
             if(email == '' || email.indexOf('@') === -1) {
@@ -170,7 +161,6 @@
                     type: "POST",
                     url: '/register',
                     data: {
-                        username: username,
                         email: email,
                         password: password,
                         passwordConf: passwordConf,

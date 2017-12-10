@@ -407,74 +407,33 @@ module.exports = function(app){
         }
 
         if (req.body.email &&
-            req.body.username &&
             req.body.password &&
             req.body.passwordConf) {
             // register
             var userData = {
                 email: req.body.email,
-                username: req.body.username,
                 password: req.body.password
             };
             User.findOne({email: req.body.email}, function (error, user) {
-                if (error) {
-                    if(req.body.is_ajax) {
-                        var obj = {success:false,message:"Can not create user"};
-                        return res.send(JSON.stringify(obj));
-                    } else {
-                        return res.send("Can not create user");
-                    }
-                } else {
-                    if (user === null) {
-                        User.findOne({username: req.body.username}, function (error, user) {
-                            if (error) {
-                                if (req.body.is_ajax) {
-                                    var obj = {success:false,message:"Can not create user"};
-                                    return res.send(JSON.stringify(obj));
-                                } else {
-                                    return res.send("Can not create user");
-                                }
-                            } else {
-                                if (user === null) {
-                                    User.create(userData, function (error, user) {
-                                        
-                                        if (error) {
-                                            if (req.body.is_ajax) {
-                                                var obj = {success: false, message: "Can not create user"};
-                                                return res.send(JSON.stringify(obj));
-                                            } else {
-                                                return res.send("Can not create user");
-                                            }
-                                        } else {
-                                            if (req.body.is_ajax) {
-                                                var obj = {success: true,tracked_price: 0};
-                                                req.session.userId = user._id;
-                                                req.session.userEmail = req.body.email;
-                                                req.session.is24x7 = user.is24x7;
-                                                return res.send(JSON.stringify(obj));
-                                            } else {
-                                                req.session.userId = user._id;
-                                                return res.redirect('/');
-                                            }
-                                        }
-                                    });
-                                } else {
-                                    if (req.body.is_ajax) {
-                                        var obj = {success: false, message: "Username was existed"};
-                                        res.send(JSON.stringify(obj));
-                                    } else {
-                                        return res.send("Username was existed.");
-                                    }
-                                }
-                            }
-                        });
-                    } else {
+                if (user === null) {
+                    User.create(userData, function (error, user) {
                         if (req.body.is_ajax) {
-                            var obj = {success: false, message: "Email was existed"};
-                            res.send(JSON.stringify(obj));
+                            var obj = {success: true,tracked_price: 0};
+                            req.session.userId = user._id;
+                            req.session.userEmail = req.body.email;
+                            req.session.is24x7 = user.is24x7;
+                            return res.send(JSON.stringify(obj));
                         } else {
-                            return res.send("Email was existed.");
+                            req.session.userId = user._id;
+                            return res.redirect('/');
                         }
+                    });
+                } else {
+                    if (req.body.is_ajax) {
+                        var obj = {success: false, message: "Email was existed"};
+                        res.send(JSON.stringify(obj));
+                    } else {
+                        return res.send("Email was existed.");
                     }
                 }
             });
