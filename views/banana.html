@@ -523,13 +523,17 @@ $('input[name=logpassword]').css('border-color','#ccc');
                     $("#level"+index).append('<option value="'+key1+'">'+key1+'</option>');
                 }
             }
-        
+            $("#form_inventoryList").delegate("select", "click", function(){
+                if($(this).attr('id')!='select_inventoryList'&&$(this).find('option').length==1){
+                    alert("Please choose the above option first.");
+                }
+            });
             $("#form_inventoryList").delegate("select", "change", function(){
                 if($(this).attr('id')=='select_inventoryList'){
                     key=$(this).val();
                     seriesData=showOne(key);
                 }
-                else{
+                else{                    
                     seriesData=showMulti();
                     idSelect=$(this).attr('id');
                     if($("select[name='level']").length-1>idSelect[idSelect.length-1]){
