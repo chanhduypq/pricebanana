@@ -524,7 +524,7 @@ $('input[name=logpassword]').css('border-color','#ccc');
                 }
             }
             $("#form_inventoryList").delegate("select", "click", function(){
-                if($(this).attr('id')!='select_inventoryList'&&$(this).find('option').length==1){
+                if($(this).attr('id')!='select_inventoryList'&&$(this).find('option').length==1&&$(this).find('option').eq(0).html()=='Please select'){
                     alert("Please choose the above option first.");
                 }
             });
@@ -540,7 +540,10 @@ $('input[name=logpassword]').css('border-color','#ccc');
                         resetComboboxChildren(idSelect);
                     }
                 }
-                $(this).find('option').eq(0).remove();
+                if($(this).find('option').eq(0).html()=='Please select'){
+                    $(this).find('option').eq(0).remove();
+                }
+                
                 
                     Highcharts.stockChart({
                         chart: {
