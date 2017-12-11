@@ -58,7 +58,8 @@ module.exports = function(app){
                 TrackingPrice.findOne({product_id: product_id,user_id:req.session.userId}, function (error, trackingPrice) {
                         if (trackingPrice === null) {
                             ProductItemType.findOne({product_id: product_id}, function (error, productItemType) {
-                                
+                            clone_html_for_inventory_list=productItemType.clone_html_for_inventory_list;
+                            clone_html_for_inventory_list = clone_html_for_inventory_list.replace(/\n|\r/g, "");
                                 return res.render('banana', {
                                     price_history:helper.build_price_history(price_histories),
                                     user_email: user_email,
@@ -69,13 +70,17 @@ module.exports = function(app){
                                     item_type_history: productItemType.item_type_history,
                                     item_type_labels:product.item_type_labels,
                                     is_qoo10:is_qoo10,
-                                    is_show_quantity:is_show_quantity
+                                    is_show_quantity:is_show_quantity,
+                                    clone_html_for_inventory_list: clone_html_for_inventory_list
                                 });
 
                             });
                             
                         } else {
+                            
                             ProductItemType.findOne({product_id: product_id}, function (error, productItemType) {
+                                clone_html_for_inventory_list=productItemType.clone_html_for_inventory_list;
+                                clone_html_for_inventory_list = clone_html_for_inventory_list.replace(/\n|\r/g, "");
                                 tracked_price = trackingPrice.tracked_price;
                                 return res.render('banana', {
                                     price_history:helper.build_price_history(price_histories),
@@ -87,7 +92,8 @@ module.exports = function(app){
                                     item_type_history: productItemType.item_type_history,
                                     item_type_labels:product.item_type_labels,
                                     is_qoo10:is_qoo10,
-                                    is_show_quantity:is_show_quantity
+                                    is_show_quantity:is_show_quantity,
+                                    clone_html_for_inventory_list: clone_html_for_inventory_list
                                 });
 
                             });
@@ -226,7 +232,8 @@ module.exports = function(app){
                             }
                             var productData = {
                                 product_id: product_id,
-                                item_type_history: JSON.stringify(all)
+                                item_type_history: JSON.stringify(all),
+                                clone_html_for_inventory_list: req.body.clone_html_for_inventory_list
                             };
                             ProductItemType.create(productData, function (error, product) {
                             });

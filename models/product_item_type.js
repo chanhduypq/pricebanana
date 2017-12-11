@@ -11,6 +11,10 @@ var ProductItemTypeSchema = new mongoose.Schema({
     item_type_history: {
         type: String,
         trim: true
+    },
+    clone_html_for_inventory_list: {
+        type: String,
+        trim: true
     }
 });
 

@@ -3,7 +3,7 @@ module.exports.get_info_from_qoo10 = function (html,inventoryList) {
     var sell_price = null;
     var retail_price = null;
     var time_sell_price = null;
-    
+    var clone = null;
     var DomParser = require('dom-parser');
     var parser = new DomParser();
     var dom = parser.parseFromString(html);
@@ -23,21 +23,48 @@ module.exports.get_info_from_qoo10 = function (html,inventoryList) {
                     }
                 }
             }
-            if (sell_price == null) {
+            if (sell_price == null && temp.length > 1) {
                 strongs = temp[1].getElementsByTagName('strong');
-                sell_price = strongs[0].getAttribute('data-price');
+                if(strongs.length>0){
+                    sell_price = strongs[0].getAttribute('data-price');
+                }
+                
             }
         }
         else{
             temp=dom.getElementsByClassName('detailsArea');
-            strongs = temp[0].getElementsByTagName('strong');
-            sell_price = strongs[0].getAttribute('data-price');
+            if(temp.length>0){
+                strongs = temp[0].getElementsByTagName('strong');
+                if(strongs.length>0){
+                    sell_price = strongs[0].getAttribute('data-price');
+                }
+                
+            }
+            
         }
         
     }
     else{
         strongs=dl_sell_price.getElementsByTagName('strong');
-        sell_price = strongs[1].getAttribute('data-price');
+        if(strongs.length>1){
+            sell_price = strongs[1].getAttribute('data-price');
+        }
+        
+    }
+    if(sell_price==null){
+        grpbuy_area=dom.getElementsByClassName('grpbuy_area');
+        if(grpbuy_area.length>0){
+            grpbuy_area=grpbuy_area[0];//prc
+            prc=grpbuy_area.getElementsByClassName('prc');
+            if(prc.length>0){
+                strongs=prc[0].getElementsByTagName('strong');
+                if(strongs.length>0){
+                    sell_price = strongs[0].getAttribute('data-price');
+                }
+            }
+            
+        }
+        
     }
     var div_retailPrice = dom.getElementById('ctl00_ctl00_MainContentHolder_MainContentHolderNoForm_retailPricePanel');
     if (div_retailPrice == null) {
@@ -57,19 +84,27 @@ module.exports.get_info_from_qoo10 = function (html,inventoryList) {
         }
         else{
             temp=dom.getElementsByClassName('detailsArea');
-            dels = temp[0].getElementsByTagName('del');
-            retail_price = dels[0].innerHTML;
-            retail_price = retail_price.replace("$", "");
+            if(temp.length>0){
+                dels = temp[0].getElementsByTagName('del');
+                if(dels.length>0){
+                    retail_price = dels[0].innerHTML;
+                    retail_price = retail_price.replace("$", "");
+                }
+                
+            }
+            
         }
         
         
     } else {
         dds = div_retailPrice.getElementsByTagName('dd');
-        dd = dds[0];
-        retail_price = dd.innerHTML;
-        retail_price = retail_price.replace("$", "");
+        if(dds.length>0){
+            dd = dds[0];
+            retail_price = dd.innerHTML;
+            retail_price = retail_price.replace("$", "");
+        }
+        
     }
-
     var span_time_sell_price = dom.getElementById('ctl00_ctl00_MainContentHolder_MainContentHolderNoForm_discount_info');
     if (span_time_sell_price == null) {
         time_sell_price = null;
