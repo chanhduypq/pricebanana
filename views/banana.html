@@ -308,7 +308,7 @@ $('input[name=logpassword]').css('border-color','#ccc');
                         options_level0[temp[i]]='';
                     }
                     for(key in options_level0){
-                        item_type_html+='<option>'+key+'</option>';
+                        item_type_html+='<option value="'+key+'">'+key+'</option>';
                     }
                 }
                 
@@ -320,8 +320,13 @@ $('input[name=logpassword]').css('border-color','#ccc');
                 selectAll+='<option value="'+key+'">'+key.split('|').join('&nbsp;&nbsp;&nbsp;')+'</option>';
             }
             selectAll+='</select><br>';
+            if(item_type_labels.length>1){
+                $("#form_inventoryList").html(item_type_html+selectAll);
+            }
+            else{
+                $("#form_inventoryList").html(item_type_html);
+            }
             
-            $("#form_inventoryList").html(item_type_html+selectAll);
             function showOne(key){
                     var prices=[];
                     if(key!=''){
@@ -407,7 +412,7 @@ $('input[name=logpassword]').css('border-color','#ccc');
                             run=false;
                             break;
                         }
-                        /*run1=true;
+                        run1=true;
                         for(m=0;m<=j;m++){
                             if($(selects[m]).val()!=''&&$(selects[m]).val()!=temp[m]){
                                 run1=false;
@@ -417,7 +422,7 @@ $('input[name=logpassword]').css('border-color','#ccc');
                         if(run1==false){
                             run=false;
                             break;
-                        }*/
+                        }
                         
                     }
                     
@@ -533,12 +538,21 @@ $('input[name=logpassword]').css('border-color','#ccc');
                     key=$(this).val();
                     seriesData=showOne(key);
                 }
-                else{                    
-                    seriesData=showMulti();
-                    idSelect=$(this).attr('id');
-                    if($("select[name='level']").length-1>idSelect[idSelect.length-1]){
-                        resetComboboxChildren(idSelect);
+                else{  
+                    if(item_type_labels.length==1){
+                        key=$(this).val();
+                        seriesData=showOne(key);
                     }
+                    else{
+                        
+                        idSelect=$(this).attr('id');
+                        if($("select[name='level']").length-1>idSelect[idSelect.length-1]){
+                            resetComboboxChildren(idSelect);
+                        }
+                        seriesData=showMulti();
+                    }
+                    
+                    
                 }
                 if($(this).find('option').eq(0).html()=='Please select'){
                     $(this).find('option').eq(0).remove();
