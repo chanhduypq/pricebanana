@@ -1,6 +1,9 @@
 var domain=false;
 var product_id = false;
-var apiUrl = 'https://localhost/get_content';
+if(url[url.length-1]=='/'){
+    url=url.substr(0,url.length-1);
+}
+var apiUrl = url+'/get_content';
 var current_url = window.location.href;
 
 $(function () {
@@ -201,7 +204,7 @@ $(function () {
             },
             success: function (result) {
                 if (result.success) {
-                    $(iframe_node).after('<div id="pricebanana_ctn"><iframe src="https://localhost/banana/' + domain + '/' + product_id + '"></iframe></div>');
+                    $(iframe_node).after('<div id="pricebanana_ctn"><iframe src="'+url+'/banana/' + domain + '/' + product_id + '"></iframe></div>');
                 }
             },
             error: function (xhr, status, error) {
@@ -218,7 +221,7 @@ $(function () {
 
 function showIframeForShopee() {
     if ($('.product-page__top-section').html() != undefined) {
-        $('.product-page__top-section').after('<div id="pricebanana_ctn"><iframe src="https://localhost/banana/'+domain+'/'+ product_id + '"></iframe></div>');
+        $('.product-page__top-section').after('<div id="pricebanana_ctn"><iframe src="'+url+'/banana/'+domain+'/'+ product_id + '"></iframe></div>');
         clearInterval(timer);
     }
 }
@@ -253,7 +256,7 @@ function runShopee() {
             },
             success: function (result) {
                 if (result.success) {
-                    $(iframe_node).after('<div id="pricebanana_ctn"><iframe src="https://localhost/banana/shopee/' + product_id + '"></iframe></div>');
+                    $(iframe_node).after('<div id="pricebanana_ctn"><iframe src="'+url+'/banana/shopee/' + product_id + '"></iframe></div>');
                 }
             },
             error: function (xhr, status, error) {

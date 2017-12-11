@@ -272,10 +272,12 @@ $('input[name=logpassword]').css('border-color','#ccc');
             label_for_yAxis='Price';
         }
         
-	$( function() {
-        
         item_type_history= '<%= item_type_history %>';
         item_type_labels= '<%= item_type_labels %>';
+        
+	$( function() {
+        
+        
         if(is_qoo10=='1'&&item_type_history!=''&&item_type_history!='{}'){
             var find = '&#34;';
             var re = new RegExp(find, 'g');
@@ -403,6 +405,17 @@ $('input[name=logpassword]').css('border-color','#ccc');
                             run=false;
                             break;
                         }
+                        run1=true;
+                        for(m=0;m<=j;m++){
+                            if($(selects[m]).val()!=''&&$(selects[m]).val()!=temp[m]){
+                                run1=false;
+                                break;
+                            }
+                        }
+                        if(run1==false){
+                            run=false;
+                            break;
+                        }
                         
                     }
                     
@@ -482,6 +495,32 @@ $('input[name=logpassword]').css('border-color','#ccc');
                     
                     return seriesDataAll;
             }
+            
+            function resetComboboxChildren(idSelect){
+                valParent=$("#"+idSelect).val();
+                index=parseInt(idSelect[idSelect.length-1]);
+                for(i=index+1;i<$("select[name='level']").length;i++){
+                    $("#level"+i).html('<option value="">Please select</option>');
+                }
+                index++;
+                next_options=[];
+                for(key in item_type_history){
+                    temp=key.split('|');
+                    run=true;
+                    for(m=0;m<=index-1;m++){
+                        if($("#level"+m).val()!=temp[m]){
+                            run=false;
+                            break;
+                        }
+                    }
+                    if(run==true){
+                        next_options[temp[index]]='';
+                    }
+                }
+                for(key1 in next_options){
+                    $("#level"+index).append('<option value="'+key1+'">'+key1+'</option>');
+                }
+            }
         
             $("#form_inventoryList").delegate("select", "change", function(){//#select_inventoryList
                 if($(this).attr('id')=='select_inventoryList'){
@@ -490,7 +529,11 @@ $('input[name=logpassword]').css('border-color','#ccc');
                 }
                 else{
                     seriesData=showMulti();
-                    console.log(seriesData);
+                    idSelect=$(this).attr('id');
+                    if($("select[name='level']").length-1>idSelect[idSelect.length-1]){
+                        console.log("abc");
+                        resetComboboxChildren(idSelect);
+                    }
                 }
                 
                 
