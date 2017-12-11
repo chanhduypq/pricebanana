@@ -58,8 +58,6 @@ module.exports = function(app){
                 TrackingPrice.findOne({product_id: product_id,user_id:req.session.userId}, function (error, trackingPrice) {
                         if (trackingPrice === null) {
                             ProductItemType.findOne({product_id: product_id}, function (error, productItemType) {
-                            clone_html_for_inventory_list=productItemType.clone_html_for_inventory_list;
-                            clone_html_for_inventory_list = clone_html_for_inventory_list.replace(/\n|\r/g, "");
                                 return res.render('banana', {
                                     price_history:helper.build_price_history(price_histories),
                                     user_email: user_email,
@@ -70,8 +68,7 @@ module.exports = function(app){
                                     item_type_history: productItemType.item_type_history,
                                     item_type_labels:product.item_type_labels,
                                     is_qoo10:is_qoo10,
-                                    is_show_quantity:is_show_quantity,
-                                    clone_html_for_inventory_list: clone_html_for_inventory_list
+                                    is_show_quantity:is_show_quantity
                                 });
 
                             });
@@ -79,8 +76,6 @@ module.exports = function(app){
                         } else {
                             
                             ProductItemType.findOne({product_id: product_id}, function (error, productItemType) {
-                                clone_html_for_inventory_list=productItemType.clone_html_for_inventory_list;
-                                clone_html_for_inventory_list = clone_html_for_inventory_list.replace(/\n|\r/g, "");
                                 tracked_price = trackingPrice.tracked_price;
                                 return res.render('banana', {
                                     price_history:helper.build_price_history(price_histories),
@@ -92,8 +87,7 @@ module.exports = function(app){
                                     item_type_history: productItemType.item_type_history,
                                     item_type_labels:product.item_type_labels,
                                     is_qoo10:is_qoo10,
-                                    is_show_quantity:is_show_quantity,
-                                    clone_html_for_inventory_list: clone_html_for_inventory_list
+                                    is_show_quantity:is_show_quantity
                                 });
 
                             });
@@ -158,12 +152,14 @@ module.exports = function(app){
     app.post('/get_content', function (req, res) {
         res.header("Access-Control-Allow-Origin", "*");
         res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-        
+        console.log('info');
         var url = req.body.url;
         var id = req.body.id;
         var domain = req.body.domain;
         if (domain == 'qoo10') {
+            console.log('info');
             info = helperGetContent.get_info_from_qoo10(req.body.content, req.body.inventoryList);
+            console.log(info);
         } else if (domain == 'lazada') {
             info = helperGetContent.get_info_from_lazada(req.body.content);
         } else if (domain == 'shopee') {
@@ -232,8 +228,7 @@ module.exports = function(app){
                             }
                             var productData = {
                                 product_id: product_id,
-                                item_type_history: JSON.stringify(all),
-                                clone_html_for_inventory_list: req.body.clone_html_for_inventory_list
+                                item_type_history: JSON.stringify(all)
                             };
                             ProductItemType.create(productData, function (error, product) {
                             });

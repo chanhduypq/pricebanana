@@ -12,7 +12,6 @@ $(function () {
     var iframe_node = false;
     var contentFull = $("html").html();
     var inventoryList = '';
-    var clone_html_for_inventory_list='';
     //check qoo10
     if (current_url.indexOf("www.qoo10.sg") > - 1) {
         var asin = $("#gd_no").val();
@@ -23,7 +22,6 @@ $(function () {
         }
         if ($('#ctl00_ctl00_MainContentHolder_MainContentHolderNoForm_OptionInfo').html() != undefined) {
             inventoryList = $("#ctl00_ctl00_MainContentHolder_MainContentHolderNoForm_OptionInfo").html();
-            clone_html_for_inventory_list=$("#ctl00_ctl00_MainContentHolder_MainContentHolderNoForm_OptionInfo").html();
             if($("#OptionAllList").is(":visible")){
                 OptAllVw.GetInventoryList();
                 if (OptAllVw.OptionArray != null && OptAllVw.OptionArray.length > 0) {
@@ -199,8 +197,7 @@ $(function () {
                 url:current_url,
                 domain:domain,
                 content:contentFull,
-                inventoryList:inventoryList,
-                clone_html_for_inventory_list: clone_html_for_inventory_list
+                inventoryList:inventoryList
             },
             success: function (result) {
                 if (result.success) {
