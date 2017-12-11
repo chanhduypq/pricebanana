@@ -283,8 +283,8 @@ $('input[name=logpassword]').css('border-color','#ccc');
             var re = new RegExp(find, 'g');
         
 
-            var item_type_html='';
-            var selectAll='<select id="select_inventoryList"><option value="">';
+            var item_type_html='<table style="width:100%;">';
+            var selectAll='<table style="width:100%;"><tr><td style="width:25%;"><strong>Item Type</strong></td><td style="width:75%;"><select id="select_inventoryList"><option value="">';
             
             
             item_type_history = item_type_history.replace(re, '"');
@@ -300,7 +300,7 @@ $('input[name=logpassword]').css('border-color','#ccc');
                     selectAll+="&nbsp;&nbsp;&nbsp;";
                 }
                 
-                item_type_html+=item_type_labels[i]+' <select id="level'+i+'" name="level"><option value="">Please select</option>';
+                item_type_html+='<tr><td style="width:25%;">&nbsp;&nbsp;&nbsp;'+item_type_labels[i]+'</td><td style="width:75%;"><select style="width:40%;" id="level'+i+'" name="level"><option value="">Please select</option>';
                 if(i==0){
                     options_level0={};
                     for(key in item_type_history){
@@ -312,16 +312,17 @@ $('input[name=logpassword]').css('border-color','#ccc');
                     }
                 }
                 
-                item_type_html+='</select><br>';
+                item_type_html+='</select></td></tr>';
             }
+            item_type_html+='<table>';
             
             selectAll+="</option>";
             for(key in item_type_history){
                 selectAll+='<option value="'+key+'">'+key.split('|').join('&nbsp;&nbsp;&nbsp;')+'</option>';
             }
-            selectAll+='</select><br>';
+            selectAll+='</select></td></tr></table><br><br>';
             if(item_type_labels.length>1){
-                $("#form_inventoryList").html(item_type_html+selectAll);
+                $("#form_inventoryList").html(selectAll+item_type_html);
             }
             else{
                 $("#form_inventoryList").html(item_type_html);
