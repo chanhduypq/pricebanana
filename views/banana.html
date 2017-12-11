@@ -301,14 +301,17 @@ $('input[name=logpassword]').css('border-color','#ccc');
                 }
                 
                 item_type_html+=item_type_labels[i]+' <select id="level'+i+'" name="level"><option value="">Please select</option>';
-                level={};
-                for(key in item_type_history){
-                    temp=key.split('|');
-                    level[temp[i]]='';
+                if(i==0){
+                    options_level0={};
+                    for(key in item_type_history){
+                        temp=key.split('|');
+                        options_level0[temp[i]]='';
+                    }
+                    for(key in options_level0){
+                        item_type_html+='<option>'+key+'</option>';
+                    }
                 }
-                for(key in level){
-                    item_type_html+='<option>'+key+'</option>';
-                }
+                
                 item_type_html+='</select><br>';
             }
             
@@ -319,7 +322,6 @@ $('input[name=logpassword]').css('border-color','#ccc');
             selectAll+='</select><br>';
             
             $("#form_inventoryList").html(item_type_html+selectAll);
-            //$("#form_inventoryList").html(selectAll);
             function showOne(key){
                     var prices=[];
                     if(key!=''){
@@ -405,7 +407,7 @@ $('input[name=logpassword]').css('border-color','#ccc');
                             run=false;
                             break;
                         }
-                        run1=true;
+                        /*run1=true;
                         for(m=0;m<=j;m++){
                             if($(selects[m]).val()!=''&&$(selects[m]).val()!=temp[m]){
                                 run1=false;
@@ -415,7 +417,7 @@ $('input[name=logpassword]').css('border-color','#ccc');
                         if(run1==false){
                             run=false;
                             break;
-                        }
+                        }*/
                         
                     }
                     
@@ -522,7 +524,7 @@ $('input[name=logpassword]').css('border-color','#ccc');
                 }
             }
         
-            $("#form_inventoryList").delegate("select", "change", function(){//#select_inventoryList
+            $("#form_inventoryList").delegate("select", "change", function(){
                 if($(this).attr('id')=='select_inventoryList'){
                     key=$(this).val();
                     seriesData=showOne(key);
@@ -531,14 +533,10 @@ $('input[name=logpassword]').css('border-color','#ccc');
                     seriesData=showMulti();
                     idSelect=$(this).attr('id');
                     if($("select[name='level']").length-1>idSelect[idSelect.length-1]){
-                        console.log("abc");
                         resetComboboxChildren(idSelect);
                     }
                 }
-                
-                
-                
-                
+                $(this).find('option').eq(0).remove();
                 
                     Highcharts.stockChart({
                         chart: {
