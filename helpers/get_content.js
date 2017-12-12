@@ -160,10 +160,9 @@ function get_item_types(inventoryList,sell_price,item_type_labels){
         for(i=0;i<json.length;i++){
             temp=json[i].GoodsAddInfo;
             for(j=0;j<temp.length;j++){
-//                console.log(temp[j].sel_value);
                 key = temp[j].sel_value;
                 quantity = temp[j].remain_cnt;
-                price = parseFloat(temp[j].sel_item_price_oc);
+                price = parseFloat(temp[j].sel_item_price);
                 price = parseFloat(sell_price) + price;
                 price=price.toFixed(2);
                 
