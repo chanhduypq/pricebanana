@@ -33,6 +33,7 @@
 		<li><a href="#tabs-price-history">Price History</a></li>
                 <li><a id="inventoryList" href="#tabs-inventoryList">Inventory list</a></li>
 		<li><a id="tracking_tab" href="#tabs-track-product">Track Product</a></li>
+                <li><a id="login_register_tab" href="#tabs-login_register">Login/Register</a></li>
 	</ul>
 	<div id="tabs-price-history">
 		<div id="chartContainer"></div>
@@ -45,8 +46,27 @@
             </div>
 	</div>
 	<div id="tabs-track-product">
+			
+			<!-- track-price -->
+			<div id="track-price" class="group-price">
+				<form action="" method="post" class="track-product">
+					<p class="price">Price: <span></span></p>
+					<p class="tracking_price">Traking Price: <span></span></p>
+					<p class="discount_price">Sale: <span></span><i></i></p>
+					<div class="price_slider">
+					  <div class="ui-slider-handle custom-handle"></div>
+					</div>
+					<div class="action">
+						<button class="ui-button ui-widget ui-corner-all"><%= label_for_action_tracking %></button>
+					</div>
+				</form>
+			</div>
+			<!-- end track-price -->
+	</div>
+    
+        <div id="tabs-login_register">
 			<!-- acount-form -->
-			<div id="acount-form" style="display:none">
+			<div id="acount-form">
 				<div class="panel panel-login">
 					<div class="panel-heading">
 						<div class="row">
@@ -117,21 +137,7 @@
 				</div>
 			</div>
 			<!-- end acount-form -->
-			<!-- track-price -->
-			<div id="track-price" class="group-price" style="display: none;">
-				<form action="" method="post" class="track-product">
-					<p class="price">Price: <span></span></p>
-					<p class="tracking_price">Traking Price: <span></span></p>
-					<p class="discount_price">Sale: <span></span><i></i></p>
-					<div class="price_slider">
-					  <div class="ui-slider-handle custom-handle"></div>
-					</div>
-					<div class="action">
-						<button class="ui-button ui-widget ui-corner-all"><%= label_for_action_tracking %></button>
-					</div>
-				</form>
-			</div>
-			<!-- end track-price -->
+			
 	</div>
         
     
@@ -225,6 +231,48 @@
                 if($(this).attr('id')=='select_inventoryList'){
                     key=$(this).val();
                     seriesData=showOne(key);
+                    
+                    for (i = 1; i < $("select[name='level']").length; i++) {
+                        $("#level" + i).html('<option value="">Please select</option>');
+                    }
+                    selects=$("select[name='level']");
+                    temp=key.split('|');
+                    
+                    for(i=0;i<temp.length;i++){
+                        $(selects[i]).val(temp[i]);
+                        if(i<temp.length-1){
+                            index=i+1;
+                            next_options = [];
+                            for (key in item_type_history) {
+                                temp1 = key.split('|');
+                                run = true;
+                                for (m = 0; m <= index - 1; m++) {
+                                    if ($("#level" + m).val() != temp1[m]) {
+                                        run = false;
+                                        break;
+                                    }
+                                }
+                                if (run == true) {
+                                    next_options[temp1[index]] = '';
+
+                                }
+                            }
+
+                            ar=[];
+                            for (key in next_options) {
+                                ar.push(key);
+                            }
+                            ar.sort();
+                            for(j=0;j<ar.length;j++){
+                                key=ar[j];
+                                $("#level" + index).append('<option value="' + key + '">' + key + '</option>');
+                            }
+                            
+                            
+                        }
+                        
+                    }
+                    
                 }
                 else{  
                     if(item_type_labels.length==1){
@@ -305,18 +353,11 @@
             var user_email ='<%= user_email %>';
             if(isLogin){
                 $("#user_email").html(user_email).append(' (<a href="/logout/'+domain+'/'+id+'">Logout</a>)');
+                $("#tabs-login_register").remove();
+                $("#login_register_tab").remove();
             }
 		//tab and slider
 		$( "#tabs" ).tabs();
-		$('#tracking_tab').click(function() {
-			if(isLogin == false) {
-				$('#track-price').hide();
-				$('#acount-form').show();
-			} else {
-				$('#acount-form').hide();
-				$('#track-price').show();
-			}
-		});
 
         //Q-Price
         
@@ -355,6 +396,11 @@
 
         $('.ui-button.ui-widget.ui-corner-all').click(function(e) {
             e.preventDefault();
+            if(isLogin==false){
+                $("#login_register_tab").click();
+                $('input[name="logemail"]').focus();
+                return;
+            }
             price = $(".tracking_price span").html();
             price = price.replace("$","");
             price = $.trim(price);
