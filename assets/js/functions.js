@@ -18,6 +18,16 @@ function regist() {
         $('input[name=passwordConf]').css('border-color', 'red');
         checked = false;
     }
+    
+    if(hasJustTracked){
+        price = $(".tracking_price span").html();
+        price = price.replace("$","");
+        price = $.trim(price);
+    }
+    else{
+        price="";
+    }
+    
 
     if (checked) {
         $.ajax({
@@ -28,7 +38,8 @@ function regist() {
                 password: password,
                 passwordConf: passwordConf,
                 is_ajax: true,
-                product_id: domain + '_' + id
+                product_id: domain + '_' + id,
+                price:price
             },
             dataType: 'json',
             success: function (result) {
@@ -61,6 +72,14 @@ function login() {
         checked = false;
     }
     var rememberme = $('input[name=rememberme]').is(":checked");
+    if(hasJustTracked){
+        price = $(".tracking_price span").html();
+        price = price.replace("$","");
+        price = $.trim(price);
+    }
+    else{
+        price="";
+    }
     if (checked) {
         $.ajax({
             type: "POST",
@@ -70,7 +89,8 @@ function login() {
                 logpassword: logpassword,
                 rememberme: rememberme,
                 is_ajax: true,
-                product_id: domain + '_' + id
+                product_id: domain + '_' + id,
+                price:price
             },
             dataType: 'json',
             success: function (result) {

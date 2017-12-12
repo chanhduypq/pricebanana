@@ -21,6 +21,66 @@
         
 	<link rel="stylesheet" type="text/css" href="/css/style.css" />
 
+        <style>
+
+            .view_all{
+                margin-right: 2px;
+                vertical-align: top;
+                text-decoration: none;
+                background-color: #066acd;
+                border-color: #066acd;
+                color: #fff !important;
+                display: inline-block;
+                height: 22px;
+                padding: 0 10px !important;;
+                line-height: 20px;
+                border: 1px solid #d6d6d6;
+                border-radius: 2px !important;;
+                vertical-align: middle;
+                text-decoration: none !important;
+                font-size: 11px;
+                cursor: pointer;
+            }
+            .view_all span{
+                display: inline-block;
+                vertical-align: middle;
+            }
+            .view_all em.ic_lst{
+                font-style: normal;
+                overflow: hidden;
+                display: inline-block;
+                margin-right: 6px;
+                padding-left: 0;
+                width: 10px;
+                height: 10px;
+                vertical-align: middle;
+                background: url(/image/icon_goods.png) -19px -20px no-repeat;
+            }
+            .view-all,.view-all tr,.view-all th,.view-all td{
+                border: 1px solid black;
+            }
+            .view-all th,.view-all td{
+                text-align: center;
+            }
+            .view-all tr.item{
+                cursor: pointer;
+            }
+            .view-all tr.item:hover{
+                background-color: #ccccff;
+            }
+            .view-all{
+                border-collapse: collapse;
+            }
+            .btn_close1{
+                right: -2px;
+                padding: 0 10px;
+                color: #fff !important;
+                text-decoration: none !important;
+                background-color: #6290cf;
+                border-radius: 0 0 3px 3px;
+                cursor: pointer;
+            }
+        </style>
         
 </head>
 <body>
@@ -144,6 +204,7 @@
 </div>
  
  <script>
+     var hasJustTracked=false;
      var isLogin= <%= isLogin %>;
         var href=window.location.href.split('banana/');
         href=href[1];
@@ -183,7 +244,24 @@
             item_type_labels=$.parseJSON(item_type_labels);
             
             if(item_type_labels.length>1){
-                selectAll+='<td style="width:75%;"><select id="select_inventoryList"><option value="">';
+                selectAll+='<td style="width:75%;">'+
+                        '<a class="view_all" id="OptionAllList">'+
+                        '<span><em class="ic_lst"></em>View All<i></i></span>'+
+                        '</a>'+
+                        '<div id="parent" style="display:none;max-height:100px;overflow-y: auto;"><table class="view-all" style="width:100%;"><tr>';
+                for(i=0;i<item_type_labels.length;i++){
+                    selectAll+='<th style="width:30%;">'+item_type_labels[i]+'</th>';
+                }
+                selectAll+='</tr>';
+                for(key in item_type_history){
+                    selectAll+='<tr class="item"><input type="hidden" value="'+key+'"/>';
+                    temp=key.split('|');
+                    for(i=0;i<temp.length;i++){
+                        selectAll+='<td style="width:30%;">'+temp[i]+'</td>';
+                    }
+                    selectAll+='</tr>';
+                }
+                selectAll+='</table></div><div id="parent1" style="display:none;float: right;"><a class="btn_close1" id="a_OptAllVw_closeBTN1">Close</a></div><select id="select_inventoryList" style="display: none;"><option value="">';
             }
             
             for(i=0;i<item_type_labels.length;i++){
@@ -218,7 +296,7 @@
                 selectAll+='</select></td>';
             }
             
-            selectAll+='</tr></table><br><br>';
+            selectAll+='</tr></table><br>';
             
             $("#form_inventoryList").html(selectAll+item_type_html);
             
@@ -226,6 +304,112 @@
                 if($(this).attr('id')!='select_inventoryList'&&$(this).find('option').length==1&&$(this).find('option').eq(0).html()=='Please select'){
                     alert("Please choose the above option first.");
                 }
+            });
+            $("#OptionAllList").click(function(){
+                $("#parent").show(1000);
+                $("#parent1").show(1000);
+            });
+            $("#a_OptAllVw_closeBTN1").click(function(){
+                $("#parent").hide(1000);
+                $("#parent1").hide(1000);
+            });
+            
+            $("#parent tr.item").click(function(){
+                key=$(this).find('input').eq(0).val();
+                seriesData=showOne(key);
+
+                for (i = 1; i < $("select[name='level']").length; i++) {
+                    $("#level" + i).html('<option value="">Please select</option>');
+                }
+                selects=$("select[name='level']");
+                temp=key.split('|');
+
+                for(i=0;i<temp.length;i++){
+                    $(selects[i]).val(temp[i]);
+                    if(i<temp.length-1){
+                        index=i+1;
+                        next_options = [];
+                        for (key in item_type_history) {
+                            temp1 = key.split('|');
+                            run = true;
+                            for (m = 0; m <= index - 1; m++) {
+                                if ($("#level" + m).val() != temp1[m]) {
+                                    run = false;
+                                    break;
+                                }
+                            }
+                            if (run == true) {
+                                next_options[temp1[index]] = '';
+
+                            }
+                        }
+
+                        ar=[];
+                        for (key in next_options) {
+                            ar.push(key);
+                        }
+                        ar.sort();
+                        for(j=0;j<ar.length;j++){
+                            key=ar[j];
+                            $("#level" + index).append('<option value="' + key + '">' + key + '</option>');
+                        }
+
+
+                    }
+
+                }
+                
+                $("#parent").hide(1000);
+                $("#parent1").hide(1000);
+                
+                Highcharts.stockChart({
+                    chart: {
+                            borderColor: 'white',
+                            borderWidth: 1,
+                            renderTo: 'chartContainer-inventoryList',
+                            style: {
+                                    fontFamily: 'Arial,Helvetica,sans-serif'
+                            }
+                    },
+                    rangeSelector: {
+                            selected: 3,
+                            buttonTheme: { width: 50 },
+                            buttons: [
+                                    {type: 'week',count: 1,text: '1w'},
+                                    {type: 'month',count: 1,text: '1m'}, 
+                                    {type: 'month',count: 3,text: '3m'}, 
+                                    {type: 'month',count: 6,text: '6m'}, 
+                                    {type: 'ytd',text: 'YTD'}, 
+                                    {type: 'year',count: 1,text: '1y'}, 
+                                    {type: 'all',text: 'All'}
+                            ]
+                    },
+                    yAxis: {
+                            title: {
+                                    text: label_for_yAxis,
+                                    style: { "color": "#333", "fontSize": "22px" }
+                            }, opposite:false
+                    },
+                    title: {
+                                    text: '<b>'+label_for_yAxis+' History<b>',
+                                    style: { "color": "#333", "fontSize": "30px" }
+                    },
+                    plotOptions: {
+                            line: {
+                                    color: '#ff6347',
+                                    marker: { enabled: false}
+                            }
+                    },
+                    credits: { enabled: false},
+                    navigator: { enabled: false},
+                    scrollbar: { enabled: false},
+                    series: seriesData
+                }, function (chart) {
+                        // apply the date pickers
+                        setTimeout(function () {
+                                $('input.highcharts-range-selector', $('#' + chart.options.chart.renderTo)).datepicker()
+                        }, 0)
+                });
             });
             $("#form_inventoryList").delegate("select", "change", function(){
                 if($(this).attr('id')=='select_inventoryList'){
@@ -396,9 +580,11 @@
 
         $('.ui-button.ui-widget.ui-corner-all').click(function(e) {
             e.preventDefault();
+            hasJustTracked=true;
             if(isLogin==false){
                 $("#login_register_tab").click();
                 $('input[name="logemail"]').focus();
+                
                 return;
             }
             price = $(".tracking_price span").html();
