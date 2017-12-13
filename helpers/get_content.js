@@ -372,6 +372,9 @@ module.exports.get_info_from_tokopedia = function (html) {
     see=nodes[0].innerHTML.replace(/[^0-9\.]+/g, '');
     nodes=dom.getElementsByClassName('item-sold-count');
     sold=nodes[0].innerHTML.replace(/[^0-9\.]+/g, '');
+    if(sold.trim()==''){
+        sold='0';
+    }
     node=dom.getElementById('p-info-minorder');
     booking_min=node.innerHTML.replace(/[^0-9\.]+/g, '');
     
