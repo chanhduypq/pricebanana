@@ -20,68 +20,7 @@
         <script src="/js/functions.js"></script>
         
 	<link rel="stylesheet" type="text/css" href="/css/style.css" />
-
-        <style>
-
-            .view_all{
-                margin-right: 2px;
-                vertical-align: top;
-                text-decoration: none;
-                background-color: #066acd;
-                border-color: #066acd;
-                color: #fff !important;
-                display: inline-block;
-                height: 22px;
-                padding: 0 10px !important;;
-                line-height: 20px;
-                border: 1px solid #d6d6d6;
-                border-radius: 2px !important;;
-                vertical-align: middle;
-                text-decoration: none !important;
-                font-size: 11px;
-                cursor: pointer;
-            }
-            .view_all span{
-                display: inline-block;
-                vertical-align: middle;
-            }
-            .view_all em.ic_lst{
-                font-style: normal;
-                overflow: hidden;
-                display: inline-block;
-                margin-right: 6px;
-                padding-left: 0;
-                width: 10px;
-                height: 10px;
-                vertical-align: middle;
-                background: url(/image/icon_goods.png) -19px -20px no-repeat;
-            }
-            .view-all,.view-all tr,.view-all th,.view-all td{
-                border: 1px solid black;
-            }
-            .view-all th,.view-all td{
-                text-align: center;
-            }
-            .view-all tr.item{
-                cursor: pointer;
-            }
-            .view-all tr.item:hover{
-                background-color: #ccccff;
-            }
-            .view-all{
-                border-collapse: collapse;
-            }
-            .btn_close1{
-                right: -2px;
-                padding: 0 10px;
-                color: #fff !important;
-                text-decoration: none !important;
-                background-color: #6290cf;
-                border-radius: 0 0 3px 3px;
-                cursor: pointer;
-            }
-        </style>
-        
+        <link rel="stylesheet" type="text/css" href="/css/inventory.css" />
 </head>
 <body>
  
@@ -234,8 +173,8 @@
             var find = '&#34;';
             var re = new RegExp(find, 'g');
 
-            var item_type_html='<table style="width:100%;">';
-            var selectAll='<table style="width:100%;"><tr><td style="width:25%;"><strong>Item Type</strong></td>';
+            var item_type_html='<table>';
+            var selectAll='<table><tr><td style="width:25%;"><strong>Item Type</strong></td>';
             
             item_type_history = item_type_history.replace(re, '"');
             item_type_labels = item_type_labels.replace(re, '"');
@@ -248,20 +187,23 @@
                         '<a class="view_all" id="OptionAllList">'+
                         '<span><em class="ic_lst"></em>View All<i></i></span>'+
                         '</a>'+
-                        '<div id="parent" style="display:none;max-height:100px;overflow-y: auto;"><table class="view-all" style="width:100%;"><tr>';
+                        '<div id="div_inventory_list" style="display:none;max-height:100px;overflow-y: auto;"><table class="view-all"><tr>';
+                width=100/parseInt(item_type_labels.length);
+                width=width.toFixed(2);
+                width+="%";
                 for(i=0;i<item_type_labels.length;i++){
-                    selectAll+='<th style="width:30%;">'+item_type_labels[i]+'</th>';
+                    selectAll+='<th style="width:'+width+';">'+item_type_labels[i]+'</th>';
                 }
                 selectAll+='</tr>';
                 for(key in item_type_history){
                     selectAll+='<tr class="item"><input type="hidden" value="'+key+'"/>';
                     temp=key.split('|');
                     for(i=0;i<temp.length;i++){
-                        selectAll+='<td style="width:30%;">'+temp[i]+'</td>';
+                        selectAll+='<td>'+temp[i]+'</td>';
                     }
                     selectAll+='</tr>';
                 }
-                selectAll+='</table></div><div id="parent1" style="display:none;float: right;"><a class="btn_close1" id="a_OptAllVw_closeBTN1">Close</a></div><select id="select_inventoryList" style="display: none;"><option value="">';
+                selectAll+='</table></div><div id="div_close" style="display:none;float: right;"><a class="btn_close" id="a_OptAllVw_closeBTN1">Close</a></div><select id="select_inventoryList" style="display: none;"><option value="">';
             }
             
             for(i=0;i<item_type_labels.length;i++){
@@ -306,25 +248,29 @@
                 }
             });
             $("#OptionAllList").click(function(){
-                $("#parent").show(1000);
-                $("#parent1").show(1000);
+                $("#div_inventory_list").show(1000);
+                $("#div_close").show(1000);
             });
             $("#a_OptAllVw_closeBTN1").click(function(){
-                $("#parent").hide(1000);
-                $("#parent1").hide(1000);
+                $("#div_inventory_list").hide(1000);
+                $("#div_close").hide(1000);
             });
             
-            $("#parent tr.item").click(function(){
+            $("#div_inventory_list tr.item").click(function(){
                 key=$(this).find('input').eq(0).val();
                 seriesData=showOne(key);
 
+                if($("#level0").find('option').eq(0).html()=='Please select'){
+                    $("#level0").find('option').eq(0).remove();
+                }
+                
                 for (i = 1; i < $("select[name='level']").length; i++) {
-                    $("#level" + i).html('<option value="">Please select</option>');
+                    $("#level" + i).html('');
                 }
                 selects=$("select[name='level']");
                 temp=key.split('|');
 
-                for(i=0;i<temp.length;i++){
+                for(i=0;i<selects.length;i++){
                     $(selects[i]).val(temp[i]);
                     if(i<temp.length-1){
                         index=i+1;
@@ -359,57 +305,12 @@
 
                 }
                 
-                $("#parent").hide(1000);
-                $("#parent1").hide(1000);
+                $("#div_inventory_list").hide(1000);
+                $("#div_close").hide(1000);
                 
-                Highcharts.stockChart({
-                    chart: {
-                            borderColor: 'white',
-                            borderWidth: 1,
-                            renderTo: 'chartContainer-inventoryList',
-                            style: {
-                                    fontFamily: 'Arial,Helvetica,sans-serif'
-                            }
-                    },
-                    rangeSelector: {
-                            selected: 3,
-                            buttonTheme: { width: 50 },
-                            buttons: [
-                                    {type: 'week',count: 1,text: '1w'},
-                                    {type: 'month',count: 1,text: '1m'}, 
-                                    {type: 'month',count: 3,text: '3m'}, 
-                                    {type: 'month',count: 6,text: '6m'}, 
-                                    {type: 'ytd',text: 'YTD'}, 
-                                    {type: 'year',count: 1,text: '1y'}, 
-                                    {type: 'all',text: 'All'}
-                            ]
-                    },
-                    yAxis: {
-                            title: {
-                                    text: label_for_yAxis,
-                                    style: { "color": "#333", "fontSize": "22px" }
-                            }, opposite:false
-                    },
-                    title: {
-                                    text: '<b>'+label_for_yAxis+' History<b>',
-                                    style: { "color": "#333", "fontSize": "30px" }
-                    },
-                    plotOptions: {
-                            line: {
-                                    color: '#ff6347',
-                                    marker: { enabled: false}
-                            }
-                    },
-                    credits: { enabled: false},
-                    navigator: { enabled: false},
-                    scrollbar: { enabled: false},
-                    series: seriesData
-                }, function (chart) {
-                        // apply the date pickers
-                        setTimeout(function () {
-                                $('input.highcharts-range-selector', $('#' + chart.options.chart.renderTo)).datepicker()
-                        }, 0)
-                });
+                showChart(label_for_yAxis,label_for_yAxis+' History',seriesData,'chartContainer-inventoryList');
+                
+                
             });
             $("#form_inventoryList").delegate("select", "change", function(){
                 if($(this).attr('id')=='select_inventoryList'){
@@ -417,12 +318,12 @@
                     seriesData=showOne(key);
                     
                     for (i = 1; i < $("select[name='level']").length; i++) {
-                        $("#level" + i).html('<option value="">Please select</option>');
+                        $("#level" + i).html('');
                     }
                     selects=$("select[name='level']");
                     temp=key.split('|');
                     
-                    for(i=0;i<temp.length;i++){
+                    for(i=0;i<selects.length;i++){
                         $(selects[i]).val(temp[i]);
                         if(i<temp.length-1){
                             index=i+1;
@@ -477,55 +378,8 @@
                     $(this).find('option').eq(0).remove();
                 }
                 
+                showChart(label_for_yAxis,label_for_yAxis+' History',seriesData,'chartContainer-inventoryList');
                 
-                Highcharts.stockChart({
-                    chart: {
-                            borderColor: 'white',
-                            borderWidth: 1,
-                            renderTo: 'chartContainer-inventoryList',
-                            style: {
-                                    fontFamily: 'Arial,Helvetica,sans-serif'
-                            }
-                    },
-                    rangeSelector: {
-                            selected: 3,
-                            buttonTheme: { width: 50 },
-                            buttons: [
-                                    {type: 'week',count: 1,text: '1w'},
-                                    {type: 'month',count: 1,text: '1m'}, 
-                                    {type: 'month',count: 3,text: '3m'}, 
-                                    {type: 'month',count: 6,text: '6m'}, 
-                                    {type: 'ytd',text: 'YTD'}, 
-                                    {type: 'year',count: 1,text: '1y'}, 
-                                    {type: 'all',text: 'All'}
-                            ]
-                    },
-                    yAxis: {
-                            title: {
-                                    text: label_for_yAxis,
-                                    style: { "color": "#333", "fontSize": "22px" }
-                            }, opposite:false
-                    },
-                    title: {
-                                    text: '<b>'+label_for_yAxis+' History<b>',
-                                    style: { "color": "#333", "fontSize": "30px" }
-                    },
-                    plotOptions: {
-                            line: {
-                                    color: '#ff6347',
-                                    marker: { enabled: false}
-                            }
-                    },
-                    credits: { enabled: false},
-                    navigator: { enabled: false},
-                    scrollbar: { enabled: false},
-                    series: seriesData
-                }, function (chart) {
-                        // apply the date pickers
-                        setTimeout(function () {
-                                $('input.highcharts-range-selector', $('#' + chart.options.chart.renderTo)).datepicker()
-                        }, 0)
-                });
             });
         }
         else{
@@ -534,14 +388,14 @@
         }
             
         
-            var user_email ='<%= user_email %>';
-            if(isLogin){
-                $("#user_email").html(user_email).append(' (<a href="/logout/'+domain+'/'+id+'">Logout</a>)');
-                $("#tabs-login_register").remove();
-                $("#login_register_tab").remove();
-            }
-		//tab and slider
-		$( "#tabs" ).tabs();
+        var user_email ='<%= user_email %>';
+        if(isLogin){
+            $("#user_email").html(user_email).append(' (<a href="/logout/'+domain+'/'+id+'">Logout</a>)');
+            $("#tabs-login_register").remove();
+            $("#login_register_tab").remove();
+        }
+        //tab and slider
+        $( "#tabs" ).tabs();
 
         //Q-Price
         
@@ -549,20 +403,32 @@
 
         //login
         $('#login-form-link').click(function(e) {
-                $("#login-form").delay(100).fadeIn(100);
+                $("#login-form").fadeIn(100);
                 $("#register-form").fadeOut(100);
                 $("#forgot-form").fadeOut(100);
                 $('.panel-heading a').removeClass('active');
                 $(this).addClass('active');
+                $('input[name="logemail"]').focus();
                 e.preventDefault();
         });
         $('#register-form-link').click(function(e) {
-                $("#register-form").delay(100).fadeIn(100);
+                $("#register-form").fadeIn(100);
                 $("#login-form").fadeOut(100);
                 $("#forgot-form").fadeOut(100);
                 $('.panel-heading a').removeClass('active');
                 $(this).addClass('active');
+                $('input[name="email"]').focus();
                 e.preventDefault();
+        });
+        
+        $('#login_register_tab').click(function(e) {
+            if($("#login-form").is(":visible")){
+                $('input[name="logemail"]').focus();
+            }
+            else{
+                $('input[name="email"]').focus();
+            }
+            
         });
                 
                 
@@ -583,8 +449,7 @@
             hasJustTracked=true;
             if(isLogin==false){
                 $("#login_register_tab").click();
-                $('input[name="logemail"]').focus();
-                
+                $('#login-form-link').click();
                 return;
             }
             price = $(".tracking_price span").html();
@@ -636,49 +501,7 @@
             }
             
         }
-	Highcharts.stockChart({
-		chart: {
-			borderColor: 'white',
-			borderWidth: 1,
-			renderTo: 'chartContainer',
-			style: {
-				fontFamily: 'Arial,Helvetica,sans-serif'
-			}
-		},
-		rangeSelector: {
-			selected: 3,
-			buttonTheme: { width: 50 },
-			buttons: [
-				{type: 'week',count: 1,text: '1w'},
-				{type: 'month',count: 1,text: '1m'}, 
-				{type: 'month',count: 3,text: '3m'}, 
-				{type: 'month',count: 6,text: '6m'}, 
-				{type: 'ytd',text: 'YTD'}, 
-				{type: 'year',count: 1,text: '1y'}, 
-				{type: 'all',text: 'All'}
-			]
-		},
-		yAxis: {
-			title: {
-				text: 'Price',
-				style: { "color": "#333", "fontSize": "22px" }
-			}
-                        , opposite:false
-		},
-		title: {
-				text: '<b>Price History<b>',
-				style: { "color": "#333", "fontSize": "30px" }
-		},
-		plotOptions: {
-			line: {
-				color: '#ff6347',
-				marker: { enabled: false}
-			}
-		},
-		credits: { enabled: false},
-		navigator: { enabled: false},
-		scrollbar: { enabled: false},
-		series: [{
+        seriesData=[{
 				name: 'Price',
 				data: data_price,
 				tooltip: {
@@ -687,13 +510,9 @@
 					shared: true,
 					xDateFormat: '%b %e %Y'
 				}
-			}]
-	}, function (chart) {
-		// apply the date pickers
-		setTimeout(function () {
-			$('input.highcharts-range-selector', $('#' + chart.options.chart.renderTo)).datepicker()
-		}, 0)
-	});
+			}];
+        showChart('Price','Price History',seriesData,'chartContainer');
+	
     
  </script>
 </body>

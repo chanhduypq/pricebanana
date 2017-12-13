@@ -18,16 +18,15 @@ function regist() {
         $('input[name=passwordConf]').css('border-color', 'red');
         checked = false;
     }
-    
-    if(hasJustTracked){
+
+    if (hasJustTracked) {
         price = $(".tracking_price span").html();
-        price = price.replace("$","");
+        price = price.replace("$", "");
         price = $.trim(price);
+    } else {
+        price = "";
     }
-    else{
-        price="";
-    }
-    
+
 
     if (checked) {
         $.ajax({
@@ -39,7 +38,7 @@ function regist() {
                 passwordConf: passwordConf,
                 is_ajax: true,
                 product_id: domain + '_' + id,
-                price:price
+                price: price
             },
             dataType: 'json',
             success: function (result) {
@@ -72,13 +71,12 @@ function login() {
         checked = false;
     }
     var rememberme = $('input[name=rememberme]').is(":checked");
-    if(hasJustTracked){
+    if (hasJustTracked) {
         price = $(".tracking_price span").html();
-        price = price.replace("$","");
+        price = price.replace("$", "");
         price = $.trim(price);
-    }
-    else{
-        price="";
+    } else {
+        price = "";
     }
     if (checked) {
         $.ajax({
@@ -90,7 +88,7 @@ function login() {
                 rememberme: rememberme,
                 is_ajax: true,
                 product_id: domain + '_' + id,
-                price:price
+                price: price
             },
             dataType: 'json',
             success: function (result) {
@@ -313,7 +311,7 @@ function resetComboboxChildren(idSelect) {
     }
     index++;
     next_options = [];
-    
+
     for (key in item_type_history) {
         temp = key.split('|');
         run = true;
@@ -325,17 +323,17 @@ function resetComboboxChildren(idSelect) {
         }
         if (run == true) {
             next_options[temp[index]] = '';
-            
+
         }
     }
-    
-    ar=[];
+
+    ar = [];
     for (key in next_options) {
         ar.push(key);
     }
     ar.sort();
-    for(i=0;i<ar.length;i++){
-        key=ar[i];
+    for (i = 0; i < ar.length; i++) {
+        key = ar[i];
         $("#level" + index).append('<option value="' + key + '">' + key + '</option>');
     }
 }
@@ -411,4 +409,55 @@ function getColor(v) {
         g = 255;
     }
     return "rgb(" + r + "," + g + ",0)";
+}
+
+function showChart(label_for_yAxis,label_for_chart,seriesData,elementId_for_render) {
+    Highcharts.stockChart({
+        chart: {
+            borderColor: 'white',
+            borderWidth: 1,
+            renderTo: elementId_for_render,
+            style: {
+                fontFamily: 'Arial,Helvetica,sans-serif'
+            }
+        },
+        rangeSelector: {
+            selected: 3,
+            buttonTheme: {width: 50},
+            buttons: [
+                {type: 'week', count: 1, text: '1w'},
+                {type: 'month', count: 1, text: '1m'},
+                {type: 'month', count: 3, text: '3m'},
+                {type: 'month', count: 6, text: '6m'},
+                {type: 'ytd', text: 'YTD'},
+                {type: 'year', count: 1, text: '1y'},
+                {type: 'all', text: 'All'}
+            ]
+        },
+        yAxis: {
+            title: {
+                text: label_for_yAxis,
+                style: {"color": "#333", "fontSize": "22px"}
+            }, opposite: false
+        },
+        title: {
+            text: '<b>' + label_for_chart + '</b>',
+            style: {"color": "#333", "fontSize": "30px"}
+        },
+        plotOptions: {
+            line: {
+                color: '#ff6347',
+                marker: {enabled: false}
+            }
+        },
+        credits: {enabled: false},
+        navigator: {enabled: false},
+        scrollbar: {enabled: false},
+        series: seriesData
+    }, function (chart) {
+        // apply the date pickers
+        setTimeout(function () {
+            $('input.highcharts-range-selector', $('#' + chart.options.chart.renderTo)).datepicker()
+        }, 0)
+    });
 }

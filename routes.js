@@ -31,7 +31,7 @@ module.exports = function(app){
             var is_qoo10 = '0';
         }
         
-        if (req.session.hasOwnProperty("userEmail") && req.session.is24x7=='1') {
+        if (req.session.hasOwnProperty("is24x7") && req.session.is24x7=='1') {
             var is_show_quantity = '1';
         } else {
             var is_show_quantity = '0';
@@ -39,6 +39,7 @@ module.exports = function(app){
         
         Product.findOne({product_id: product_id}, function (error, product) {  
             if (product === null) {
+                var item_types = {};
                 return res.render('banana', {
                                 price_history:[],
                                 user_email: user_email,
@@ -46,6 +47,8 @@ module.exports = function(app){
                                 tracked_price: 0,
                                 isLogin: req.session.hasOwnProperty("userId"),
                                 label_for_action_tracking: 'Start tracking',
+                                item_type_history: item_types,
+                                item_type_labels:null,
                                 is_qoo10:is_qoo10,
                                 is_show_quantity:is_show_quantity
                             });
@@ -162,8 +165,6 @@ module.exports = function(app){
         } else if (domain == 'shopee') {
             info = helperGetContent.get_info_from_shopee(req.body.content);
         }
-
-
 
         var data = {
             domain: domain,

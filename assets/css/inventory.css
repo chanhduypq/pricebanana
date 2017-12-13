@@ -1,0 +1,61 @@
+.view_all{
+    margin-right: 2px;
+    vertical-align: top;
+    text-decoration: none;
+    background-color: #066acd;
+    border-color: #066acd;
+    color: #fff !important;
+    display: inline-block;
+    height: 22px;
+    padding: 0 10px !important;;
+    line-height: 20px;
+    border: 1px solid #d6d6d6;
+    border-radius: 2px !important;;
+    vertical-align: middle;
+    text-decoration: none !important;
+    font-size: 11px;
+    cursor: pointer;
+}
+.view_all span{
+    display: inline-block;
+    vertical-align: middle;
+}
+.view_all em.ic_lst{
+    font-style: normal;
+    overflow: hidden;
+    display: inline-block;
+    margin-right: 6px;
+    padding-left: 0;
+    width: 10px;
+    height: 10px;
+    vertical-align: middle;
+    background: url(../image/icon_goods.png) -19px -20px no-repeat;
+}
+.view-all,.view-all tr,.view-all th,.view-all td{
+    border: 1px solid black;
+}
+.view-all th,.view-all td{
+    text-align: center;
+}
+.view-all tr.item{
+    cursor: pointer;
+}
+.view-all tr.item:hover{
+    background-color: #ccccff;
+}
+.view-all{
+    border-collapse: collapse;
+}
+.btn_close{
+    right: -2px;
+    padding: 0 10px;
+    color: #fff !important;
+    text-decoration: none !important;
+    background-color: #6290cf;
+    border-radius: 0 0 3px 3px;
+    cursor: pointer;
+}
+
+table{
+    width: 100%;
+}
