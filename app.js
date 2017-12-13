@@ -83,4 +83,32 @@ app.use(function (err, req, res, next) {
   //   console.log('Server is running on port 3000');
 // });
 
+//var CronJob = require('cron').CronJob;
+//new CronJob('* * * * * *', function() {
+//  console.log('You will see this message every second');
+//}, null, true, 'America/Los_Angeles');
+
+//Seconds: 0-59
+//Minutes: 0-59
+//Hours: 0-23
+//Day of Month: 1-31
+//Months: 0-11 (Jan-Dec)
+//Day of Week: 0-6 (Sun-Sat)
+
+var times=0;
+var CronJob = require('cron').CronJob;
+var job = new CronJob({
+  cronTime: '00 * * * * *',
+  onTick: function() {
+    times++;
+    console.log("lan thu "+times);
+    if(times==5){
+        this.stop();
+    }
+  },
+  start: false,
+  timeZone: 'Asia/Ho_Chi_Minh'
+});
+job.start();
+
 https.createServer(options, app).listen(443);
