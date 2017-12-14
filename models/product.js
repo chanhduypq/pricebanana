@@ -16,7 +16,7 @@ var ProductSchema = new mongoose.Schema({
         type: Date
     },
     current_price: {
-        type: String
+        type: Number
     },
     item_type_labels: {
         type: String

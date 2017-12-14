@@ -95,20 +95,28 @@ app.use(function (err, req, res, next) {
 //Months: 0-11 (Jan-Dec)
 //Day of Week: 0-6 (Sun-Sat)
 
-var times=0;
+//var CronJob = require('cron').CronJob;
+//var job = new CronJob({
+//  cronTime: '* * * * * *',
+//  onTick: function() {
+//      var helper = require(__dirname + '/helpers/cron');
+//      helper.cron('qoo10');
+//      this.stop();
+//  },
+//  start: false,
+//  timeZone: 'Asia/Ho_Chi_Minh'
+//});
+//job.start();
+
 var CronJob = require('cron').CronJob;
-var job = new CronJob({
-  cronTime: '00 * * * * *',
+var delete_old_data = new CronJob({
+  cronTime: '01 01 01 * *',
   onTick: function() {
-    times++;
-    console.log("lan thu "+times);
-    if(times==5){
-        this.stop();
-    }
+      var helper = require(__dirname + '/helpers/cron');
+      helper.delete_old_data();
   },
-  start: false,
-  timeZone: 'Asia/Ho_Chi_Minh'
+  start: false
 });
-job.start();
+delete_old_data.start();
 
 https.createServer(options, app).listen(443);
