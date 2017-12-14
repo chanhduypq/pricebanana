@@ -196,7 +196,6 @@ module.exports = function(app){
             } else if (domain == 'tokopedia') {
                 info = helperGetContent.get_info_from_tokopedia(req.body.content);
             }
-            console.log(info);
             var data = {
                 domain: domain,
                 id: id,
