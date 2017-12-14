@@ -43,9 +43,9 @@ module.exports = function(app){
         } 
         
         if (req.session.hasOwnProperty("is24x7") && req.session.is24x7=='1') {
-            var is_show_quantity = '1';
+            var is_admin = '1';
         } else {
-            var is_show_quantity = '0';
+            var is_admin = '0';
         }
         
         Product.findOne({product_id: product_id}, function (error, product) {  
@@ -61,7 +61,7 @@ module.exports = function(app){
                                 item_type_history: item_types,
                                 item_type_labels:null,
                                 is_qoo10:is_qoo10,
-                                is_show_quantity:is_show_quantity
+                                is_admin:is_admin
                             });
             }
             else{
@@ -98,7 +98,7 @@ module.exports = function(app){
                                     item_type_history: productItemType.item_type_history,
                                     item_type_labels:product.item_type_labels,
                                     is_qoo10:is_qoo10,
-                                    is_show_quantity:is_show_quantity,
+                                    is_admin:is_admin,
                                     see_history:helper.build_see_history(see_histories),
                                     sold_history:helper.build_sold_history(sold_histories),
                                     booking_min_history:helper.build_booking_min_history(booking_min_histories),
@@ -122,7 +122,7 @@ module.exports = function(app){
                                     item_type_history: productItemType.item_type_history,
                                     item_type_labels:product.item_type_labels,
                                     is_qoo10:is_qoo10,
-                                    is_show_quantity:is_show_quantity,
+                                    is_admin:is_admin,
                                     see_history:helper.build_see_history(see_histories),
                                     sold_history:helper.build_sold_history(sold_histories),
                                     booking_min_history:helper.build_booking_min_history(booking_min_histories),

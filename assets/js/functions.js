@@ -142,7 +142,7 @@ function showOneTokopedia(key) {
 
         }
     }
-    if (is_show_quantity == '1') {
+    if (is_admin == '1') {
         var data_quantity = [];
         if (key != '') {
             data = item_type_history[key];
@@ -209,7 +209,7 @@ function showOne(key) {
 
         }
     }
-    if (is_show_quantity == '1') {
+    if (is_admin == '1') {
         var data_quantity = [];
         if (key != '') {
             data = item_type_history[key];
@@ -305,7 +305,7 @@ function showMulti() {
                 prices.push([date, price]);
 
             }
-            if (is_show_quantity == '1') {
+            if (is_admin == '1') {
                 var data_quantity = [];
                 if (key != '') {
                     data = item_type_history[key];

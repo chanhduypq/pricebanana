@@ -159,8 +159,8 @@
         var reviews_history='<%= reviews_history %>';
         var discussion_history='<%= discussion_history %>';
         
-        is_show_quantity= '<%= is_show_quantity %>';
-        if(is_show_quantity=='1'){
+        is_admin= '<%= is_admin %>';
+        if(is_admin=='1'){
             label_for_yAxis='Price - Quantity';
         }
         else{
@@ -390,7 +390,7 @@
             
         }
         
-        if(is_show_quantity=='1'){
+        if(is_admin=='1'){
             $("#history").html('History');
             seriesData = [{
                     name: 'See',
