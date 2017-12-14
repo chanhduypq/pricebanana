@@ -351,7 +351,6 @@ module.exports.get_info_from_tokopedia = function (html) {
     }  
     item_type_labels=JSON.stringify(item_type_labels);
     
-    
     var inventoryListOther=dom.getElementById('inventoryListOther');
     if(inventoryListOther!=null){
         json = JSON.parse(inventoryListOther.innerHTML);
@@ -378,12 +377,21 @@ module.exports.get_info_from_tokopedia = function (html) {
     
     node=dom.getElementById('p-nav-review');
     spans=node.getElementsByTagName('span');
-    reviews=spans[0].innerHTML.replace(/[^0-9\.]+/g, '');
+    if(spans.length>0){
+        reviews=spans[0].innerHTML.replace(/[^0-9\.]+/g, '');
+    }
+    else{
+        reviews='0';
+    }
     
     node=dom.getElementById('p-nav-talk');
     spans=node.getElementsByTagName('span');
-    discussion=spans[0].innerHTML.replace(/[^0-9\.]+/g, '');
-    
+    if(spans.length>0){
+        discussion=spans[0].innerHTML.replace(/[^0-9\.]+/g, '');
+    }
+    else{
+        discussion='0';
+    }
     
     return {reviews: reviews,discussion: discussion,see: see,sold: sold,sell_price: sell_price,booking_min: booking_min,retail_price: retail_price, time_sell_price: time_sell_price,item_types:item_types,item_type_labels:item_type_labels};
 };

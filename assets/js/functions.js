@@ -129,6 +129,73 @@ function showTrackProductTab(result, logemail, current_price) {
     discount_price_percent.text(' (' + percent + '%)');
 }
 
+function showOneTokopedia(key) {
+    var prices = [];
+    if (key != '') {
+        data = item_type_history[key];
+        for (i = 0; i < data.length; i++) {
+
+            date = new Date(data[i]['date']).getTime();
+            date = parseFloat(date);
+            price = parseFloat(data[i]['price']);
+            prices.push([date, price]);
+
+        }
+    }
+    if (is_show_quantity == '1') {
+        var data_quantity = [];
+        if (key != '') {
+            data = item_type_history[key];
+            for (i = 0; i < data.length; i++) {
+
+                date = new Date(data[i]['date']).getTime();
+                date = parseFloat(date);
+                quantity = parseFloat(data[i]['quantity']);
+                data_quantity.push([date, quantity]);
+
+            }
+        }
+
+        seriesData = [{
+                name: 'Price',
+                data: prices,
+                tooltip: {
+                    valueDecimals: 0,
+                    pointFormat: '{series.name}: <b>Rp {point.y}</b><br/>',
+                    shared: true,
+                    xDateFormat: '%b %e %Y'
+                },
+                color: 'blue'
+            },
+            {
+                name: 'Quantity',
+                data: data_quantity,
+                tooltip: {
+                    valueDecimals: 0,
+                    pointFormat: '{series.name}: <b>{point.y}</b><br/>',
+                    shared: true,
+                    xDateFormat: '%b %e %Y'
+                }
+            }
+        ];
+    } else {
+        seriesData = [{
+                name: 'Price',
+                data: prices,
+                tooltip: {
+                    valueDecimals: 0,
+                    pointFormat: '{series.name}: <b>Rp {point.y}</b><br/>',
+                    shared: true,
+                    xDateFormat: '%b %e %Y'
+                },
+                color: 'blue'
+            }
+        ];
+    }
+
+    return seriesData;
+}
+
 function showOne(key) {
     var prices = [];
     if (key != '') {
