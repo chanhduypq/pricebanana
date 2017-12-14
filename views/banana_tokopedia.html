@@ -201,7 +201,7 @@
             
             $("#form_inventoryList").delegate("select", "change", function(){
                 key=$(this).val();
-                seriesData=showOneTokopedia(key);
+                seriesData=getSeriesData(key);
                 
                 if($(this).find('option').eq(0).html()=='Please select'){
                     $(this).find('option').eq(0).remove();

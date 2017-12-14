@@ -1,5 +1,5 @@
 
-function showOne(key) {
+function getSeriesData(key) {
     var prices = [];
     if (key != '') {
         data = item_type_history[key];
@@ -66,7 +66,7 @@ function showOne(key) {
     return seriesData;
 }
 
-function showMulti() {
+function getMultiSeriesData() {
     seriesDataAll = [];
     options = $("#select_inventoryList option");
     selects = $("select[name='level']");

@@ -258,7 +258,7 @@
             
             $("#div_inventory_list tr.item").click(function(){
                 key=$(this).find('input').eq(0).val();
-                seriesData=showOne(key);
+                seriesData=getSeriesData(key);
 
                 if($("#level0").find('option').eq(0).html()=='Please select'){
                     $("#level0").find('option').eq(0).remove();
@@ -369,7 +369,7 @@
                         if($("select[name='level']").length-1>idSelect[idSelect.length-1]){
                             resetComboboxChildren(idSelect);
                         }
-                        seriesData=showMulti();
+                        seriesData=getMultiSeriesData();
                     }
                     
                     

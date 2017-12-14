@@ -1,4 +1,4 @@
-function showOneTokopedia(key) {
+function getSeriesData(key) {
     var prices = [];
     if (key != '') {
         data = item_type_history[key];
