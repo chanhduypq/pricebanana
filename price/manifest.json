@@ -2,7 +2,7 @@
     "name": "Price Tracker",
     "manifest_version": 2,
     "version": "1.0",
-    "description": "Add price history chart and Tracking price on Qoo10 site.",
+    "description": "Add price history chart and Tracking price.",
     "icons": {
         "128": "img/icon-128.png",
         "48": "img/icon-48.png",

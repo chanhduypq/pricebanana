@@ -93,11 +93,21 @@ module.exports = function(app){
                     var discussion_history = '';
                 }
                 var price_histories = JSON.parse(product.price_history);
-                var see_histories = JSON.parse(product.see_history);
-                var sold_histories = JSON.parse(product.sold_history);
-                var booking_min_histories = JSON.parse(product.booking_min_history);
-                var reviews_histories = JSON.parse(product.reviews_history);
-                var discussion_histories = JSON.parse(product.discussion_history);
+                if (domain == 'tokopedia') {
+                    var see_histories = JSON.parse(product.see_history);
+                    var sold_histories = JSON.parse(product.sold_history);
+                    var booking_min_histories = JSON.parse(product.booking_min_history);
+                    var reviews_histories = JSON.parse(product.reviews_history);
+                    var discussion_histories = JSON.parse(product.discussion_history);
+                }
+                else{
+                    var see_histories = null;
+                    var sold_histories = null;
+                    var booking_min_histories = null;
+                    var reviews_histories = null;
+                    var discussion_histories = null;
+                }
+                
                 var current_price = product.current_price;
                 var tracked_price = current_price;
                 
@@ -141,11 +151,11 @@ module.exports = function(app){
                                     is_qoo10:is_qoo10,
                                     is_show_quantity:is_show_quantity,
                                     other_price_history:other_price_history,
-                                    see_history:see_history,
-                                    sold_history:sold_history,
-                                    booking_min_history:booking_min_history,
-                                    reviews_history:reviews_history,
-                                    discussion_history:discussion_history
+                                    see_history:helper.build_see_history(see_histories),
+                                    sold_history:helper.build_sold_history(sold_histories),
+                                    booking_min_history:helper.build_booking_min_history(booking_min_histories),
+                                    reviews_history:helper.build_reviews_history(reviews_histories),
+                                    discussion_history:helper.build_discussion_history(discussion_histories)
                                 });
 
                             });

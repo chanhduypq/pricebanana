@@ -334,7 +334,8 @@ module.exports.get_info_from_tokopedia = function (html) {
         product_pricetag = product_pricetag[0];
         spans=product_pricetag.getElementsByTagName('span');
         if (spans.length>1) {
-            sell_price=spans[1].innerHTML;
+            sell_price=spans[1].innerHTML.replace('.', '');
+            sell_price=sell_price.replace('.', '');
         }
         
     }
