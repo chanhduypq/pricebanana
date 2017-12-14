@@ -159,7 +159,6 @@
         var reviews_history='<%= reviews_history %>';
         var discussion_history='<%= discussion_history %>';
         
-        is_qoo10= '<%= is_qoo10 %>';
         is_show_quantity= '<%= is_show_quantity %>';
         if(is_show_quantity=='1'){
             label_for_yAxis='Price - Quantity';
@@ -174,7 +173,7 @@
 	$( function() {
         
         
-        if(is_qoo10=='1'&&item_type_history!=''&&item_type_history!='{}'){
+        if(item_type_history!=''&&item_type_history!='{}'){
             var find = '&#34;';
             var re = new RegExp(find, 'g');
 

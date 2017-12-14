@@ -25,7 +25,7 @@ module.exports = function(app){
             var user_email = '';
         }
         
-        if (domain == 'qoo10'||domain == 'tokopedia') {
+        if (domain == 'qoo10') {
             var is_qoo10 = '1';
         } else {
             var is_qoo10 = '0';
