@@ -25,12 +25,6 @@ module.exports = function(app){
             var user_email = '';
         }
         
-        if (domain == 'qoo10') {
-            var is_qoo10 = '1';
-        } else {
-            var is_qoo10 = '0';
-        }
-        
         
         if (domain == 'tokopedia') {
             render_file = 'banana_tokopedia';
@@ -60,7 +54,6 @@ module.exports = function(app){
                                 label_for_action_tracking: 'Start tracking',
                                 item_type_history: item_types,
                                 item_type_labels:null,
-                                is_qoo10:is_qoo10,
                                 is_admin:is_admin
                             });
             }
@@ -97,7 +90,6 @@ module.exports = function(app){
                                     label_for_action_tracking: 'Start tracking',
                                     item_type_history: productItemType.item_type_history,
                                     item_type_labels:product.item_type_labels,
-                                    is_qoo10:is_qoo10,
                                     is_admin:is_admin,
                                     see_history:helper.build_see_history(see_histories),
                                     sold_history:helper.build_sold_history(sold_histories),
@@ -121,7 +113,6 @@ module.exports = function(app){
                                     label_for_action_tracking: 'Update tracking',
                                     item_type_history: productItemType.item_type_history,
                                     item_type_labels:product.item_type_labels,
-                                    is_qoo10:is_qoo10,
                                     is_admin:is_admin,
                                     see_history:helper.build_see_history(see_histories),
                                     sold_history:helper.build_sold_history(sold_histories),
