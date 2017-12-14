@@ -142,44 +142,8 @@ function showOneTokopedia(key) {
 
         }
     }
-    if (is_admin == '1') {
-        var data_quantity = [];
-        if (key != '') {
-            data = item_type_history[key];
-            for (i = 0; i < data.length; i++) {
-
-                date = new Date(data[i]['date']).getTime();
-                date = parseFloat(date);
-                quantity = parseFloat(data[i]['quantity']);
-                data_quantity.push([date, quantity]);
-
-            }
-        }
-
-        seriesData = [{
-                name: 'Price',
-                data: prices,
-                tooltip: {
-                    valueDecimals: 0,
-                    pointFormat: '{series.name}: <b>Rp {point.y}</b><br/>',
-                    shared: true,
-                    xDateFormat: '%b %e %Y'
-                },
-                color: 'blue'
-            },
-            {
-                name: 'Quantity',
-                data: data_quantity,
-                tooltip: {
-                    valueDecimals: 0,
-                    pointFormat: '{series.name}: <b>{point.y}</b><br/>',
-                    shared: true,
-                    xDateFormat: '%b %e %Y'
-                }
-            }
-        ];
-    } else {
-        seriesData = [{
+    
+    seriesData = [{
                 name: 'Price',
                 data: prices,
                 tooltip: {
@@ -191,7 +155,6 @@ function showOneTokopedia(key) {
                 color: 'blue'
             }
         ];
-    }
 
     return seriesData;
 }
