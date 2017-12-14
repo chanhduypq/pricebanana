@@ -12,10 +12,6 @@ var ProductSchema = new mongoose.Schema({
         type: String,
         trim: true
     },
-    other_price_history: {
-        type: String,
-        trim: true
-    },
     see_history: {
         type: String,
         trim: true

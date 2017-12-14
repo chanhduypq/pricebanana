@@ -57,16 +57,10 @@ module.exports = function(app){
                                 item_type_history: item_types,
                                 item_type_labels:null,
                                 is_qoo10:is_qoo10,
-                                is_show_quantity:is_show_quantity,
-                                other_price_history:''
+                                is_show_quantity:is_show_quantity
                             });
             }
             else{
-                if (product.other_price_history != undefined && product.other_price_history != 'undefined') {
-                    var other_price_history = product.other_price_history;
-                } else {
-                    var other_price_history = '';
-                }
                 if (product.see_history != undefined && product.see_history != 'undefined') {
                     var see_history = product.see_history;
                 } else {
@@ -125,7 +119,6 @@ module.exports = function(app){
                                     item_type_labels:product.item_type_labels,
                                     is_qoo10:is_qoo10,
                                     is_show_quantity:is_show_quantity,
-                                    other_price_history:other_price_history,
                                     see_history:helper.build_see_history(see_histories),
                                     sold_history:helper.build_sold_history(sold_histories),
                                     booking_min_history:helper.build_booking_min_history(booking_min_histories),
@@ -150,7 +143,6 @@ module.exports = function(app){
                                     item_type_labels:product.item_type_labels,
                                     is_qoo10:is_qoo10,
                                     is_show_quantity:is_show_quantity,
-                                    other_price_history:other_price_history,
                                     see_history:helper.build_see_history(see_histories),
                                     sold_history:helper.build_sold_history(sold_histories),
                                     booking_min_history:helper.build_booking_min_history(booking_min_histories),
@@ -254,10 +246,6 @@ module.exports = function(app){
                                 { date: today, price: info.sell_price}
                             ];   
                             if (domain == 'tokopedia') {
-                                var other_price_histories = [
-                                    { date: today, other_price: info.other_price}
-                                ];  
-                                other_price_histories = JSON.stringify(other_price_histories);
                                 
                                 var see_histories = [
                                     { date: today, see: info.see}
@@ -282,7 +270,6 @@ module.exports = function(app){
                                 item_type_labels: info.item_type_labels
                             };
                             if (domain == 'tokopedia') {
-                                productData['other_price_history'] = other_price_histories;
                                 productData['see_history'] = JSON.stringify(see_histories);
                                 productData['sold_history'] = JSON.stringify(sold_histories);
                                 productData['booking_min_history'] = JSON.stringify(booking_min_histories);
@@ -311,19 +298,6 @@ module.exports = function(app){
                             current_price=price_history[price_history.length-1].price;
                             
                             if (domain == 'tokopedia') {
-                                var other_price_histories = JSON.parse(product.other_price_history);
-                                find = false;
-                                for(var i=0; i<other_price_histories.length;i++) {
-                                    if(other_price_histories[i].date == today) {
-                                        other_price_histories[i].other_price = info.other_price;
-                                        find = true;
-                                        break;
-                                    }
-                                }
-                                if(!find) {
-                                    other_price_histories.push({date: today, other_price: info.other_price});
-                                }
-                                other_price_histories=helper.sort_price_history(other_price_histories);
                                 
                                 var see_histories = JSON.parse(product.see_history);
                                 var sold_histories = JSON.parse(product.sold_history);
@@ -400,11 +374,11 @@ module.exports = function(app){
                             helperGetContent.send_mail_for_tracking_price_fixed(product_id,info.sell_price);
 
                             if (domain == 'tokopedia') {
-                                Product.findOneAndUpdate({ "_id" : product._id }, {reviews_history: JSON.stringify(reviews_history),discussion_history: JSON.stringify(discussion_history),price_history: JSON.stringify(price_history),see_history: JSON.stringify(see_history),sold_history: JSON.stringify(sold_history),booking_min_history: JSON.stringify(booking_min_history),other_price_history: JSON.stringify(other_price_histories),"current_price":current_price}, function (err, product) {
+                                Product.findOneAndUpdate({ "_id" : product._id }, {reviews_history: JSON.stringify(reviews_history),discussion_history: JSON.stringify(discussion_history),price_history: JSON.stringify(price_history),see_history: JSON.stringify(see_history),sold_history: JSON.stringify(sold_history),booking_min_history: JSON.stringify(booking_min_history),"current_price":current_price}, function (err, product) {
                                 });
                             }
                             else{
-                                Product.findOneAndUpdate({ "_id" : product._id }, {price_history: JSON.stringify(price_history),other_price_history: JSON.stringify(other_price_histories),"current_price":current_price}, function (err, product) {
+                                Product.findOneAndUpdate({ "_id" : product._id }, {price_history: JSON.stringify(price_history),"current_price":current_price}, function (err, product) {
                                 });
                             }
                             

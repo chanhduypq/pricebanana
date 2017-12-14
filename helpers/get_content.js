@@ -319,7 +319,6 @@ module.exports.get_info_from_tokopedia = function (html) {
     var time_sell_price = null;
     var item_types = {};
     var item_type_labels =[];
-    var other_price={};
     var see = null;
     var sold = null;
     var booking_min = null;
@@ -345,14 +344,12 @@ module.exports.get_info_from_tokopedia = function (html) {
     quantities=ul.getElementsByClassName('product-ratingstat_quantity');
     prices=ul.getElementsByClassName('bold');
     for(i=0;i<quantities.length;i++){
-        other_price[quantities[i].innerHTML]=prices[i].innerHTML;
         item_type_labels.push(quantities[i].innerHTML);
         price=prices[i].innerHTML;
         price=price.replace(/[^0-9\.]+/g, '');
         item_types[quantities[i].innerHTML]={price:price};
     }  
     item_type_labels=JSON.stringify(item_type_labels);
-    other_price=JSON.stringify(other_price);
     
     
     var inventoryListOther=dom.getElementById('inventoryListOther');
@@ -388,7 +385,7 @@ module.exports.get_info_from_tokopedia = function (html) {
     discussion=spans[0].innerHTML.replace(/[^0-9\.]+/g, '');
     
     
-    return {reviews: reviews,discussion: discussion,see: see,sold: sold,sell_price: sell_price,booking_min: booking_min,retail_price: retail_price, time_sell_price: time_sell_price,item_types:item_types,item_type_labels:item_type_labels,other_price:other_price};
+    return {reviews: reviews,discussion: discussion,see: see,sold: sold,sell_price: sell_price,booking_min: booking_min,retail_price: retail_price, time_sell_price: time_sell_price,item_types:item_types,item_type_labels:item_type_labels};
 };
 
 module.exports.send_mail_for_tracking_price_fixed = function (product_id, sell_price) {
