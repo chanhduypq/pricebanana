@@ -12,6 +12,30 @@ var ProductSchema = new mongoose.Schema({
         type: String,
         trim: true
     },
+    other_price_history: {
+        type: String,
+        trim: true
+    },
+    see_history: {
+        type: String,
+        trim: true
+    },
+    sold_history: {
+        type: String,
+        trim: true
+    },
+    booking_min_history: {
+        type: String,
+        trim: true
+    },
+    reviews_history: {
+        type: String,
+        trim: true
+    },
+    discussion_history: {
+        type: String,
+        trim: true
+    },
     createdDate: {
         type: Date
     },

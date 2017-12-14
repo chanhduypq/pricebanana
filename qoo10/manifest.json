@@ -1,5 +1,5 @@
 {
-    "name": "Qoo10 Price Tracker",
+    "name": "Price Tracker",
     "manifest_version": 2,
     "version": "1.0",
     "description": "Add price history chart and Tracking price on Qoo10 site.",
@@ -16,7 +16,8 @@
             "*://*.qoo10.sg/item/*",
             "*://*.qoo10.sg/Goods/*",
             "*://*.shopee.sg/*",
-            "*://*.lazada.sg/*"
+            "*://*.lazada.sg/*",
+            "*://*.tokopedia.com/*"
         ],
         "all_frames": true,
         "run_at": "document_end"
@@ -25,6 +26,7 @@
             "*://*.qoo10.sg/*",
             "*://*.shopee.sg/*",
             "*://*.lazada.sg/*",
+            "*://*.tokopedia.com/*",
             "*://*.pricebanana.com/*"
     ]
 }

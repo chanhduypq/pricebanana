@@ -187,6 +187,12 @@ $(function () {
             iframe_node = '#prodinfo';
         }
     }
+    if (current_url.indexOf("www.tokopedia.com") > - 1) {
+        product_id = $("#product-id").val();
+        domain = 'tokopedia';
+        iframe_node = '#review-summary-container';
+        contentFull+=$(".span7.product-content-holder").html();
+    }
     //check march domain to send full page to server by ajax
     if (domain != false && domain != 'shopee' && product_id != false && iframe_node != false){
         $.ajax({
@@ -204,7 +210,13 @@ $(function () {
             },
             success: function (result) {
                 if (result.success) {
-                    $(iframe_node).after('<div id="pricebanana_ctn"><iframe src="'+url+'/banana/' + domain + '/' + product_id + '"></iframe></div>');
+                    if(domain!='tokopedia'){
+                        $(iframe_node).after('<div id="pricebanana_ctn"><iframe src="'+url+'/banana/' + domain + '/' + product_id + '"></iframe></div>');
+                    }
+                    else{
+                        $(iframe_node).before('<div id="pricebanana_ctn"><iframe src="'+url+'/banana/' + domain + '/' + product_id + '"></iframe></div>');
+                    }
+                    
                 }
             },
             error: function (xhr, status, error) {

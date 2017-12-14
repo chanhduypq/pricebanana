@@ -55,6 +55,81 @@ module.exports.build_price_history = function(price_histories) {
     return result;
 };
 
+module.exports.build_see_history = function(price_histories) {
+    
+    var result = '';
+    if(price_histories == '' || typeof(price_histories) == 'undefined' || price_histories == null) {
+        return result;
+    }
+    for(var i=0; i<price_histories.length-1;i++) {
+        var price = price_histories[i];
+        result += new Date(price.date).getTime()+'-'+price.see+'_';
+    }
+    price = price_histories[price_histories.length-1];
+    result += new Date(price.date).getTime()+'-'+price.see;
+    return result;
+};
+
+module.exports.build_sold_history = function(price_histories) {
+    
+    var result = '';
+    if(price_histories == '' || typeof(price_histories) == 'undefined' || price_histories == null) {
+        return result;
+    }
+    for(var i=0; i<price_histories.length-1;i++) {
+        var price = price_histories[i];
+        result += new Date(price.date).getTime()+'-'+price.sold+'_';
+    }
+    price = price_histories[price_histories.length-1];
+    result += new Date(price.date).getTime()+'-'+price.sold;
+    return result;
+};
+
+module.exports.build_booking_min_history = function(price_histories) {
+    
+    var result = '';
+    if(price_histories == '' || typeof(price_histories) == 'undefined' || price_histories == null) {
+        return result;
+    }
+    for(var i=0; i<price_histories.length-1;i++) {
+        var price = price_histories[i];
+        result += new Date(price.date).getTime()+'-'+price.booking_min+'_';
+    }
+    price = price_histories[price_histories.length-1];
+    result += new Date(price.date).getTime()+'-'+price.booking_min;
+    return result;
+};
+
+module.exports.build_reviews_history = function(price_histories) {
+    
+    var result = '';
+    if(price_histories == '' || typeof(price_histories) == 'undefined' || price_histories == null) {
+        return result;
+    }
+    for(var i=0; i<price_histories.length-1;i++) {
+        var price = price_histories[i];
+        result += new Date(price.date).getTime()+'-'+price.reviews+'_';
+    }
+    price = price_histories[price_histories.length-1];
+    result += new Date(price.date).getTime()+'-'+price.reviews;
+    return result;
+};
+
+module.exports.build_discussion_history = function(price_histories) {
+    
+    var result = '';
+    if(price_histories == '' || typeof(price_histories) == 'undefined' || price_histories == null) {
+        return result;
+    }
+    for(var i=0; i<price_histories.length-1;i++) {
+        var price = price_histories[i];
+        result += new Date(price.date).getTime()+'-'+price.discussion+'_';
+    }
+    price = price_histories[price_histories.length-1];
+    result += new Date(price.date).getTime()+'-'+price.discussion;
+    return result;
+};
+
 module.exports.sort_price_history = function(price_histories) {
     var result = [];
     for(var i=0; i<price_histories.length-1;i++) {

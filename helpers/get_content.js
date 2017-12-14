@@ -313,6 +313,83 @@ module.exports.get_info_from_shopee = function (html) {
     return {sell_price: sell_price, retail_price: retail_price, time_sell_price: time_sell_price,item_types:item_types,item_type_labels:item_type_labels};
 };
 
+module.exports.get_info_from_tokopedia = function (html) {
+    var sell_price = null;
+    var retail_price = null;
+    var time_sell_price = null;
+    var item_types = {};
+    var item_type_labels =[];
+    var other_price={};
+    var see = null;
+    var sold = null;
+    var booking_min = null;
+    var reviews = null;
+    var discussion = null;
+    
+    var DomParser = require('dom-parser');
+    var parser = new DomParser();
+    var dom = parser.parseFromString(html);
+    var product_pricetag = dom.getElementsByClassName('product-pricetag');
+    if (product_pricetag.length>0) {
+        product_pricetag = product_pricetag[0];
+        spans=product_pricetag.getElementsByTagName('span');
+        if (spans.length>1) {
+            sell_price=spans[1].innerHTML;
+        }
+        
+    }
+    
+    uls = dom.getElementsByClassName('product-ratingstat');
+    ul=uls[0];
+    quantities=ul.getElementsByClassName('product-ratingstat_quantity');
+    prices=ul.getElementsByClassName('bold');
+    for(i=0;i<quantities.length;i++){
+        other_price[quantities[i].innerHTML]=prices[i].innerHTML;
+        item_type_labels.push(quantities[i].innerHTML);
+        price=prices[i].innerHTML;
+        price=price.replace(/[^0-9\.]+/g, '');
+        item_types[quantities[i].innerHTML]={price:price};
+    }  
+    item_type_labels=JSON.stringify(item_type_labels);
+    other_price=JSON.stringify(other_price);
+    
+    
+    var inventoryListOther=dom.getElementById('inventoryListOther');
+    if(inventoryListOther!=null){
+        json = JSON.parse(inventoryListOther.innerHTML);
+        for(i=0;i<json.length;i++){
+            temp=json[i].GoodsAddInfo;
+            for(j=0;j<temp.length;j++){
+                key = temp[j].sel_value;
+                quantity = temp[j].remain_cnt;
+                price = parseFloat(temp[j].sel_item_price);
+                price = parseFloat(sell_price) + price;
+                price=price.toFixed(2);
+                
+                
+            }
+        }
+    }
+    
+    nodes=dom.getElementsByClassName('view-count');
+    see=nodes[0].innerHTML.replace(/[^0-9\.]+/g, '');
+    nodes=dom.getElementsByClassName('item-sold-count');
+    sold=nodes[0].innerHTML.replace(/[^0-9\.]+/g, '');
+    node=dom.getElementById('p-info-minorder');
+    booking_min=node.innerHTML.replace(/[^0-9\.]+/g, '');
+    
+    node=dom.getElementById('p-nav-review');
+    spans=node.getElementsByTagName('span');
+    reviews=spans[0].innerHTML.replace(/[^0-9\.]+/g, '');
+    
+    node=dom.getElementById('p-nav-talk');
+    spans=node.getElementsByTagName('span');
+    discussion=spans[0].innerHTML.replace(/[^0-9\.]+/g, '');
+    
+    
+    return {reviews: reviews,discussion: discussion,see: see,sold: sold,sell_price: sell_price,booking_min: booking_min,retail_price: retail_price, time_sell_price: time_sell_price,item_types:item_types,item_type_labels:item_type_labels,other_price:other_price};
+};
+
 module.exports.send_mail_for_tracking_price_fixed = function (product_id, sell_price) {
     var TrackingPrice = require('../models/tracking_price');
     TrackingPrice.find({product_id: product_id}, function (error, allTrackingPrice) {

@@ -1,5 +1,5 @@
 var config = {
-    'domains': ['qoo10', 'lazada', 'shopee'],
+    'domains': ['qoo10', 'lazada', 'shopee','tokopedia'],
     'host': 'smtp.fastmail.com',
     'port': 465,
     'user': 'jack@24x7studios.com',

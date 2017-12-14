@@ -25,11 +25,18 @@ module.exports = function(app){
             var user_email = '';
         }
         
-        if (domain == 'qoo10') {
+        if (domain == 'qoo10'||domain == 'tokopedia') {
             var is_qoo10 = '1';
         } else {
             var is_qoo10 = '0';
         }
+        
+        
+        if (domain == 'tokopedia') {
+            render_file = 'banana_tokopedia';
+        } else {
+            render_file = 'banana';
+        } 
         
         if (req.session.hasOwnProperty("is24x7") && req.session.is24x7=='1') {
             var is_show_quantity = '1';
@@ -40,7 +47,7 @@ module.exports = function(app){
         Product.findOne({product_id: product_id}, function (error, product) {  
             if (product === null) {
                 var item_types = {};
-                return res.render('banana', {
+                return res.render(render_file, {
                                 price_history:[],
                                 user_email: user_email,
                                 current_price: 0,
@@ -50,18 +57,54 @@ module.exports = function(app){
                                 item_type_history: item_types,
                                 item_type_labels:null,
                                 is_qoo10:is_qoo10,
-                                is_show_quantity:is_show_quantity
+                                is_show_quantity:is_show_quantity,
+                                other_price_history:''
                             });
             }
             else{
+                if (product.other_price_history != undefined && product.other_price_history != 'undefined') {
+                    var other_price_history = product.other_price_history;
+                } else {
+                    var other_price_history = '';
+                }
+                if (product.see_history != undefined && product.see_history != 'undefined') {
+                    var see_history = product.see_history;
+                } else {
+                    var see_history = '';
+                }
+                if (product.sold_history != undefined && product.sold_history != 'undefined') {
+                    var sold_history = product.sold_history;
+                } else {
+                    var sold_history = '';
+                }
+                if (product.booking_min_history != undefined && product.booking_min_history != 'undefined') {
+                    var booking_min_history = product.booking_min_history;
+                } else {
+                    var booking_min_history = '';
+                }
+                if (product.reviews_history != undefined && product.reviews_history != 'undefined') {
+                    var reviews_history = product.reviews_history;
+                } else {
+                    var reviews_history = '';
+                }
+                if (product.discussion_history != undefined && product.discussion_history != 'undefined') {
+                    var discussion_history = product.discussion_history;
+                } else {
+                    var discussion_history = '';
+                }
                 var price_histories = JSON.parse(product.price_history);
+                var see_histories = JSON.parse(product.see_history);
+                var sold_histories = JSON.parse(product.sold_history);
+                var booking_min_histories = JSON.parse(product.booking_min_history);
+                var reviews_histories = JSON.parse(product.reviews_history);
+                var discussion_histories = JSON.parse(product.discussion_history);
                 var current_price = product.current_price;
                 var tracked_price = current_price;
                 
                 TrackingPrice.findOne({product_id: product_id,user_id:req.session.userId}, function (error, trackingPrice) {
                         if (trackingPrice === null) {
                             ProductItemType.findOne({product_id: product_id}, function (error, productItemType) {
-                                return res.render('banana', {
+                                return res.render(render_file, {
                                     price_history:helper.build_price_history(price_histories),
                                     user_email: user_email,
                                     current_price: current_price,
@@ -71,7 +114,13 @@ module.exports = function(app){
                                     item_type_history: productItemType.item_type_history,
                                     item_type_labels:product.item_type_labels,
                                     is_qoo10:is_qoo10,
-                                    is_show_quantity:is_show_quantity
+                                    is_show_quantity:is_show_quantity,
+                                    other_price_history:other_price_history,
+                                    see_history:helper.build_see_history(see_histories),
+                                    sold_history:helper.build_sold_history(sold_histories),
+                                    booking_min_history:helper.build_booking_min_history(booking_min_histories),
+                                    reviews_history:helper.build_reviews_history(reviews_histories),
+                                    discussion_history:helper.build_discussion_history(discussion_histories)
                                 });
 
                             });
@@ -80,7 +129,7 @@ module.exports = function(app){
                             
                             ProductItemType.findOne({product_id: product_id}, function (error, productItemType) {
                                 tracked_price = trackingPrice.tracked_price;
-                                return res.render('banana', {
+                                return res.render(render_file, {
                                     price_history:helper.build_price_history(price_histories),
                                     user_email: user_email,
                                     current_price: current_price,
@@ -90,7 +139,13 @@ module.exports = function(app){
                                     item_type_history: productItemType.item_type_history,
                                     item_type_labels:product.item_type_labels,
                                     is_qoo10:is_qoo10,
-                                    is_show_quantity:is_show_quantity
+                                    is_show_quantity:is_show_quantity,
+                                    other_price_history:other_price_history,
+                                    see_history:see_history,
+                                    sold_history:sold_history,
+                                    booking_min_history:booking_min_history,
+                                    reviews_history:reviews_history,
+                                    discussion_history:discussion_history
                                 });
 
                             });
@@ -158,113 +213,242 @@ module.exports = function(app){
         var url = req.body.url;
         var id = req.body.id;
         var domain = req.body.domain;
-        if (domain == 'qoo10') {
-            info = helperGetContent.get_info_from_qoo10(req.body.content, req.body.inventoryList);
-        } else if (domain == 'lazada') {
-            info = helperGetContent.get_info_from_lazada(req.body.content);
-        } else if (domain == 'shopee') {
-            info = helperGetContent.get_info_from_shopee(req.body.content);
-        }
+        if (id != undefined && id != 'undefined') {
+            if (domain == 'qoo10') {
+                info = helperGetContent.get_info_from_qoo10(req.body.content, req.body.inventoryList);
+            } else if (domain == 'lazada') {
+                info = helperGetContent.get_info_from_lazada(req.body.content);
+            } else if (domain == 'shopee') {
+                info = helperGetContent.get_info_from_shopee(req.body.content);
+            } else if (domain == 'tokopedia') {
+                info = helperGetContent.get_info_from_tokopedia(req.body.content);
+            }
+            console.log(info);
+            var data = {
+                domain: domain,
+                id: id,
+                content: req.body.content
+            };
+            today = helper.get_today();
+            UrlContent.findOne({domain: domain,id:id,createdDate: today}, function (error, urlContent) {
+                if (urlContent === null){
 
-        var data = {
-            domain: domain,
-            id: id,
-            content: req.body.content
-        };
-        today = helper.get_today();
-        UrlContent.findOne({domain: domain,id:id,createdDate: today}, function (error, urlContent) {
-            if (urlContent === null){
-                
-                UrlContent.create(data, function (error, urlContent) {
-                });  
+                    UrlContent.create(data, function (error, urlContent) {
+                    });  
 
-                var product_id = domain + "_" + id;
-                Product.findOne({product_id: product_id}, function (error, product) {
+                    var product_id = domain + "_" + id;
+                    Product.findOne({product_id: product_id}, function (error, product) {
 
-                    if (product === null){
-                        var price_histories = [
-                            { date: today, price: info.sell_price}
-                        ];                    
-                        var productData = {
-                            product_id: product_id,
-                            price_history: JSON.stringify(price_histories),
-                            current_price: info.sell_price,
-                            item_type_labels: info.item_type_labels
-                        };
-                        Product.create(productData, function (error, product) {
-                        });
-                    } else {
-                        var price_histories = JSON.parse(product.price_history);
-                        var find = false;
-                        for(var i=0; i<price_histories.length;i++) {
-                            if(price_histories[i].date == today) {
-                                price_histories[i].price = info.sell_price;
-                                price_histories[i].item_types = info.item_types;
-                                find = true;
-                                break;
-                            }
-                        }
-                        if(!find) {
-                            price_histories.push({date: today, price: info.sell_price});
-                        }
-                        price_history=helper.sort_price_history(price_histories);
-                        current_price=price_history[price_history.length-1].price;
-
-                        helperGetContent.send_mail_for_tracking_price_fixed(product_id,info.sell_price);
-
-                        Product.findOneAndUpdate({ "_id" : product._id }, {price_history: JSON.stringify(price_history),"current_price":current_price}, function (err, product) {
-                        });
-                    }
-                    
-                    item_types=info.item_types;
-                    ProductItemType.findOne({product_id: product_id}, function (error, productItemType) {
-                        var all={};
-                        
-                        if (productItemType === null){
-                            for(key in item_types){
-                                all[key]=[{ date: today, price: item_types[key]['price'], quantity: item_types[key]['quantity'] }];
+                        if (product === null){
+                            var price_histories = [
+                                { date: today, price: info.sell_price}
+                            ];   
+                            if (domain == 'tokopedia') {
+                                var other_price_histories = [
+                                    { date: today, other_price: info.other_price}
+                                ];  
+                                other_price_histories = JSON.stringify(other_price_histories);
+                                
+                                var see_histories = [
+                                    { date: today, see: info.see}
+                                ]; 
+                                var sold_histories = [
+                                    { date: today, sold: info.sold}
+                                ]; 
+                                var booking_min_histories = [
+                                    { date: today, booking_min: info.booking_min}
+                                ]; 
+                                var reviews_histories = [
+                                    { date: today, reviews: info.reviews}
+                                ]; 
+                                var discussion_histories = [
+                                    { date: today, discussion: info.discussion}
+                                ]; 
                             }
                             var productData = {
                                 product_id: product_id,
-                                item_type_history: JSON.stringify(all)
+                                price_history: JSON.stringify(price_histories),
+                                current_price: info.sell_price,
+                                item_type_labels: info.item_type_labels
                             };
-                            ProductItemType.create(productData, function (error, product) {
+                            if (domain == 'tokopedia') {
+                                productData['other_price_history'] = other_price_histories;
+                                productData['see_history'] = JSON.stringify(see_histories);
+                                productData['sold_history'] = JSON.stringify(sold_histories);
+                                productData['booking_min_history'] = JSON.stringify(booking_min_histories);
+                                productData['reviews_history'] = JSON.stringify(reviews_histories);
+                                productData['discussion_history'] = JSON.stringify(discussion_histories);
+                            }
+                            Product.create(productData, function (error, product) {
                             });
                         } else {
-                            var all=JSON.parse(productItemType.item_type_history);
-                            for(key in all){
-                                var price_histories = all[key];
-                                var find = false;
-                                for(var i=0; i<price_histories.length;i++) {
-                                    if(price_histories[i].date == today) {
-                                        price_histories[i].price = item_types[key]['price'];
-                                        price_histories[i].quantity = item_types[key]['quantity'];
+                            var price_histories = JSON.parse(product.price_history);
+                            
+                            
+                            var find = false;
+                            for(var i=0; i<price_histories.length;i++) {
+                                if(price_histories[i].date == today) {
+                                    price_histories[i].price = info.sell_price;
+                                    price_histories[i].item_types = info.item_types;
+                                    find = true;
+                                    break;
+                                }
+                            }
+                            if(!find) {
+                                price_histories.push({date: today, price: info.sell_price});
+                            }
+                            price_history=helper.sort_price_history(price_histories);
+                            current_price=price_history[price_history.length-1].price;
+                            
+                            if (domain == 'tokopedia') {
+                                var other_price_histories = JSON.parse(product.other_price_history);
+                                find = false;
+                                for(var i=0; i<other_price_histories.length;i++) {
+                                    if(other_price_histories[i].date == today) {
+                                        other_price_histories[i].other_price = info.other_price;
                                         find = true;
                                         break;
                                     }
                                 }
                                 if(!find) {
-                                    price_histories.push({date: today, price: item_types[key]['price'], quantity: item_types[key]['quantity']});
+                                    other_price_histories.push({date: today, other_price: info.other_price});
                                 }
-                                all[key]=helper.sort_price_history(price_histories);
+                                other_price_histories=helper.sort_price_history(other_price_histories);
+                                
+                                var see_histories = JSON.parse(product.see_history);
+                                var sold_histories = JSON.parse(product.sold_history);
+                                var booking_min_histories = JSON.parse(product.booking_min_history);
+                                var reviews_histories = JSON.parse(product.reviews_history);
+                                var discussion_histories = JSON.parse(product.discussion_history);
+                                
+                                find = false;
+                                for(var i=0; i<see_histories.length;i++) {
+                                    if(see_histories[i].date == today) {
+                                        see_histories[i].price = info.see;
+                                        find = true;
+                                        break;
+                                    }
+                                }
+                                if(!find) {
+                                    see_histories.push({date: today, see: info.see});
+                                }
+                                see_history=helper.sort_price_history(see_histories);
+                                
+                                find = false;
+                                for(var i=0; i<sold_histories.length;i++) {
+                                    if(sold_histories[i].date == today) {
+                                        sold_histories[i].price = info.sold;
+                                        find = true;
+                                        break;
+                                    }
+                                }
+                                if(!find) {
+                                    sold_histories.push({date: today, sold: info.sold});
+                                }
+                                sold_history=helper.sort_price_history(sold_histories);
+                                
+                                find = false;
+                                for(var i=0; i<booking_min_histories.length;i++) {
+                                    if(booking_min_histories[i].date == today) {
+                                        booking_min_histories[i].price = info.booking_min;
+                                        find = true;
+                                        break;
+                                    }
+                                }
+                                if(!find) {
+                                    booking_min_histories.push({date: today, booking_min: info.booking_min});
+                                }
+                                booking_min_history=helper.sort_price_history(booking_min_histories);
+                                
+                                find = false;
+                                for(var i=0; i<reviews_histories.length;i++) {
+                                    if(reviews_histories[i].date == today) {
+                                        reviews_histories[i].price = info.reviews;
+                                        find = true;
+                                        break;
+                                    }
+                                }
+                                if(!find) {
+                                    reviews_histories.push({date: today, reviews: info.reviews});
+                                }
+                                reviews_history=helper.sort_price_history(reviews_histories);
+                                
+                                find = false;
+                                for(var i=0; i<discussion_histories.length;i++) {
+                                    if(discussion_histories[i].date == today) {
+                                        discussion_histories[i].price = info.discussion;
+                                        find = true;
+                                        break;
+                                    }
+                                }
+                                if(!find) {
+                                    discussion_histories.push({date: today, discussion: info.discussion});
+                                }
+                                discussion_history=helper.sort_price_history(discussion_histories);
+                            }
+
+                            helperGetContent.send_mail_for_tracking_price_fixed(product_id,info.sell_price);
+
+                            if (domain == 'tokopedia') {
+                                Product.findOneAndUpdate({ "_id" : product._id }, {reviews_history: JSON.stringify(reviews_history),discussion_history: JSON.stringify(discussion_history),price_history: JSON.stringify(price_history),see_history: JSON.stringify(see_history),sold_history: JSON.stringify(sold_history),booking_min_history: JSON.stringify(booking_min_history),other_price_history: JSON.stringify(other_price_histories),"current_price":current_price}, function (err, product) {
+                                });
+                            }
+                            else{
+                                Product.findOneAndUpdate({ "_id" : product._id }, {price_history: JSON.stringify(price_history),other_price_history: JSON.stringify(other_price_histories),"current_price":current_price}, function (err, product) {
+                                });
                             }
                             
-
-                            ProductItemType.findOneAndUpdate({ "_id" : productItemType._id }, {item_type_history: JSON.stringify(all)}, function (err, product) {
-                            });
                         }
-                    });
-                });
-            }
-        });
 
-        var obj = {success: true};
-        return res.send(JSON.stringify(obj));
-            
-//        requestify=require('requestify');
-//        requestify.get(req.body.url).then(function(response) {
-//            var content=response.getBody();
-//        });
+                        item_types=info.item_types;
+                        ProductItemType.findOne({product_id: product_id}, function (error, productItemType) {
+                            var all={};
+
+                            if (productItemType === null){
+                                for(key in item_types){
+                                    all[key]=[{ date: today, price: item_types[key]['price'], quantity: item_types[key]['quantity'] }];
+                                }
+                                var productData = {
+                                    product_id: product_id,
+                                    item_type_history: JSON.stringify(all)
+                                };
+                                ProductItemType.create(productData, function (error, product) {
+                                });
+                            } else {
+                                var all=JSON.parse(productItemType.item_type_history);
+                                for(key in all){
+                                    var price_histories = all[key];
+                                    var find = false;
+                                    for(var i=0; i<price_histories.length;i++) {
+                                        if(price_histories[i].date == today) {
+                                            price_histories[i].price = item_types[key]['price'];
+                                            price_histories[i].quantity = item_types[key]['quantity'];
+                                            find = true;
+                                            break;
+                                        }
+                                    }
+                                    if(!find) {
+                                        price_histories.push({date: today, price: item_types[key]['price'], quantity: item_types[key]['quantity']});
+                                    }
+                                    all[key]=helper.sort_price_history(price_histories);
+                                }
+
+
+                                ProductItemType.findOneAndUpdate({ "_id" : productItemType._id }, {item_type_history: JSON.stringify(all)}, function (err, product) {
+                                });
+                            }
+                        });
+                    });
+                }
+            });
+
+            var obj = {success: true};
+            return res.send(JSON.stringify(obj));
+        }
+        else{
+            var obj = {success: false};
+            return res.send(JSON.stringify(obj));
+        }
         
     });
 

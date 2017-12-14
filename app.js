@@ -108,15 +108,15 @@ app.use(function (err, req, res, next) {
 //});
 //job.start();
 
-var CronJob = require('cron').CronJob;
-var delete_old_data = new CronJob({
-  cronTime: '01 01 01 * *',
-  onTick: function() {
-      var helper = require(__dirname + '/helpers/cron');
-      helper.delete_old_data();
-  },
-  start: false
-});
-delete_old_data.start();
+//var CronJob = require('cron').CronJob;
+//var delete_old_data = new CronJob({
+//  cronTime: '01 01 01 * * *',
+//  onTick: function() {
+//      var helper = require(__dirname + '/helpers/cron');
+//      helper.delete_old_data();
+//  },
+//  start: false
+//});
+//delete_old_data.start();
 
 https.createServer(options, app).listen(443);
