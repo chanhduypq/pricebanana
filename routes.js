@@ -61,31 +61,7 @@ module.exports = function(app){
                             });
             }
             else{
-                if (product.see_history != undefined && product.see_history != 'undefined') {
-                    var see_history = product.see_history;
-                } else {
-                    var see_history = '';
-                }
-                if (product.sold_history != undefined && product.sold_history != 'undefined') {
-                    var sold_history = product.sold_history;
-                } else {
-                    var sold_history = '';
-                }
-                if (product.booking_min_history != undefined && product.booking_min_history != 'undefined') {
-                    var booking_min_history = product.booking_min_history;
-                } else {
-                    var booking_min_history = '';
-                }
-                if (product.reviews_history != undefined && product.reviews_history != 'undefined') {
-                    var reviews_history = product.reviews_history;
-                } else {
-                    var reviews_history = '';
-                }
-                if (product.discussion_history != undefined && product.discussion_history != 'undefined') {
-                    var discussion_history = product.discussion_history;
-                } else {
-                    var discussion_history = '';
-                }
+                
                 var price_histories = JSON.parse(product.price_history);
                 if (domain == 'tokopedia') {
                     var see_histories = JSON.parse(product.see_history);
