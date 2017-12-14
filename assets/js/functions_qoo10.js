@@ -1,5 +1,5 @@
 
-function getSeriesData(key) {
+function getSeriesData(key,is_admin) {
     var prices = [];
     if (key != '') {
         data = item_type_history[key];
@@ -66,7 +66,7 @@ function getSeriesData(key) {
     return seriesData;
 }
 
-function getMultiSeriesData() {
+function getMultiSeriesData(is_admin) {
     seriesDataAll = [];
     options = $("#select_inventoryList option");
     selects = $("select[name='level']");

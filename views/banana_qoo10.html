@@ -258,7 +258,7 @@
             
             $("#div_inventory_list tr.item").click(function(){
                 key=$(this).find('input').eq(0).val();
-                seriesData=getSeriesData(key);
+                seriesData=getSeriesData(key,is_admin);
 
                 if($("#level0").find('option').eq(0).html()=='Please select'){
                     $("#level0").find('option').eq(0).remove();
@@ -315,7 +315,7 @@
             $("#form_inventoryList").delegate("select", "change", function(){
                 if($(this).attr('id')=='select_inventoryList'){
                     key=$(this).val();
-                    seriesData=showOne(key);
+                    seriesData=getSeriesData(key,is_admin);
                     
                     for (i = 1; i < $("select[name='level']").length; i++) {
                         $("#level" + i).html('');
@@ -362,14 +362,14 @@
                 else{  
                     if(item_type_labels.length==1){
                         key=$(this).val();
-                        seriesData=showOne(key);
+                        seriesData=getSeriesData(key,is_admin);
                     }
                     else{
                         idSelect=$(this).attr('id');
                         if($("select[name='level']").length-1>idSelect[idSelect.length-1]){
                             resetComboboxChildren(idSelect);
                         }
-                        seriesData=getMultiSeriesData();
+                        seriesData=getMultiSeriesData(is_admin);
                     }
                     
                     

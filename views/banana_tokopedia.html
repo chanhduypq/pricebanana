@@ -162,7 +162,7 @@
         
         is_admin= '<%= is_admin %>';
         if(is_admin=='1'){
-            label_for_yAxis='Price - Quantity';
+            label_for_yAxis='';
         }
         else{
             label_for_yAxis='Price';
@@ -459,7 +459,7 @@
                     color: 'brown'
                 }
             ];
-            showChart('','History',seriesData,'chartContainer');
+            showChart(label_for_yAxis,label_for_yAxis+' History',seriesData,'chartContainer');
         }
         else{
             seriesData=[{
@@ -472,7 +472,7 @@
                                     xDateFormat: '%b %e %Y'
                             }
                     }];
-            showChart('Price','Price History',seriesData,'chartContainer');
+            showChart(label_for_yAxis,label_for_yAxis+' History',seriesData,'chartContainer');
         }
         
        
