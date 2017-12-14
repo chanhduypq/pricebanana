@@ -34,7 +34,11 @@ module.exports = function(app){
         
         if (domain == 'tokopedia') {
             render_file = 'banana_tokopedia';
-        } else {
+        }
+        else if (domain == 'qoo10') {
+            render_file = 'banana_qoo10';
+        }
+        else {
             render_file = 'banana';
         } 
         
