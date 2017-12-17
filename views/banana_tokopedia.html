@@ -337,8 +337,17 @@
             if(temp[i]!=''){
                 date_and_price=temp[i].split('-');
                 date=parseInt(date_and_price[0]);
-                price=parseFloat(date_and_price[1]);
-                data_see.push([date,price]);
+                
+                if(date_and_price[1].indexOf('rb')!=-1){
+                    price=date_and_price[1].replace('rb','');
+                    price=parseFloat(price.replace(',','.'));
+                    data_see.push([date,price,1]);
+                }
+                else{
+                    price=parseFloat(date_and_price[1].replace(',','.'));
+                    data_see.push([date,price,0]);
+                }
+                
             }
             
         }
@@ -390,7 +399,7 @@
             }
             
         }
-        
+
         if(is_admin=='1'){
             $("#history").html('History');
             seriesData = [{
@@ -398,9 +407,19 @@
                     data: data_see,
                     tooltip: {
                         valueDecimals: 0,
-                        pointFormat: '{series.name}: <b>{point.y}</b><br/>',
+//                        pointFormat: '{series.name}: <b>{point.y}</b><br/>',
                         shared: true,
-                        xDateFormat: '%b %e %Y'
+                        xDateFormat: '%b %e %Y',
+                        pointFormatter: function() {
+                        
+                            if(data_see[this.index][2]==1){
+                                return this.series.name+': <b>' + this.y.toString().replace('.',',') + 'rb</b>';
+                            }
+                            else{
+                                return this.series.name+': <b>' + this.y.toString().replace('.',',') + '</b>';
+                            }
+                            
+                        }
                     },
                     color: 'blue'
                 },

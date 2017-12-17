@@ -351,25 +351,8 @@ module.exports.get_info_from_tokopedia = function (html) {
     }  
     item_type_labels=JSON.stringify(item_type_labels);
     
-    var inventoryListOther=dom.getElementById('inventoryListOther');
-    if(inventoryListOther!=null){
-        json = JSON.parse(inventoryListOther.innerHTML);
-        for(i=0;i<json.length;i++){
-            temp=json[i].GoodsAddInfo;
-            for(j=0;j<temp.length;j++){
-                key = temp[j].sel_value;
-                quantity = temp[j].remain_cnt;
-                price = parseFloat(temp[j].sel_item_price);
-                price = parseFloat(sell_price) + price;
-                price=price.toFixed(2);
-                
-                
-            }
-        }
-    }
-    
     nodes=dom.getElementsByClassName('view-count');
-    see=nodes[0].innerHTML.replace(/[^0-9\.]+/g, '');
+    see=nodes[0].innerHTML;//.replace(/[^0-9\,]+/g, '');
     nodes=dom.getElementsByClassName('item-sold-count');
     sold=nodes[0].innerHTML.replace(/[^0-9\.]+/g, '');
     if(sold.trim()==''){
