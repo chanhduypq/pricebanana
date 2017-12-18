@@ -246,7 +246,7 @@ if (current_url.indexOf("shopee.sg") > - 1) {
     timer = setInterval(runShopee, 5000);
 }
 
-if (current_url.indexOf("www.tokopedia.com") > - 1) {
+if (current_url.indexOf("www.tokopedia.com") > - 1 && $('.pull-left.m-0.view-count').length>0) {
     timerTokopedia = setInterval(runTokopedia, 5000);
 }
 
