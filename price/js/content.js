@@ -77,7 +77,7 @@ $(function () {
                                     async: false,
                                     dataType: 'xml',
                                     data: {
-                                        "inventory_no":"ST575680492 ",
+                                        "inventory_no":"ST"+product_id+" ",
                                         "sel_value1":sel_value1,
                                         "sel_value2":sel_value2,
                                         "sel_value3":"",
@@ -128,7 +128,7 @@ $(function () {
                                         async: false,
                                         dataType: 'xml',
                                         data: {
-                                            "inventory_no":"ST575680492 ",
+                                            "inventory_no":"ST"+product_id+" ",
                                             "sel_value1":sel_value1,
                                             "sel_value2":sel_value2,
                                             "sel_value3":sel_value3,
