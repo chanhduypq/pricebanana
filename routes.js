@@ -14,6 +14,7 @@ module.exports = function(app){
 
         var domain = req.params.domain;        
         var id = req.params.id;
+        var path_for_view='banana';
         if(config.domains.indexOf(domain) == -1) {
             return res.send('Wrong domain name');
         }
@@ -27,13 +28,16 @@ module.exports = function(app){
         
         
         if (domain == 'tokopedia') {
-            render_file = 'banana_tokopedia';
+            render_file = path_for_view+'/banana_tokopedia';
         }
         else if (domain == 'qoo10') {
-            render_file = 'banana_qoo10';
+            render_file = path_for_view+'/banana_qoo10';
+        }
+        else if (domain == 'lazada') {
+            render_file = path_for_view+'/banana_lazada';
         }
         else {
-            render_file = 'banana';
+            render_file = path_for_view+'/banana_shopee';
         } 
         
         if (req.session.hasOwnProperty("is24x7") && req.session.is24x7=='1') {
