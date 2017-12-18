@@ -187,14 +187,9 @@ $(function () {
             iframe_node = '#prodinfo';
         }
     }
-    if (current_url.indexOf("www.tokopedia.com") > - 1) {
-        product_id = $("#product-id").val();
-        domain = 'tokopedia';
-        iframe_node = '#review-summary-container';
-        contentFull+=$(".span7.product-content-holder").html();
-    }
+
     //check march domain to send full page to server by ajax
-    if (domain != false && domain != 'shopee' && product_id != false && iframe_node != false){
+    if (domain != false && domain != 'shopee' && domain != 'tokopedia' && product_id != false && iframe_node != false){
         $.ajax({
             url: apiUrl,
             method: "POST",
@@ -210,12 +205,13 @@ $(function () {
             },
             success: function (result) {
                 if (result.success) {
-                    if(domain!='tokopedia'){
-                        $(iframe_node).after('<div id="pricebanana_ctn"><iframe src="'+url+'/banana/' + domain + '/' + product_id + '"></iframe></div>');
-                    }
-                    else{
-                        $(iframe_node).before('<div id="pricebanana_ctn"><iframe src="'+url+'/banana/' + domain + '/' + product_id + '"></iframe></div>');
-                    }
+                    $(iframe_node).after('<div id="pricebanana_ctn"><iframe src="'+url+'/banana/' + domain + '/' + product_id + '"></iframe></div>');
+//                    if(domain!='tokopedia'){
+//                        $(iframe_node).after('<div id="pricebanana_ctn"><iframe src="'+url+'/banana/' + domain + '/' + product_id + '"></iframe></div>');
+//                    }
+//                    else{
+//                        $(iframe_node).before('<div id="pricebanana_ctn"><iframe src="'+url+'/banana/' + domain + '/' + product_id + '"></iframe></div>');
+//                    }
                     
                 }
             },
@@ -237,12 +233,21 @@ function showIframeForShopee() {
         clearInterval(timer);
     }
 }
-
+function showIframeForTokopedia() {
+    if ($('.pull-left.m-0.view-count').html() != undefined) {
+        $('#review-summary-container').before('<div id="pricebanana_ctn"><iframe src="'+url+'/banana/' + domain + '/' + product_id + '"></iframe></div>');
+        clearInterval(timerTokopedia);
+    }
+}
 //var shopeeRegex = /shopee.sg\/[\S]*(-i.)([0-9]{6}).([0-9]{9})/i;
 var shopeeRegex = /shopee.sg\/[\S]*(-i.)([0-9]).([0-9])/i;
 //if (shopeeRegex.test(current_url)){
 if (current_url.indexOf("shopee.sg") > - 1) {
     timer = setInterval(runShopee, 5000);
+}
+
+if (current_url.indexOf("www.tokopedia.com") > - 1) {
+    timerTokopedia = setInterval(runTokopedia, 5000);
 }
 
 
@@ -269,6 +274,39 @@ function runShopee() {
             success: function (result) {
                 if (result.success) {
                     $(iframe_node).after('<div id="pricebanana_ctn"><iframe src="'+url+'/banana/shopee/' + product_id + '"></iframe></div>');
+                }
+            },
+            error: function (xhr, status, error) {
+                console.log(status);
+                console.log(error);
+                console.log(xhr.responseText);
+            }
+        });
+        
+    }
+}
+
+function runTokopedia() {
+    if ($('.pull-left.m-0.view-count').html() != undefined) {
+        clearInterval(timerTokopedia);
+        contentFull = $("html").html();
+        product_id = $("#product-id").val();
+        $.ajax({
+            url: apiUrl,
+            method: "POST",
+            crossDomain: true,
+            async: false,
+            dataType: 'json',
+            data: {
+                id:product_id,
+                url:current_url,
+                domain:'tokopedia',
+                content:contentFull,
+                inventoryList:''
+            },
+            success: function (result) {
+                if (result.success) {
+                    $('#review-summary-container').before('<div id="pricebanana_ctn"><iframe src="'+url+'/banana/tokopedia/' + product_id + '"></iframe></div>');
                 }
             },
             error: function (xhr, status, error) {

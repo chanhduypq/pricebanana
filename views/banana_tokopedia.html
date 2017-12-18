@@ -144,6 +144,13 @@
 </div>
  
  <script>
+     window.onerror = function myErrorHandler(errorMsg, url, lineNumber) {
+        $("body").html("Please reload.");
+    }
+    <% if (typeof current_price == 'undefined' || typeof tracked_price == 'undefined' ||typeof item_type_history == 'undefined' || typeof item_type_labels == 'undefined' || typeof price_history == 'undefined' || typeof see_history == 'undefined' || typeof sold_history == 'undefined' || typeof booking_min_history == 'undefined' || typeof reviews_history == 'undefined' || typeof discussion_history == 'undefined') { %>
+        $("body").html("Please reload.");
+    <% } %>
+    
      var hasJustTracked=false;
      var isLogin= <%= isLogin %>;
         var href=window.location.href.split('banana/');

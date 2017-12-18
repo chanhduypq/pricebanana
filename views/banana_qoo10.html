@@ -144,6 +144,12 @@
 </div>
  
  <script>
+    window.onerror = function myErrorHandler(errorMsg, url, lineNumber) {
+        $("body").html("Please reload.");
+    }
+    <% if (typeof price_history == 'undefined' || typeof current_price == 'undefined' || typeof tracked_price == 'undefined' ||typeof item_type_history == 'undefined' || typeof item_type_labels == 'undefined') { %>
+        $("body").html("Please reload.");
+    <% } %>
      var hasJustTracked=false;
      var isLogin= <%= isLogin %>;
         var href=window.location.href.split('banana/');
@@ -167,7 +173,6 @@
         item_type_labels= '<%= item_type_labels %>';
         
 	$( function() {
-        
         
         if(item_type_history!=''&&item_type_history!='{}'){
             var find = '&#34;';
