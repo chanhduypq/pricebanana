@@ -100,7 +100,7 @@ app.use(function (err, req, res, next) {
 //  cronTime: '* * * * * *',
 //  onTick: function() {
 //      var helper = require(__dirname + '/helpers/cron');
-//      helper.cron('qoo10');
+//      helper.cron('tokopedia');
 //      this.stop();
 //  },
 //  start: false,

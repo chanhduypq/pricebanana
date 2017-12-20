@@ -18,7 +18,8 @@ module.exports.cron = function (domain) {
 
 function getUrls(domain) {
     urls = [];
-    urls.push('https://www.qoo10.sg/item/PLUS-SIZE-TOPS-DRESS-PANTS-SHORTS-SHORT-SLEEVE-T-SHIRT-SLING/560300975');
+//    urls.push('https://www.qoo10.sg/item/PLUS-SIZE-TOPS-DRESS-PANTS-SHORTS-SHORT-SLEEVE-T-SHIRT-SLING/560300975');
+    urls.push('https://www.tokopedia.com/luna/luna-64-gb-space-gray');
     
     return urls;
 }
@@ -41,7 +42,17 @@ function saveDB(url, domain) {
             var $ = require("jquery")(window);
             
             all = $($.parseHTML(content));
-            id = $(all).find("#gd_no").val();
+            
+            if (domain == 'qoo10') {
+                id = $(all).find("#gd_no").val();
+            } else if (domain == 'lazada') {
+                id = $(all).find("#config_id").val();
+            } else if (domain == 'shopee') {
+                var asin = url.split('.');
+                id = asin[3];
+            } else if (domain == 'tokopedia') {
+                id = $(all).find("#product-id").val();
+            }
 
             var DomParser = require('dom-parser');
             var parser = new DomParser();
@@ -52,34 +63,11 @@ function saveDB(url, domain) {
             if (ctl00_ctl00_MainContentHolder_MainContentHolderNoForm_OptionInfo != null && ctl00_ctl00_MainContentHolder_MainContentHolderNoForm_OptionInfo.innerHTML != "") {
                 inventoryList = ctl00_ctl00_MainContentHolder_MainContentHolderNoForm_OptionInfo.innerHTML;
                 if($(all).find("#div_OptAllVw_scroll").html().trim()==''){
-                    var request = require('ajax-request');
-
-                    request({
-                        url: 'https://www.qoo10.sg/gmkt.inc/swe_GoodsAjaxService.asmx/GetGoodsInventoryAvailableList',
-                        method: 'POST',
-                        data: {
-                            "inventory_no": "ST560300975 ",
-                            "lang_cd": "en",
-                            "global_order_type": "L",
-                            "gd_no": id,
-                            "inventory_yn": "",
-                            "link_type": "N",
-                            "___cache_expire___": "1513217968101"
-                        }
-                        ,headers: {'user-agent': 'node.js',"Accept": "application/json", "Content-Type": "application/json"}
-                    },
-                            function (err, res, body) {
-                                console.log(err);
-                                console.log(res);
-                                console.log(body);
-                    });
-                    
-//                    $.ajax({
+//                    var request = require('ajax-request');
+//
+//                    request({
 //                        url: 'https://www.qoo10.sg/gmkt.inc/swe_GoodsAjaxService.asmx/GetGoodsInventoryAvailableList',
-//                        method: "POST",
-////                        crossDomain: true,
-//                        async: false,
-////                        dataType: 'xml',
+//                        method: 'POST',
 //                        data: {
 //                            "inventory_no": "ST560300975 ",
 //                            "lang_cd": "en",
@@ -88,16 +76,39 @@ function saveDB(url, domain) {
 //                            "inventory_yn": "",
 //                            "link_type": "N",
 //                            "___cache_expire___": "1513217968101"
-//                        },
-//                        success: function (xml) {
-//                            console.log(xml);
-//                        },
-//                        error: function (xhr, status, error) {
-//                            console.log(status);
-//                            console.log(error);
-//                            console.log(xhr.responseText);
 //                        }
+//                        ,headers: {'user-agent': 'node.js',"Accept": "application/json", "Content-Type": "application/json"}
+//                    },
+//                            function (err, res, body) {
+//                                console.log(err);
+//                                console.log(res);
+//                                console.log(body);
 //                    });
+                    
+                    $.ajax({
+                        url: 'https://www.qoo10.sg/gmkt.inc/swe_GoodsAjaxService.asmx/GetGoodsInventoryAvailableList',
+                        method: "POST",
+//                        crossDomain: true,
+                        async: false,
+//                        dataType: 'xml',
+                        data: {
+                            "inventory_no": "ST560300975 ",
+                            "lang_cd": "en",
+                            "global_order_type": "L",
+                            "gd_no": id,
+                            "inventory_yn": "",
+                            "link_type": "N",
+                            "___cache_expire___": "1513217968101"
+                        },
+                        success: function (xml) {
+                            console.log(xml);
+                        },
+                        error: function (xhr, status, error) {
+                            console.log(status);
+                            console.log(error);
+                            console.log(xhr.responseText);
+                        }
+                    });
 //                    OptAllVw.GetInventoryList();
 //                    if (OptAllVw.OptionArray != null && OptAllVw.OptionArray.length > 0) {
 //                        if (OptAllVw.OptionArray[0].sel_name5 != null && OptAllVw.OptionArray[0].sel_name5 != "") {
@@ -249,6 +260,8 @@ function saveDB(url, domain) {
                 info = helperGetContent.get_info_from_lazada(content);
             } else if (domain == 'shopee') {
                 info = helperGetContent.get_info_from_shopee(content);
+            } else if (domain == 'tokopedia') {
+                info = helperGetContent.get_info_from_tokopedia(content);
             }
 
             var data = {
@@ -266,12 +279,37 @@ function saveDB(url, domain) {
                     var price_histories = [
                         {date: today, price: info.sell_price}
                     ];
+                    if (domain == 'tokopedia') {
+                                
+                        var see_histories = [
+                            { date: today, see: info.see}
+                        ]; 
+                        var sold_histories = [
+                            { date: today, sold: info.sold}
+                        ]; 
+                        var booking_min_histories = [
+                            { date: today, booking_min: info.booking_min}
+                        ]; 
+                        var reviews_histories = [
+                            { date: today, reviews: info.reviews}
+                        ]; 
+                        var discussion_histories = [
+                            { date: today, discussion: info.discussion}
+                        ]; 
+                    }
                     var productData = {
                         product_id: product_id,
                         price_history: JSON.stringify(price_histories),
                         current_price: info.sell_price,
                         item_type_labels: info.item_type_labels
                     };
+                    if (domain == 'tokopedia') {
+                        productData['see_history'] = JSON.stringify(see_histories);
+                        productData['sold_history'] = JSON.stringify(sold_histories);
+                        productData['booking_min_history'] = JSON.stringify(booking_min_histories);
+                        productData['reviews_history'] = JSON.stringify(reviews_histories);
+                        productData['discussion_history'] = JSON.stringify(discussion_histories);
+                    }
                     Product.create(productData, function (error, product) {
                     });
                 } else {
@@ -290,11 +328,91 @@ function saveDB(url, domain) {
                     }
                     price_history = helper.sort_price_history(price_histories);
                     current_price = price_history[price_history.length - 1].price;
+                    
+                    if (domain == 'tokopedia') {
+                                
+                        var see_histories = JSON.parse(product.see_history);
+                        var sold_histories = JSON.parse(product.sold_history);
+                        var booking_min_histories = JSON.parse(product.booking_min_history);
+                        var reviews_histories = JSON.parse(product.reviews_history);
+                        var discussion_histories = JSON.parse(product.discussion_history);
+
+                        find = false;
+                        for(var i=0; i<see_histories.length;i++) {
+                            if(see_histories[i].date == today) {
+                                see_histories[i].price = info.see;
+                                find = true;
+                                break;
+                            }
+                        }
+                        if(!find) {
+                            see_histories.push({date: today, see: info.see});
+                        }
+                        see_history=helper.sort_price_history(see_histories);
+
+                        find = false;
+                        for(var i=0; i<sold_histories.length;i++) {
+                            if(sold_histories[i].date == today) {
+                                sold_histories[i].price = info.sold;
+                                find = true;
+                                break;
+                            }
+                        }
+                        if(!find) {
+                            sold_histories.push({date: today, sold: info.sold});
+                        }
+                        sold_history=helper.sort_price_history(sold_histories);
+
+                        find = false;
+                        for(var i=0; i<booking_min_histories.length;i++) {
+                            if(booking_min_histories[i].date == today) {
+                                booking_min_histories[i].price = info.booking_min;
+                                find = true;
+                                break;
+                            }
+                        }
+                        if(!find) {
+                            booking_min_histories.push({date: today, booking_min: info.booking_min});
+                        }
+                        booking_min_history=helper.sort_price_history(booking_min_histories);
+
+                        find = false;
+                        for(var i=0; i<reviews_histories.length;i++) {
+                            if(reviews_histories[i].date == today) {
+                                reviews_histories[i].price = info.reviews;
+                                find = true;
+                                break;
+                            }
+                        }
+                        if(!find) {
+                            reviews_histories.push({date: today, reviews: info.reviews});
+                        }
+                        reviews_history=helper.sort_price_history(reviews_histories);
+
+                        find = false;
+                        for(var i=0; i<discussion_histories.length;i++) {
+                            if(discussion_histories[i].date == today) {
+                                discussion_histories[i].price = info.discussion;
+                                find = true;
+                                break;
+                            }
+                        }
+                        if(!find) {
+                            discussion_histories.push({date: today, discussion: info.discussion});
+                        }
+                        discussion_history=helper.sort_price_history(discussion_histories);
+                    }
 
                     helperGetContent.send_mail_for_tracking_price_fixed(product_id, info.sell_price);
 
-                    Product.findOneAndUpdate({"_id": product._id}, {price_history: JSON.stringify(price_history), "current_price": current_price}, function (err, product) {
-                    });
+                    if (domain == 'tokopedia') {
+                        Product.findOneAndUpdate({ "_id" : product._id }, {reviews_history: JSON.stringify(reviews_history),discussion_history: JSON.stringify(discussion_history),price_history: JSON.stringify(price_history),see_history: JSON.stringify(see_history),sold_history: JSON.stringify(sold_history),booking_min_history: JSON.stringify(booking_min_history),"current_price":current_price}, function (err, product) {
+                        });
+                    }
+                    else{
+                        Product.findOneAndUpdate({ "_id" : product._id }, {price_history: JSON.stringify(price_history),"current_price":current_price}, function (err, product) {
+                        });
+                    }
                 }
 
                 item_types = info.item_types;
