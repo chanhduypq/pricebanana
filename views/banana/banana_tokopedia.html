@@ -19,9 +19,12 @@
 	<script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
         <script src="/js/functions.js"></script>
         <script src="/js/functions_tokopedia.js"></script>
+        <script src="/js/jAlert.js"></script>
         
 	<link rel="stylesheet" type="text/css" href="/css/style.css" />
         <link rel="stylesheet" type="text/css" href="/css/inventory.css" />
+        
+        <link rel="stylesheet" type="text/css" href="/css/jAlert.css" />
 </head>
 <body>
  
@@ -142,7 +145,7 @@
         
     
 </div>
- 
+<div id="tracking" style="display: none;">success</div>
  <script>
      window.onerror = function myErrorHandler(errorMsg, url, lineNumber) {
         $("body").html("Please reload.");
@@ -235,7 +238,7 @@
 
         //Q-Price
         
-        trackingPriceSlide(tracked_price,0,current_price);
+        trackingPriceSlide(tracked_price,0,current_price,"Rp ");
 
         //login
         $('#login-form-link').click(function(e) {
@@ -279,7 +282,17 @@
                login();
              }			
         });
-
+        $.alertOnClick('#tracking', {
+            'title':'',
+            'content':'success',
+            'onOpen': function(alert){
+                $(".ja_wrap.ja_wrap_black").height($("body").height());
+                $(".jAlert.animated.ja_default.ja_noTitle.ja_sm.fadeInUp").css('margin-top','30px');
+                window.setTimeout(function(){
+                    $.jAlert('current').closeAlert();
+                }, 1000);
+            }
+        });
         $('.ui-button.ui-widget.ui-corner-all').click(function(e) {
             e.preventDefault();
             hasJustTracked=true;
@@ -289,7 +302,7 @@
                 return;
             }
             price = $(".tracking_price span").html();
-            price = price.replace("$","");
+            price = price.replace(/[^0-9]*/,"");
             price = $.trim(price);
             $.ajax({
                 type: "GET",
@@ -297,7 +310,7 @@
                 dataType: 'json',
                 success: function(result) {
                     if(result.success) {
-                        alert('success');
+                        $( "#tracking" ).click();
                     } else {
                         alert('error');
                     }

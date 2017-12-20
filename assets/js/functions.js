@@ -106,7 +106,7 @@ function login() {
     }
 }
 
-function showTrackProductTab(result, logemail, current_price) {
+function showTrackProductTab(result, logemail, current_price,currency) {
     $('#acount-form').hide();
     $('#track-price').show();
     isLogin = true;
@@ -114,7 +114,6 @@ function showTrackProductTab(result, logemail, current_price) {
     updatePriceSlide(result.tracked_price);
     var discount_price = $('#track-price .discount_price span');
     var discount_price_percent = $('#track-price .discount_price i');
-    var currency = '$';
     var currency_label = currency + ' ';
     // caculate
     discount = current_price - result.tracked_price;
@@ -141,9 +140,8 @@ function updatePriceSlide(track_value) {
 
 }
 
-function trackingPriceSlide(current_price, min_price, max_price) {
+function trackingPriceSlide(current_price, min_price, max_price,currency) {
     //slider
-    var currency = '$';
     var currency_label = currency + ' ';
     var price = $('#track-price .price span');
     var tracking_price = $('#track-price .tracking_price span');
@@ -159,7 +157,7 @@ function trackingPriceSlide(current_price, min_price, max_price) {
         create: function () {
             slide_price = $(this).slider('value');
             handle.text(currency_label + slide_price);
-            tracking_price.text(current_price);
+            tracking_price.text(currency_label + current_price);
             price.text(currency_label + max_price);
 
             // caculate
@@ -190,6 +188,10 @@ function trackingPriceSlide(current_price, min_price, max_price) {
             $('#track-price .price_slider .ui-slider-range').css('background-color', getColor(100 - percent));
         }
     });
+    if($(".ui-slider-handle.custom-handle.ui-corner-all.ui-state-default").css('left')=='100%'){
+        $(".ui-slider-handle.custom-handle.ui-corner-all.ui-state-default").css('left','98%');
+    }
+    
 }
 
 function getColor(v) {
