@@ -58,7 +58,12 @@ module.exports = function(app){
                                 label_for_action_tracking: 'Start tracking',
                                 item_type_history: item_types,
                                 item_type_labels:null,
-                                is_admin:is_admin
+                                is_admin:is_admin,
+                                see_history:helper.build_see_history(see_histories),
+                                sold_history:helper.build_sold_history(sold_histories),
+                                booking_min_history:helper.build_booking_min_history(booking_min_histories),
+                                reviews_history:helper.build_reviews_history(reviews_histories),
+                                discussion_history:helper.build_discussion_history(discussion_histories)
                             });
             }
             else{
