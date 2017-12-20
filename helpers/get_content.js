@@ -346,7 +346,7 @@ module.exports.get_info_from_tokopedia = function (html) {
     for(i=0;i<quantities.length;i++){
         item_type_labels.push(quantities[i].innerHTML);
         price=prices[i].innerHTML;
-        price=price.replace(/[^0-9\.]+/g, '');
+        price=price.replace(/[^0-9]+/g, '');
         item_types[quantities[i].innerHTML]={price:price};
     }  
     item_type_labels=JSON.stringify(item_type_labels);

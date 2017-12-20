@@ -17,6 +17,7 @@ $(function () {
     var inventoryList = '';
     //check qoo10
     if (current_url.indexOf("www.qoo10.sg") > - 1) {
+        $('.goodsDetailWrap').after('<div id="loading_banana" style="width:100%;height:100%;"><img src="'+url+'/image/loading.gif" style="width: 100%;height: 100%;"/></div>');
         var asin = $("#gd_no").val();
         if (asin != ''){
             product_id = asin;
@@ -180,6 +181,7 @@ $(function () {
     }
     //check lazada
     if (current_url.indexOf("www.lazada.sg") > - 1) {
+        $('#prodinfo').after('<div id="loading_banana" style="width:100%;height:100%;"><img src="'+url+'/image/loading.gif" style="width: 100%;height: 100%;"/></div>');
         var asin = $("#config_id").val();
         if (asin != ''){
             product_id = asin;
@@ -206,6 +208,7 @@ $(function () {
             success: function (result) {
                 if (result.success) {
                     setTimeout(function (){
+                        $("#loading_banana").remove();
                         $(iframe_node).after('<div id="pricebanana_ctn"><iframe src="'+url+'/banana/' + domain + '/' + product_id + '"></iframe></div>');
                     },3000);
                 }
@@ -238,10 +241,12 @@ function showIframeForTokopedia() {
 var shopeeRegex = /shopee.sg\/[\S]*(-i.)([0-9]).([0-9])/i;
 //if (shopeeRegex.test(current_url)){
 if (current_url.indexOf("shopee.sg") > - 1) {
+    $('body').prepend('<div id="loading_banana" style="width:30%;height:50%;position:fixed;left:30%;top:30%;"><img src="'+url+'/image/loading.gif" style="width: 100%;height: 100%;"/></div>');
     timer = setInterval(runShopee, 5000);
 }
 
 if (current_url.indexOf("www.tokopedia.com") > - 1 && $('.pull-left.m-0.view-count').length>0) {
+    $('#review-summary-container').before('<div id="loading_banana" style="width:100%;height:100%;"><img src="'+url+'/image/loading.gif" style="width: 100%;height: 100%;"/></div>');
     timerTokopedia = setInterval(runTokopedia, 5000);
 }
 
@@ -269,6 +274,7 @@ function runShopee() {
             success: function (result) {
                 if (result.success) {
                     setTimeout(function (){
+                        $("#loading_banana").remove();
                         $(iframe_node).after('<div id="pricebanana_ctn"><iframe src="'+url+'/banana/shopee/' + product_id + '"></iframe></div>');
                     },5000);
                     
@@ -305,6 +311,7 @@ function runTokopedia() {
             success: function (result) {
                 if (result.success) {
                     setTimeout(function (){
+                        $("#loading_banana").remove();
                         $('#review-summary-container').before('<div id="pricebanana_ctn"><iframe src="'+url+'/banana/tokopedia/' + product_id + '"></iframe></div>');
                     },3000);
                 }
