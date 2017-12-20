@@ -43,7 +43,7 @@ module.exports.get_today = function() {
 module.exports.build_price_history = function(price_histories) {
     
     var result = '';
-    if(price_histories == '' || typeof(price_histories) == 'undefined' || price_histories == null) {
+    if(price_histories == '' || typeof(price_histories) == 'undefined' || price_histories == null || price_histories.length == 0) {
         return result;
     }
     for(var i=0; i<price_histories.length-1;i++) {
@@ -58,7 +58,7 @@ module.exports.build_price_history = function(price_histories) {
 module.exports.build_see_history = function(price_histories) {
     
     var result = '';
-    if(price_histories == '' || typeof(price_histories) == 'undefined' || price_histories == null) {
+    if(price_histories == '' || typeof(price_histories) == 'undefined' || price_histories == null || price_histories.length == 0) {
         return result;
     }
     for(var i=0; i<price_histories.length-1;i++) {
@@ -73,7 +73,7 @@ module.exports.build_see_history = function(price_histories) {
 module.exports.build_sold_history = function(price_histories) {
     
     var result = '';
-    if(price_histories == '' || typeof(price_histories) == 'undefined' || price_histories == null) {
+    if(price_histories == '' || typeof(price_histories) == 'undefined' || price_histories == null || price_histories.length == 0) {
         return result;
     }
     for(var i=0; i<price_histories.length-1;i++) {
@@ -88,7 +88,7 @@ module.exports.build_sold_history = function(price_histories) {
 module.exports.build_booking_min_history = function(price_histories) {
     
     var result = '';
-    if(price_histories == '' || typeof(price_histories) == 'undefined' || price_histories == null) {
+    if(price_histories == '' || typeof(price_histories) == 'undefined' || price_histories == null || price_histories.length == 0) {
         return result;
     }
     for(var i=0; i<price_histories.length-1;i++) {
@@ -103,7 +103,7 @@ module.exports.build_booking_min_history = function(price_histories) {
 module.exports.build_reviews_history = function(price_histories) {
     
     var result = '';
-    if(price_histories == '' || typeof(price_histories) == 'undefined' || price_histories == null) {
+    if(price_histories == '' || typeof(price_histories) == 'undefined' || price_histories == null || price_histories.length == 0) {
         return result;
     }
     for(var i=0; i<price_histories.length-1;i++) {
@@ -118,7 +118,7 @@ module.exports.build_reviews_history = function(price_histories) {
 module.exports.build_discussion_history = function(price_histories) {
     
     var result = '';
-    if(price_histories == '' || typeof(price_histories) == 'undefined' || price_histories == null) {
+    if(price_histories == '' || typeof(price_histories) == 'undefined' || price_histories == null || price_histories.length == 0) {
         return result;
     }
     for(var i=0; i<price_histories.length-1;i++) {
