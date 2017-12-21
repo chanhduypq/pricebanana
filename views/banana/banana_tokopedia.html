@@ -33,12 +33,46 @@
 		<span href="#" id="user_email"></span>
 	</div>
 	<ul>
-		<li><a href="#tabs-price-history" id='history'>Price History</a></li>
-                <li><a id="inventoryList" href="#tabs-inventoryList">Wholesale Price</a></li>
-                <li><a id="history_tab" href="#tabs-history">Other History</a></li>
-		<li><a id="tracking_tab" href="#tabs-track-product">Track Product</a></li>
+		<li><a href="#tabs-price-history" id='history'>Price history</a></li>
+                <li><a id="inventoryList" href="#tabs-inventoryList">Wholesale price</a></li>
+                <li><a id="history_tab" href="#tabs-history">Other history</a></li>
+		<li><a id="tracking_tab" href="#tabs-track-product">Track product</a></li>
                 <li><a id="login_register_tab" href="#tabs-login_register">Login/Register</a></li>
 	</ul>
+        <div style="float: right;margin: 10px;">
+            <input type="button" value="Track product"/>
+        </div>
+<!--        <div style="float: right;margin: 10px;">
+            <input type="button" value="List of tracking product"/>
+        </div>-->
+        <div style="clear: both;"></div>
+        <div>
+            <table id="tracking_table">
+                <thead>
+                    <tr>
+                        <th>
+                            Product
+                        </th>
+                        <th>
+                            Desired price
+                        </th>
+                        <th>
+                            Current price
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            
+                        </td>
+                        <td>
+                            <input type="text" id="desired_price"/>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 	<div id="tabs-price-history">
 		<div id="chartContainer"></div>
 	</div>

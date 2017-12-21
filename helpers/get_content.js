@@ -1,5 +1,6 @@
 
 module.exports.get_info_from_qoo10 = function (html,inventoryList) {
+    var name = null;
     var sell_price = null;
     var retail_price = null;
     var time_sell_price = null;
@@ -120,7 +121,12 @@ module.exports.get_info_from_qoo10 = function (html,inventoryList) {
     var item_type_labels = get_item_type_labels(inventoryList);
     var item_types = get_item_types(inventoryList,sell_price,item_type_labels);
     
-    return {sell_price: sell_price, retail_price: retail_price, time_sell_price: time_sell_price,item_types:item_types,item_type_labels:item_type_labels};
+    node = dom.getElementById('goods_name');
+    if (node != null) {
+        name = node.innerHTML;
+    }
+    
+    return {name: name, sell_price: sell_price, retail_price: retail_price, time_sell_price: time_sell_price,item_types:item_types,item_type_labels:item_type_labels};
 };
 
 function get_item_type_labels(inventoryList){
@@ -256,6 +262,7 @@ function get_item_types(inventoryList,sell_price,item_type_labels){
 }
 
 module.exports.get_info_from_lazada = function (html) {
+    var name = null;
     var sell_price = null;
     var retail_price = null;
     var time_sell_price = null;
@@ -276,10 +283,16 @@ module.exports.get_info_from_lazada = function (html) {
     }
     var item_types = null;
     var item_type_labels =null;
-    return {sell_price: sell_price, retail_price: retail_price, time_sell_price: time_sell_price,item_types:item_types,item_type_labels:item_type_labels};
+    
+    node = dom.getElementById('prod_title');
+    if (node != null) {
+        name = node.innerHTML;
+    }
+    return {name: name, sell_price: sell_price, retail_price: retail_price, time_sell_price: time_sell_price,item_types:item_types,item_type_labels:item_type_labels};
 };
 
 module.exports.get_info_from_shopee = function (html) {
+    var name = null;
     var sell_price = null;
     var retail_price = null;
     var time_sell_price = null;
@@ -310,10 +323,16 @@ module.exports.get_info_from_shopee = function (html) {
     var item_types = null;
     var item_type_labels =null;
     
-    return {sell_price: sell_price, retail_price: retail_price, time_sell_price: time_sell_price,item_types:item_types,item_type_labels:item_type_labels};
+    node = dom.getElementsByClassName('shopee-product-info__header__text');
+    if (node.length > 0) {
+        name = node[0].innerHTML;
+    }
+    
+    return {name: name, sell_price: sell_price, retail_price: retail_price, time_sell_price: time_sell_price,item_types:item_types,item_type_labels:item_type_labels};
 };
 
 module.exports.get_info_from_tokopedia = function (html) {
+    var name = null;
     var sell_price = null;
     var retail_price = null;
     var time_sell_price = null;
@@ -392,7 +411,15 @@ module.exports.get_info_from_tokopedia = function (html) {
         rating='0';
     }
     
-    return {reviews: reviews,rating: rating,discussion: discussion,sold: sold,sell_price: sell_price,booking_min: booking_min,retail_price: retail_price, time_sell_price: time_sell_price,item_types:item_types,item_type_labels:item_type_labels};
+    node = dom.getElementsByClassName('product-title');
+    if (node.length > 0) {
+        node = node[0].getElementsByTagName('a');
+        if (node.length > 0) {
+            name = node[0].innerHTML;
+        }
+    }
+    
+    return {name: name, reviews: reviews,rating: rating,discussion: discussion,sold: sold,sell_price: sell_price,booking_min: booking_min,retail_price: retail_price, time_sell_price: time_sell_price,item_types:item_types,item_type_labels:item_type_labels};
 };
 
 module.exports.send_mail_for_tracking_price_fixed = function (product_id, sell_price) {

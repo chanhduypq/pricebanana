@@ -255,6 +255,7 @@ module.exports = function(app){
                                 product_id: product_id,
                                 price_history: JSON.stringify(price_histories),
                                 current_price: info.sell_price,
+                                name: info.name,
                                 item_type_labels: info.item_type_labels
                             };
                             if (domain == 'tokopedia') {

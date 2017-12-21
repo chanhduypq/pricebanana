@@ -8,6 +8,10 @@ var ProductSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
+    name: {
+        type: String,
+        trim: true
+    },
     price_history: {
         type: String,
         trim: true
