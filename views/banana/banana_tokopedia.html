@@ -24,20 +24,11 @@
         
 	<link rel="stylesheet" type="text/css" href="/css/style.css" />
         <link rel="stylesheet" type="text/css" href="/css/inventory.css" />
+        <link rel="stylesheet" type="text/css" href="/css/tracking.css" />
+        <link rel="stylesheet" type="text/css" href="/css/overview.css" />
         
         <link rel="stylesheet" type="text/css" href="/css/jAlert.css" />
-        <style>
-            #tracking_table{
-                width: 100%;
-            }
-            #tracking_table td,#tracking_table th{
-                width: 24%;
-                border: 1px solid black;
-                word-break: break-all;
-                text-align: center;
-                padding: 5px;
-            }
-        </style>
+        
 </head>
 <body>
  
@@ -46,6 +37,7 @@
 		<span href="#" id="user_email"></span>
 	</div>
 	<ul>
+                <li><a href="#tabs-overview" id='overview'>Overview</a></li>
 		<li><a href="#tabs-price-history" id='history'>Price history</a></li>
                 <li><a id="inventoryList" href="#tabs-inventoryList">Wholesale price</a></li>
                 <li><a id="history_tab" href="#tabs-history">Other history</a></li>		
@@ -90,6 +82,159 @@
             </table>
             <div id="div_close" style="float: right;"><a class="btn_close" id="a_OptAllVw_closeBTN1">Close</a></div>
         </div>
+        <div id="tabs-overview">
+            <table>
+                <tbody>
+                    <tr>
+                        <td class="left">
+                            name
+                        </td>
+                        <td class="right">
+                            <%= name %>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="left">
+                            seller name
+                        </td>
+                        <td class="right">
+                            <%= seller_name %>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="left">
+                            seller url
+                        </td>
+                        <td class="right">
+                            <%= seller_url %>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="left">
+                            transaction success
+                        </td>
+                        <td class="right">
+                            <%= transaction_success %>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="left">
+                            item sold
+                        </td>
+                        <td class="right">
+                            <%= item_sold %>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="left">
+                            talk response rate
+                        </td>
+                        <td class="right">
+                            <%= talk_response_rate %>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="left">
+                            talk response time
+                        </td>
+                        <td class="right">
+                            <%= talk_response_time %>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="left">
+                            message response rate
+                        </td>
+                        <td class="right">
+                            <%= message_response_rate %>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="left">
+                            seller name
+                        </td>
+                        <td class="right">
+                            <%= seller_name %>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="left">
+                            message response time
+                        </td>
+                        <td class="right">
+                            <%= message_response_time %>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="left">
+                            location of shop
+                        </td>
+                        <td class="right">
+                            <%= location_of_shop %>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="left">
+                            condition
+                        </td>
+                        <td class="right">
+                            <%= condition %>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="left">
+                            insurance
+                        </td>
+                        <td class="right">
+                            <%= insurance %>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="left">
+                            weight
+                        </td>
+                        <td class="right">
+                            <%= weight %>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="left">
+                            current review count
+                        </td>
+                        <td class="right">
+                            <%= current_review_count %>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="left">
+                            current rating count
+                        </td>
+                        <td class="right">
+                            <%= current_rating_count %>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="left">
+                            currrent a talk about count
+                        </td>
+                        <td class="right">
+                            <%= currrent_a_talk_about_count %>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="left">
+                            shipment support
+                        </td>
+                        <td class="right">
+                            <div class="col-xs-8" id='shipment_support'>
+
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            
+	</div>
 	<div id="tabs-price-history">
 		<div id="chartContainer"></div>
 	</div>
@@ -206,6 +351,21 @@
         var booking_min_history='<%= booking_min_history %>';
         var reviews_history='<%= reviews_history %>';
         var discussion_history='<%= discussion_history %>';
+        
+        shipment_support='<%= shipment_support %>';
+        find1 = '&#34;';
+        re1 = new RegExp(find1, 'g');
+        shipment_support = shipment_support.replace(re1, '"');
+        
+        find1 = '&lt;';
+        re1 = new RegExp(find1, 'g');
+        shipment_support = shipment_support.replace(re1, '<');
+        
+        find1 = '&gt;';
+        re1 = new RegExp(find1, 'g');
+        shipment_support = shipment_support.replace(re1, '>');
+        
+        $("#shipment_support").html(shipment_support);
         
         is_admin= '<%= is_admin %>';
         if(is_admin=='0'){

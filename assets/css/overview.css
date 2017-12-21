@@ -1,0 +1,94 @@
+.product-ratingstat {
+    list-style: none !important;
+    margin: 10px 0 15px !important;
+    float: left !important;
+    padding: 0 !important;
+    display: block !important;
+    width: 100% !important;
+}
+.p-10 {
+    padding: 10px !important;
+}
+.mt-0 {
+    margin-top: 0 !important;
+}
+[class*=span] {
+    display: block !important;
+    float: left !important;
+    min-height: 30px !important;
+    margin-left: 2.127659574468085% !important;
+    -webkit-box-sizing: border-box !important;
+    -moz-box-sizing: border-box !important;
+    box-sizing: border-box !important;
+}
+.mr-10 {
+    margin-right: 10px !important;
+}
+li {
+    display: list-item !important;
+    text-align: -webkit-match-parent !important;
+}
+img {
+    height: auto !important;
+    max-width: 100% !important;
+    vertical-align: middle !important;
+    border: 0 !important;
+}
+.pull-left {
+    float: left !important;
+}
+.mr-5 {
+    margin-right: 5px !important;
+}
+small {
+    font-size: 85% !important;
+}
+
+[class^=icon-], [class*=" icon-"] {
+    font-family: tokopedia !important;
+    font-weight: 400 !important;
+    font-style: normal !important;
+    text-decoration: inherit !important;
+    -webkit-font-smoothing: antialiased !important;
+    display: inline-block !important;
+    text-align: center !important;
+    width: auto !important;
+    height: auto !important;
+    line-height: normal !important;
+    vertical-align: baseline !important;
+    background-image: none !important;
+    background-position: 0 0 !important;
+    background-repeat: repeat !important;
+    margin-top: 0 !important;
+}
+.muted {
+    color: rgba(0,0,0,.38) !important;
+}
+.icon-checked::before{content:"\f037" !important;}
+
+#tabs-overview table{
+    width: 100%;
+}
+#tabs-overview table td.left{
+    width: 20%;
+    text-align: right;
+}
+#tabs-overview table td.right{
+    width: 80%;
+    text-align: left;
+}
+#tabs-overview table td{
+    padding: 5px;
+}
+#tabs-overview table,#tabs-overview table td{
+    border: 1px solid black;
+}
+
+.span2 {
+  width: 14.893617021276595%;
+  *width: 14.840425531914894%;
+}
+.span9 {
+  width: 74.46808510638297%;
+  *width: 74.41489361702126%;
+}

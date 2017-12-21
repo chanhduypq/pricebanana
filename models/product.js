@@ -48,6 +48,54 @@ var ProductSchema = new mongoose.Schema({
     },
     item_type_labels: {
         type: String
+    },
+    seller_name: {
+        type: String
+    },
+    seller_url: {
+        type: String
+    },
+    transaction_success: {
+        type: String
+    },
+    item_sold: {
+        type: String
+    },
+    talk_response_rate: {
+        type: String
+    },
+    talk_response_time: {
+        type: String
+    },
+    message_response_rate: {
+        type: String
+    },
+    message_response_time: {
+        type: String
+    },
+    shipment_support: {
+        type: String
+    },
+    location_of_shop: {
+        type: String
+    },
+    condition: {
+        type: String
+    },
+    insurance: {
+        type: String
+    },
+    weight: {
+        type: String
+    },
+    current_review_count: {
+        type: String
+    },
+    current_rating_count: {
+        type: String
+    },
+    currrent_a_talk_about_count: {
+        type: String
     }
 });
 

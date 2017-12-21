@@ -65,7 +65,23 @@ module.exports = function(app){
                                 rating_history:helper.build_rating_history(rating_histories),
                                 booking_min_history:helper.build_booking_min_history(booking_min_histories),
                                 reviews_history:helper.build_reviews_history(reviews_histories),
-                                discussion_history:helper.build_discussion_history(discussion_histories)
+                                discussion_history:helper.build_discussion_history(discussion_histories),
+                                seller_name:'',
+                                seller_url:'',
+                                transaction_success:'',
+                                item_sold:'',
+                                talk_response_rate:'',
+                                talk_response_time:'',
+                                message_response_rate:'',
+                                message_response_time:'',
+                                shipment_support:'',
+                                location_of_shop:'',
+                                condition:'',
+                                insurance:'',
+                                weight:'',
+                                current_review_count:'',
+                                current_rating_count:'',
+                                currrent_a_talk_about_count:''
                             });
             }
             else{
@@ -110,7 +126,23 @@ module.exports = function(app){
                                     rating_history:helper.build_rating_history(rating_histories),
                                     booking_min_history:helper.build_booking_min_history(booking_min_histories),
                                     reviews_history:helper.build_reviews_history(reviews_histories),
-                                    discussion_history:helper.build_discussion_history(discussion_histories)
+                                    discussion_history:helper.build_discussion_history(discussion_histories),
+                                    seller_name:(product.seller_name==undefined?'':product.seller_name),
+                                    seller_url:(product.seller_url==undefined?'':product.seller_url),
+                                    transaction_success:(product.transaction_success==undefined?'':product.transaction_success),
+                                    item_sold:(product.item_sold==undefined?'':product.item_sold),
+                                    talk_response_rate:(product.talk_response_rate==undefined?'':product.talk_response_rate),
+                                    talk_response_time:(product.talk_response_time==undefined?'':product.talk_response_time),
+                                    message_response_rate:(product.message_response_rate==undefined?'':product.message_response_rate),
+                                    message_response_time:(product.message_response_time==undefined?'':product.message_response_time),
+                                    shipment_support:(product.shipment_support==undefined?'':product.shipment_support),
+                                    location_of_shop:(product.location_of_shop==undefined?'':product.location_of_shop),
+                                    condition:(product.condition==undefined?'':product.condition),
+                                    insurance:(product.insurance==undefined?'':product.insurance),
+                                    weight:(product.weight==undefined?'':product.weight),
+                                    current_review_count:(product.current_review_count==undefined?'':product.current_review_count),
+                                    current_rating_count:(product.current_rating_count==undefined?'':product.current_rating_count),
+                                    currrent_a_talk_about_count:(product.currrent_a_talk_about_count==undefined?'':product.currrent_a_talk_about_count)
                                 });
 
                             });
@@ -135,7 +167,23 @@ module.exports = function(app){
                                     rating_history:helper.build_rating_history(rating_histories),
                                     booking_min_history:helper.build_booking_min_history(booking_min_histories),
                                     reviews_history:helper.build_reviews_history(reviews_histories),
-                                    discussion_history:helper.build_discussion_history(discussion_histories)
+                                    discussion_history:helper.build_discussion_history(discussion_histories),
+                                    seller_name:(product.seller_name==undefined?'':product.seller_name),
+                                    seller_url:(product.seller_url==undefined?'':product.seller_url),
+                                    transaction_success:(product.transaction_success==undefined?'':product.transaction_success),
+                                    item_sold:(product.item_sold==undefined?'':product.item_sold),
+                                    talk_response_rate:(product.talk_response_rate==undefined?'':product.talk_response_rate),
+                                    talk_response_time:(product.talk_response_time==undefined?'':product.talk_response_time),
+                                    message_response_rate:(product.message_response_rate==undefined?'':product.message_response_rate),
+                                    message_response_time:(product.message_response_time==undefined?'':product.message_response_time),
+                                    shipment_support:(product.shipment_support==undefined?'':product.shipment_support),
+                                    location_of_shop:(product.location_of_shop==undefined?'':product.location_of_shop),
+                                    condition:(product.condition==undefined?'':product.condition),
+                                    insurance:(product.insurance==undefined?'':product.insurance),
+                                    weight:(product.weight==undefined?'':product.weight),
+                                    current_review_count:(product.current_review_count==undefined?'':product.current_review_count),
+                                    current_rating_count:(product.current_rating_count==undefined?'':product.current_rating_count),
+                                    currrent_a_talk_about_count:(product.currrent_a_talk_about_count==undefined?'':product.currrent_a_talk_about_count)
                                 });
 
                             });
@@ -268,6 +316,22 @@ module.exports = function(app){
                                 productData['booking_min_history'] = JSON.stringify(booking_min_histories);
                                 productData['reviews_history'] = JSON.stringify(reviews_histories);
                                 productData['discussion_history'] = JSON.stringify(discussion_histories);
+                                productData['seller_name']=info.seller_name;
+                                productData['seller_url']=info.seller_url;
+                                productData['transaction_success']=info.transaction_success;
+                                productData['item_sold']=info.item_sold;
+                                productData['talk_response_rate']=info.talk_response_rate;
+                                productData['talk_response_time']=info.talk_response_time;
+                                productData['message_response_rate']=info.message_response_rate;
+                                productData['message_response_time']=info.message_response_time;
+                                productData['shipment_support']=info.shipment_support;
+                                productData['location_of_shop']=info.location_of_shop;
+                                productData['condition']=info.condition;
+                                productData['insurance']=info.insurance;
+                                productData['weight']=info.weight;
+                                productData['current_review_count']=info.current_review_count;
+                                productData['current_rating_count']=info.current_rating_count;
+                                productData['currrent_a_talk_about_count']=info.currrent_a_talk_about_count;
                             }
                             Product.create(productData, function (error, product) {
                             });

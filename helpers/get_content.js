@@ -343,6 +343,22 @@ module.exports.get_info_from_tokopedia = function (html) {
     var reviews = null;
     var discussion = null;
     var rating = null;
+    var seller_name = null;
+    var seller_url = null;
+    var transaction_success = null;
+    var item_sold = null;
+    var talk_response_rate = null;
+    var talk_response_time = null;
+    var message_response_rate = null;
+    var message_response_time = null;
+    var shipment_support = null;
+    var location_of_shop = null;
+    var condition = null;
+    var insurance = null;
+    var weight = null;
+    var current_review_count = null;
+    var current_rating_count = null;
+    var currrent_a_talk_about_count = null;
     
     var DomParser = require('dom-parser');
     var parser = new DomParser();
@@ -419,7 +435,95 @@ module.exports.get_info_from_tokopedia = function (html) {
         }
     }
     
-    return {name: name, reviews: reviews,rating: rating,discussion: discussion,sold: sold,sell_price: sell_price,booking_min: booking_min,retail_price: retail_price, time_sell_price: time_sell_price,item_types:item_types,item_type_labels:item_type_labels};
+    nodes=dom.getElementById('p-info-weight');
+    if(nodes!=null){
+        weight=nodes.innerHTML.trim();
+    }
+    
+    nodes=dom.getElementById('p-info-insurance');
+    if(nodes!=null){
+        insurance=nodes.innerHTML.trim();
+    }
+    
+    nodes=dom.getElementById('p-info-condition');
+    if(nodes!=null){
+        condition=nodes.innerHTML.trim();
+    }
+    
+    node = dom.getElementsByClassName('pengiriman');
+    if(node.length>0){
+        uls=node[0].getElementsByTagName('ul');
+        if(uls.length>0){
+            shipment_support='<ul class="product-ratingstat mt-0 p-10">'+uls[0].innerHTML.replace(/(\r\n|\n|\r)/gm,"")+'</ul>';
+        }
+        
+    }
+    
+    node = dom.getElementsByClassName('product-box-content');
+    if(node.length>1){
+        node=node[1];
+        spans=node.getElementsByTagName('span');
+        if(spans.length>2){
+            location_of_shop=spans[2].innerHTML;
+        }
+    }
+    
+    nodes=dom.getElementById('shop-item-sold-v2');
+    if(nodes!=null){
+        item_sold=nodes.innerHTML.trim();
+    }
+    
+    node = dom.getElementsByClassName('transaction-info');
+    if(node.length>0){
+        node=node[0];
+        node=node.getElementsByTagName('strong');
+        if(node.length>0){
+            transaction_success=node[0].innerHTML;
+        }
+    }
+    
+    nodes=dom.getElementById('shop-name-info');
+    if(nodes!=null){
+        seller_url=nodes.getAttribute('href');
+        seller_name=nodes.innerHTML;
+    }
+    
+    node = dom.getElementsByClassName('reviewsummary-loop');
+    if(node.length>0){
+        node=node[0];
+        node=node.getElementsByClassName('mt-5');
+        if(node.length>1){
+            current_review_count=node[1].innerHTML.replace(/[^0-9]+/g, '');
+        }
+    }
+    
+    node = dom.getElementsByClassName('ratingtotal');
+    if(node.length>0){
+        current_rating_count=node[0].innerHTML;
+    }
+    
+    nodes=dom.getElementById('seller-message-response-time');
+    if(nodes!=null){
+        message_response_time=nodes.innerHTML;
+    }
+    
+    nodes=dom.getElementById('seller-message-response-rate');
+    if(nodes!=null){
+        message_response_rate=nodes.innerHTML;
+    }
+    
+    nodes=dom.getElementById('seller-response-time');
+    if(nodes!=null){
+        talk_response_time=nodes.innerHTML;
+    }
+    
+    nodes=dom.getElementById('seller-response-rate');
+    if(nodes!=null){
+        talk_response_rate=nodes.innerHTML;
+    }
+    
+    
+    return {seller_name: seller_name,seller_url: seller_url,transaction_success: transaction_success,item_sold: item_sold,talk_response_rate: talk_response_rate,talk_response_time: talk_response_time,message_response_rate: message_response_rate,message_response_time: message_response_time,shipment_support: shipment_support,location_of_shop: location_of_shop,condition: condition,insurance: insurance,weight: weight,current_review_count: current_review_count,current_rating_count: current_rating_count,currrent_a_talk_about_count: currrent_a_talk_about_count,name: name, reviews: reviews,rating: rating,discussion: discussion,sold: sold,sell_price: sell_price,booking_min: booking_min,retail_price: retail_price, time_sell_price: time_sell_price,item_types:item_types,item_type_labels:item_type_labels};
 };
 
 module.exports.send_mail_for_tracking_price_fixed = function (product_id, sell_price) {

@@ -1,0 +1,10 @@
+#tracking_table{
+    width: 100%;
+}
+#tracking_table td,#tracking_table th{
+    width: 24%;
+    border: 1px solid black;
+    word-break: break-all;
+    text-align: center;
+    padding: 5px;
+}
