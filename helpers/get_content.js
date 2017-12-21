@@ -319,11 +319,11 @@ module.exports.get_info_from_tokopedia = function (html) {
     var time_sell_price = null;
     var item_types = {};
     var item_type_labels =[];
-    var see = null;
     var sold = null;
     var booking_min = null;
     var reviews = null;
     var discussion = null;
+    var rating = null;
     
     var DomParser = require('dom-parser');
     var parser = new DomParser();
@@ -351,8 +351,6 @@ module.exports.get_info_from_tokopedia = function (html) {
     }  
     item_type_labels=JSON.stringify(item_type_labels);
     
-    nodes=dom.getElementsByClassName('view-count');
-    see=nodes[0].innerHTML;//.replace(/[^0-9\,]+/g, '');
     nodes=dom.getElementsByClassName('item-sold-count');
     sold=nodes[0].innerHTML.replace(/[^0-9\.]+/g, '');
     if(sold.trim()==''){
@@ -379,7 +377,22 @@ module.exports.get_info_from_tokopedia = function (html) {
         discussion='0';
     }
     
-    return {reviews: reviews,discussion: discussion,see: see,sold: sold,sell_price: sell_price,booking_min: booking_min,retail_price: retail_price, time_sell_price: time_sell_price,item_types:item_types,item_type_labels:item_type_labels};
+    node=dom.getElementsByClassName('rate-accuracy');
+    if(node.length>0){
+        node = node[0];
+        ps = node.getElementsByTagName('p');
+        if (ps.length > 0) {
+            rating = ps[0].innerHTML.replace(/[^0-9\.]+/g, '');
+            rating = rating.substr(0, 3);
+        } else {
+            rating = '0';
+        }
+    }
+    else{
+        rating='0';
+    }
+    
+    return {reviews: reviews,rating: rating,discussion: discussion,sold: sold,sell_price: sell_price,booking_min: booking_min,retail_price: retail_price, time_sell_price: time_sell_price,item_types:item_types,item_type_labels:item_type_labels};
 };
 
 module.exports.send_mail_for_tracking_price_fixed = function (product_id, sell_price) {

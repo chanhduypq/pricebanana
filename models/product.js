@@ -16,6 +16,10 @@ var ProductSchema = new mongoose.Schema({
         type: String,
         trim: true
     },
+    rating_history: {
+        type: String,
+        trim: true
+    },
     sold_history: {
         type: String,
         trim: true

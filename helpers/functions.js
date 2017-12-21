@@ -85,6 +85,21 @@ module.exports.build_sold_history = function(price_histories) {
     return result;
 };
 
+module.exports.build_rating_history = function(price_histories) {
+    
+    var result = '';
+    if(price_histories == '' || typeof(price_histories) == 'undefined' || price_histories == null || price_histories.length == 0) {
+        return result;
+    }
+    for(var i=0; i<price_histories.length-1;i++) {
+        var price = price_histories[i];
+        result += new Date(price.date).getTime()+'-'+price.rating+'_';
+    }
+    price = price_histories[price_histories.length-1];
+    result += new Date(price.date).getTime()+'-'+price.rating;
+    return result;
+};
+
 module.exports.build_booking_min_history = function(price_histories) {
     
     var result = '';

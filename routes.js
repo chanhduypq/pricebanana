@@ -61,6 +61,7 @@ module.exports = function(app){
                                 is_admin:is_admin,
                                 see_history:helper.build_see_history(see_histories),
                                 sold_history:helper.build_sold_history(sold_histories),
+                                rating_history:helper.build_rating_history(rating_histories),
                                 booking_min_history:helper.build_booking_min_history(booking_min_histories),
                                 reviews_history:helper.build_reviews_history(reviews_histories),
                                 discussion_history:helper.build_discussion_history(discussion_histories)
@@ -72,6 +73,7 @@ module.exports = function(app){
                 if (domain == 'tokopedia') {
                     var see_histories = JSON.parse(product.see_history);
                     var sold_histories = JSON.parse(product.sold_history);
+                    var rating_histories = JSON.parse(product.rating_history);
                     var booking_min_histories = JSON.parse(product.booking_min_history);
                     var reviews_histories = JSON.parse(product.reviews_history);
                     var discussion_histories = JSON.parse(product.discussion_history);
@@ -79,6 +81,7 @@ module.exports = function(app){
                 else{
                     var see_histories = null;
                     var sold_histories = null;
+                    var rating_histories = null;
                     var booking_min_histories = null;
                     var reviews_histories = null;
                     var discussion_histories = null;
@@ -102,6 +105,7 @@ module.exports = function(app){
                                     is_admin:is_admin,
                                     see_history:helper.build_see_history(see_histories),
                                     sold_history:helper.build_sold_history(sold_histories),
+                                    rating_history:helper.build_rating_history(rating_histories),
                                     booking_min_history:helper.build_booking_min_history(booking_min_histories),
                                     reviews_history:helper.build_reviews_history(reviews_histories),
                                     discussion_history:helper.build_discussion_history(discussion_histories)
@@ -125,6 +129,7 @@ module.exports = function(app){
                                     is_admin:is_admin,
                                     see_history:helper.build_see_history(see_histories),
                                     sold_history:helper.build_sold_history(sold_histories),
+                                    rating_history:helper.build_rating_history(rating_histories),
                                     booking_min_history:helper.build_booking_min_history(booking_min_histories),
                                     reviews_history:helper.build_reviews_history(reviews_histories),
                                     discussion_history:helper.build_discussion_history(discussion_histories)
@@ -195,6 +200,7 @@ module.exports = function(app){
         var url = req.body.url;
         var id = req.body.id;
         var domain = req.body.domain;
+        var see = req.body.see;
         if (id != undefined && id != 'undefined') {
             if (domain == 'qoo10') {
                 info = helperGetContent.get_info_from_qoo10(req.body.content, req.body.inventoryList);
@@ -227,7 +233,10 @@ module.exports = function(app){
                             if (domain == 'tokopedia') {
                                 
                                 var see_histories = [
-                                    { date: today, see: info.see}
+                                    { date: today, see: see}
+                                ]; 
+                                var rating_histories = [
+                                    { date: today, rating: info.rating}
                                 ]; 
                                 var sold_histories = [
                                     { date: today, sold: info.sold}
@@ -250,6 +259,7 @@ module.exports = function(app){
                             };
                             if (domain == 'tokopedia') {
                                 productData['see_history'] = JSON.stringify(see_histories);
+                                productData['rating_history'] = JSON.stringify(rating_histories);
                                 productData['sold_history'] = JSON.stringify(sold_histories);
                                 productData['booking_min_history'] = JSON.stringify(booking_min_histories);
                                 productData['reviews_history'] = JSON.stringify(reviews_histories);
@@ -279,6 +289,7 @@ module.exports = function(app){
                             if (domain == 'tokopedia') {
                                 
                                 var see_histories = JSON.parse(product.see_history);
+                                var rating_histories = JSON.parse(product.rating_history);
                                 var sold_histories = JSON.parse(product.sold_history);
                                 var booking_min_histories = JSON.parse(product.booking_min_history);
                                 var reviews_histories = JSON.parse(product.reviews_history);
@@ -287,15 +298,28 @@ module.exports = function(app){
                                 find = false;
                                 for(var i=0; i<see_histories.length;i++) {
                                     if(see_histories[i].date == today) {
-                                        see_histories[i].price = info.see;
+                                        see_histories[i].price = see;
                                         find = true;
                                         break;
                                     }
                                 }
                                 if(!find) {
-                                    see_histories.push({date: today, see: info.see});
+                                    see_histories.push({date: today, see: see});
                                 }
                                 see_history=helper.sort_price_history(see_histories);
+                                
+                                find = false;
+                                for(var i=0; i<rating_histories.length;i++) {
+                                    if(rating_histories[i].date == today) {
+                                        rating_histories[i].price = info.rating;
+                                        find = true;
+                                        break;
+                                    }
+                                }
+                                if(!find) {
+                                    rating_histories.push({date: today, rating: info.rating});
+                                }
+                                rating_history=helper.sort_price_history(rating_histories);
                                 
                                 find = false;
                                 for(var i=0; i<sold_histories.length;i++) {
@@ -353,7 +377,7 @@ module.exports = function(app){
                             helperGetContent.send_mail_for_tracking_price_fixed(product_id,info.sell_price);
 
                             if (domain == 'tokopedia') {
-                                Product.findOneAndUpdate({ "_id" : product._id }, {reviews_history: JSON.stringify(reviews_history),discussion_history: JSON.stringify(discussion_history),price_history: JSON.stringify(price_history),see_history: JSON.stringify(see_history),sold_history: JSON.stringify(sold_history),booking_min_history: JSON.stringify(booking_min_history),"current_price":current_price}, function (err, product) {
+                                Product.findOneAndUpdate({ "_id" : product._id }, {reviews_history: JSON.stringify(reviews_history),discussion_history: JSON.stringify(discussion_history),price_history: JSON.stringify(price_history),see_history: JSON.stringify(see_history),rating_history: JSON.stringify(rating_history),sold_history: JSON.stringify(sold_history),booking_min_history: JSON.stringify(booking_min_history),"current_price":current_price}, function (err, product) {
                                 });
                             }
                             else{

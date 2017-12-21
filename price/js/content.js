@@ -295,6 +295,26 @@ function runTokopedia() {
         clearInterval(timerTokopedia);
         contentFull = $("html").html();
         product_id = $("#product-id").val();
+        see='0';
+        $.ajax({
+            url: 'https://www.tokopedia.com/provi/check?pid='+product_id+'&callback=show_product_view',//&_=1513821634109',
+            method: "GET",
+            crossDomain: true,
+            async: false,
+            success: function (result) {
+                result=result.split(':');
+                result=result[1];
+                result=result.split('}');
+                see=result[0];
+            },
+            error: function (xhr, status, error) {
+                console.log(status);
+                console.log(error);
+                console.log(xhr.responseText);
+            }
+        });
+        
+        
         $.ajax({
             url: apiUrl,
             method: "POST",
@@ -306,7 +326,8 @@ function runTokopedia() {
                 url:current_url,
                 domain:'tokopedia',
                 content:contentFull,
-                inventoryList:''
+                inventoryList:'',
+                see:see
             },
             success: function (result) {
                 if (result.success) {

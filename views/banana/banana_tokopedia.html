@@ -35,6 +35,7 @@
 	<ul>
 		<li><a href="#tabs-price-history" id='history'>Price History</a></li>
                 <li><a id="inventoryList" href="#tabs-inventoryList">Other Price History</a></li>
+                <li><a id="history_tab" href="#tabs-history">Other History</a></li>
 		<li><a id="tracking_tab" href="#tabs-track-product">Track Product</a></li>
                 <li><a id="login_register_tab" href="#tabs-login_register">Login/Register</a></li>
 	</ul>
@@ -47,6 +48,9 @@
             </div>
             <div id="chartContainer-inventoryList">
             </div>
+	</div>
+        <div id="tabs-history">
+		<div id="chartContainer-other"></div>
 	</div>
 	<div id="tabs-track-product">
 			
@@ -165,17 +169,16 @@
         var tracked_price = parseFloat('<%= tracked_price %>');
         var price_history='<%= price_history %>';
         var see_history='<%= see_history %>';
+        var rating_history='<%= rating_history %>';
         var sold_history='<%= sold_history %>';
         var booking_min_history='<%= booking_min_history %>';
         var reviews_history='<%= reviews_history %>';
         var discussion_history='<%= discussion_history %>';
         
         is_admin= '<%= is_admin %>';
-        if(is_admin=='1'){
-            label_for_yAxis='';
-        }
-        else{
-            label_for_yAxis='Price';
+        if(is_admin=='0'){
+            $("#history_tab").remove();
+            $("#tabs-history").remove();
         }
         
         item_type_history= '<%= item_type_history %>';
@@ -357,17 +360,20 @@
             if(temp[i]!=''){
                 date_and_price=temp[i].split('-');
                 date=parseInt(date_and_price[0]);
-                
-                if(date_and_price[1].indexOf('rb')!=-1){
-                    price=date_and_price[1].replace('rb','');
-                    price=parseFloat(price.replace(',','.'));
-                    data_see.push([date,price,1]);
-                }
-                else{
-                    price=parseFloat(date_and_price[1].replace(',','.'));
-                    data_see.push([date,price,0]);
-                }
-                
+                price=parseFloat(date_and_price[1]);
+                data_see.push([date,price]);
+            }
+            
+        }
+        
+        var data_rating=[];
+        temp=rating_history.split('_');
+        for(i=0;i<temp.length;i++){
+            if(temp[i]!=''){
+                date_and_price=temp[i].split('-');
+                date=parseInt(date_and_price[0]);
+                price=parseFloat(date_and_price[1]);
+                data_rating.push([date,price]);
             }
             
         }
@@ -421,16 +427,15 @@
         }
 
         if(is_admin=='1'){
-            $("#history").html('History');
             seriesData = [{
                     name: 'See',
                     data: data_see,
                     tooltip: {
                         valueDecimals: 0,
-//                        pointFormat: '{series.name}: <b>{point.y}</b><br/>',
+                        pointFormat: '{series.name}: <b>{point.y}</b><br/>',
                         shared: true,
-                        xDateFormat: '%b %e %Y',
-                        pointFormatter: function() {
+                        xDateFormat: '%b %e %Y'
+                        /*pointFormatter: function() {
                         
                             if(data_see[this.index][2]==1){
                                 return this.series.name+': <b>' + this.y.toString().replace('.',',') + 'rb</b>';
@@ -439,7 +444,7 @@
                                 return this.series.name+': <b>' + this.y.toString().replace('.',',') + '</b>';
                             }
                             
-                        }
+                        }*/
                     },
                     color: 'blue'
                 },
@@ -487,32 +492,32 @@
                     color: 'yellow'
                 },
                 {
-                    name: 'Price',
-                    data: data_price,
+                    name: 'Rating',
+                    data: data_rating,
                     tooltip: {
-                        valueDecimals: 0,
-                        pointFormat: '{series.name}: <b>Rp {point.y}</b><br/>',
+                        valueDecimals: 1,
+                        pointFormat: '{series.name}: <b>{point.y}</b><br/>',
                         shared: true,
                         xDateFormat: '%b %e %Y'
                     },
-                    color: 'brown'
+                    color: 'violet'
                 }
             ];
-            showChart(label_for_yAxis,label_for_yAxis+' History',seriesData,'chartContainer');
+            showChart('Other','Other History',seriesData,'chartContainer-other');
         }
-        else{
-            seriesData=[{
-                            name: 'Price',
-                            data: data_price,
-                            tooltip: {
-                                    valueDecimals: 0,
-                                    pointFormat: '{series.name}: <b>Rp {point.y}</b><br/>',
-                                    shared: true,
-                                    xDateFormat: '%b %e %Y'
-                            }
-                    }];
-            showChart(label_for_yAxis,label_for_yAxis+' History',seriesData,'chartContainer');
-        }
+        
+        
+        seriesData=[{
+                        name: 'Price',
+                        data: data_price,
+                        tooltip: {
+                                valueDecimals: 0,
+                                pointFormat: '{series.name}: <b>Rp {point.y}</b><br/>',
+                                shared: true,
+                                xDateFormat: '%b %e %Y'
+                        }
+                }];
+        showChart('Price','Price History',seriesData,'chartContainer');
         
        
 	
