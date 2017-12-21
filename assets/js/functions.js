@@ -43,7 +43,6 @@ function regist() {
             dataType: 'json',
             success: function (result) {
                 if (result.success) {
-//                            showTrackProductTab(result,email,current_price);
                     window.location.reload();
                 } else {
                     alert(result.message);
@@ -205,7 +204,12 @@ function getColor(v) {
     return "rgb(" + r + "," + g + ",0)";
 }
 
-function showChart(label_for_yAxis,label_for_chart,seriesData,elementId_for_render) {
+function showChart(label_for_yAxis,label_for_chart,seriesData,elementId_for_render) {    
+    Highcharts.setOptions({
+            lang:{
+                rangeSelectorZoom: ''
+            }
+    });
     Highcharts.stockChart({
         chart: {
             borderColor: 'white',
@@ -217,7 +221,10 @@ function showChart(label_for_yAxis,label_for_chart,seriesData,elementId_for_rend
         },
         rangeSelector: {
             selected: 3,
-            buttonTheme: {width: 50},
+            buttonTheme: {
+                width: 50,
+                visibility: 'hidden'
+            },
             buttons: [
                 {type: 'week', count: 1, text: '1w'},
                 {type: 'month', count: 1, text: '1m'},
@@ -247,6 +254,7 @@ function showChart(label_for_yAxis,label_for_chart,seriesData,elementId_for_rend
         credits: {enabled: false},
         navigator: {enabled: false},
         scrollbar: {enabled: false},
+        exporting: { enabled: false },
         series: seriesData
     }, function (chart) {
         // apply the date pickers

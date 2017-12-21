@@ -29,7 +29,7 @@
  
 <div id="tabs">
 	<div class="acount">
-		<span href="#" id="user_email"><%= user_email %></span>
+		<span href="#" id="user_email"></span>
 	</div>
 	<ul>
 		<li><a href="#tabs-price-history">Price History</a></li>
@@ -397,7 +397,8 @@
         
         var user_email ='<%= user_email %>';
         if(isLogin){
-            $("#user_email").html(user_email).append(' (<a href="/logout/'+domain+'/'+id+'">Logout</a>)');
+//            $("#user_email").html(user_email).append(' (<a href="/logout/'+domain+'/'+id+'">Logout</a>)');
+            $("#user_email").append('<a href="/logout/'+domain+'/'+id+'">Logout</a>');
             $("#tabs-login_register").remove();
             $("#login_register_tab").remove();
         }

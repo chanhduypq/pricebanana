@@ -30,11 +30,11 @@
  
 <div id="tabs">
 	<div class="acount">
-		<span href="#" id="user_email"><%= user_email %></span>
+		<span href="#" id="user_email"></span>
 	</div>
 	<ul>
 		<li><a href="#tabs-price-history" id='history'>Price History</a></li>
-                <li><a id="inventoryList" href="#tabs-inventoryList">Other Price History</a></li>
+                <li><a id="inventoryList" href="#tabs-inventoryList">Wholesale Price</a></li>
                 <li><a id="history_tab" href="#tabs-history">Other History</a></li>
 		<li><a id="tracking_tab" href="#tabs-track-product">Track Product</a></li>
                 <li><a id="login_register_tab" href="#tabs-login_register">Login/Register</a></li>
@@ -232,7 +232,8 @@
         
         var user_email ='<%= user_email %>';
         if(isLogin){
-            $("#user_email").html(user_email).append(' (<a href="/logout/'+domain+'/'+id+'">Logout</a>)');
+//            $("#user_email").html(user_email).append(' (<a href="/logout/'+domain+'/'+id+'">Logout</a>)');
+            $("#user_email").append('<a href="/logout/'+domain+'/'+id+'">Logout</a>');
             $("#tabs-login_register").remove();
             $("#login_register_tab").remove();
         }
@@ -428,7 +429,7 @@
 
         if(is_admin=='1'){
             seriesData = [{
-                    name: 'See',
+                    name: 'View',
                     data: data_see,
                     tooltip: {
                         valueDecimals: 0,
@@ -459,7 +460,7 @@
                     }
                 },
                 {
-                    name: 'Booking min',
+                    name: 'Min. Order',
                     data: data_booking_min,
                     tooltip: {
                         valueDecimals: 0,
@@ -481,7 +482,7 @@
                     color: 'pink'
                 },
                 {
-                    name: 'Product discussion',
+                    name: 'Discussions',
                     data: data_discussion,
                     tooltip: {
                         valueDecimals: 0,
@@ -517,6 +518,11 @@
                                 xDateFormat: '%b %e %Y'
                         }
                 }];
+        Highcharts.setOptions({
+                lang: {
+                        thousandsSep: ','
+                }
+        });
         showChart('Price','Price History',seriesData,'chartContainer');
         
        
