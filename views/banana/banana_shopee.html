@@ -19,10 +19,24 @@
 	<script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
         <script src="/js/functions.js"></script>
         <script src="/js/jAlert.js"></script>
+        <script src="/js/jquery.numeric.min.js"></script>
         
 	<link rel="stylesheet" type="text/css" href="/css/style.css" />
         <link rel="stylesheet" type="text/css" href="/css/inventory.css" />
         <link rel="stylesheet" type="text/css" href="/css/jAlert.css" />
+        
+        <style>
+            #tracking_table{
+                width: 100%;
+            }
+            #tracking_table td,#tracking_table th{
+                width: 24%;
+                border: 1px solid black;
+                word-break: break-all;
+                text-align: center;
+                padding: 5px;
+            }
+        </style>
 </head>
 <body>
  
@@ -35,6 +49,45 @@
 		<li><a id="tracking_tab" href="#tabs-track-product">Track Product</a></li>
                 <li><a id="login_register_tab" href="#tabs-login_register">Login/Register</a></li>
 	</ul>
+        <div style="float: right;margin: 10px;">
+            <input type="button" value="Track product" id="track-button"/>
+        </div>
+        <div style="clear: both;"></div>
+        <div id="tracking_div" style="display: none;background-color: #ccc;">
+            <table id="tracking_table">
+                <thead>
+                    <tr>
+                        <th>
+                            Product
+                        </th>
+                        <th>
+                            Desired price
+                        </th>
+                        <th>
+                            Current price
+                        </th>
+                        <th>&nbsp;</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <%= name %>
+                        </td>
+                        <td>
+                            $<input style="width: 50%;" class="numeric" type="text" id="desired_price" value=""/>
+                        </td>
+                        <td id="current_price">
+                            $<%= current_price %>
+                        </td>
+                        <td>
+                            <button class="ui-button ui-widget ui-corner-all"><%= label_for_action_tracking %></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div id="div_close" style="float: right;"><a class="btn_close" id="a_OptAllVw_closeBTN1">Close</a></div>
+        </div>
 	<div id="tabs-price-history">
 		<div id="chartContainer"></div>
 	</div>
@@ -147,9 +200,7 @@
      window.onerror = function myErrorHandler(errorMsg, url, lineNumber) {
         $("body").html("Please reload.");
     }
-    <% if (typeof price_history == 'undefined' || typeof current_price == 'undefined' || typeof tracked_price == 'undefined') { %>
-        $("body").html("Please reload.");
-    <% } %>
+    
     
      var hasJustTracked=false;
      var isLogin= <%= isLogin %>;
@@ -164,9 +215,23 @@
         
 	$( function() {
         
+        $(".numeric").numeric({ negative: false ,decimal : '.'});
+        $(".numeric").keyup(function(){
+            $(this).val(numberWithCommasForToko($(this).val()));
+        });
+        
+        $("#current_price").html("$"+numberWithCommasForToko(current_price));
+        $("#desired_price").val(numberWithCommasForToko(tracked_price));
+        
+        $("#track-button").click(function(){
+            $("#tracking_div").slideToggle('slow');        
+        });
+        $("#a_OptAllVw_closeBTN1").click(function(){
+            $("#tracking_div").slideToggle('slow'); 
+        });
+        
         var user_email ='<%= user_email %>';
         if(isLogin){
-//            $("#user_email").html(user_email).append(' (<a href="/logout/'+domain+'/'+id+'">Logout</a>)');
             $("#user_email").append('<a href="/logout/'+domain+'/'+id+'">Logout</a>');
             $("#tabs-login_register").remove();
             $("#login_register_tab").remove();
@@ -242,9 +307,10 @@
                 $('#login-form-link').click();
                 return;
             }
-            price = $(".tracking_price span").html();
-            price = price.replace(/[^0-9]*/,"");
-            price = $.trim(price);
+            price = $.trim($("#desired_price").val());
+            find1 = ',';
+            re1 = new RegExp(find1, 'g');
+            price = price.replace(re1,"");
             $.ajax({
                 type: "GET",
                 url: '/tracking/'+domain+'/'+id+'/'+price,

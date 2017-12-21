@@ -50,6 +50,7 @@ module.exports = function(app){
             if (product === null) {
                 var item_types = {};
                 return res.render(render_file, {
+                                name: '',
                                 price_history:[],
                                 user_email: user_email,
                                 current_price: 0,
@@ -94,6 +95,7 @@ module.exports = function(app){
                         if (trackingPrice === null) {
                             ProductItemType.findOne({product_id: product_id}, function (error, productItemType) {
                                 return res.render(render_file, {
+                                    name:product.name,
                                     price_history:helper.build_price_history(price_histories),
                                     user_email: user_email,
                                     current_price: current_price,
@@ -118,6 +120,7 @@ module.exports = function(app){
                             ProductItemType.findOne({product_id: product_id}, function (error, productItemType) {
                                 tracked_price = trackingPrice.tracked_price;
                                 return res.render(render_file, {
+                                    name:product.name,
                                     price_history:helper.build_price_history(price_histories),
                                     user_email: user_email,
                                     current_price: current_price,

@@ -20,9 +20,10 @@ function regist() {
     }
 
     if (hasJustTracked) {
-        price = $(".tracking_price span").html();
-        price = price.replace("$", "");
-        price = $.trim(price);
+        price = $.trim($("#desired_price").val());
+        find1 = ',';
+        re1 = new RegExp(find1, 'g');
+        price = price.replace(re1,"");
     } else {
         price = "";
     }
@@ -71,9 +72,10 @@ function login() {
     }
     var rememberme = $('input[name=rememberme]').is(":checked");
     if (hasJustTracked) {
-        price = $(".tracking_price span").html();
-        price = price.replace("$", "");
-        price = $.trim(price);
+        price = $.trim($("#desired_price").val());
+        find1 = ',';
+        re1 = new RegExp(find1, 'g');
+        price = price.replace(re1,"");
     } else {
         price = "";
     }
@@ -262,4 +264,10 @@ function showChart(label_for_yAxis,label_for_chart,seriesData,elementId_for_rend
             $('input.highcharts-range-selector', $('#' + chart.options.chart.renderTo)).datepicker()
         }, 0)
     });
+}
+
+function numberWithCommasForToko(x) {
+    var parts = x.toString().split(".");
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return parts.join(".");
 }
