@@ -222,10 +222,6 @@
         //tab and slider
         $( "#tabs" ).tabs();
 
-        //Q-Price
-        
-        trackingPriceSlide(tracked_price,0,current_price,"$");
-
         //login
         $('#login-form-link').click(function(e) {
                 $("#login-form").fadeIn(100);
@@ -274,7 +270,7 @@
             'content':'success',
             'onOpen': function(alert){
                 $(".ja_wrap.ja_wrap_black").height($("body").height());
-                $(".jAlert.animated.ja_default.ja_noTitle.ja_sm.fadeInUp").css('margin-top','30px');
+                $(".jAlert.animated.ja_default.ja_noTitle.ja_sm.fadeInUp").css('margin-top','350px');
             
                 window.setTimeout(function(){
                     $.jAlert('current').closeAlert();
