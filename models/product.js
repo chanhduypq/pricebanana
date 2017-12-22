@@ -94,7 +94,7 @@ var ProductSchema = new mongoose.Schema({
     current_rating_count: {
         type: String
     },
-    currrent_a_talk_about_count: {
+    current_number_of_talk_about: {
         type: String
     }
 });

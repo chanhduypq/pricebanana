@@ -19,15 +19,6 @@ function regist() {
         checked = false;
     }
 
-    if (hasJustTracked) {
-        price = $.trim($("#desired_price").val());
-        find1 = ',';
-        re1 = new RegExp(find1, 'g');
-        price = price.replace(re1,"");
-    } else {
-        price = "";
-    }
-
 
     if (checked) {
         $.ajax({
@@ -38,8 +29,7 @@ function regist() {
                 password: password,
                 passwordConf: passwordConf,
                 is_ajax: true,
-                product_id: domain + '_' + id,
-                price: price
+                product_id: domain + '_' + id
             },
             dataType: 'json',
             success: function (result) {
@@ -71,14 +61,6 @@ function login() {
         checked = false;
     }
     var rememberme = $('input[name=rememberme]').is(":checked");
-    if (hasJustTracked) {
-        price = $.trim($("#desired_price").val());
-        find1 = ',';
-        re1 = new RegExp(find1, 'g');
-        price = price.replace(re1,"");
-    } else {
-        price = "";
-    }
     if (checked) {
         $.ajax({
             type: "POST",
@@ -88,13 +70,11 @@ function login() {
                 logpassword: logpassword,
                 rememberme: rememberme,
                 is_ajax: true,
-                product_id: domain + '_' + id,
-                price: price
+                product_id: domain + '_' + id
             },
             dataType: 'json',
             success: function (result) {
                 if (result.success) {
-//                                    showTrackProductTab(result,logemail,current_price);
                     window.location.reload();
                 } else {
                     alert(result.message);
@@ -245,7 +225,7 @@ function showChart(label_for_yAxis,label_for_chart,seriesData,elementId_for_rend
         },
         title: {
             text: '<b>' + label_for_chart + '</b>',
-            style: {"color": "#333", "fontSize": "30px"}
+            style: {"color": "#333", "fontSize": "12px"}
         },
         plotOptions: {
             line: {

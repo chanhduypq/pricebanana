@@ -27,70 +27,17 @@
         <link rel="stylesheet" type="text/css" href="/css/tracking.css" />
         <link rel="stylesheet" type="text/css" href="/css/jAlert.css" />
         
-        <style>
-            #tracking_table{
-                width: 100%;
-            }
-            #tracking_table td,#tracking_table th{
-                width: 24%;
-                border: 1px solid black;
-                word-break: break-all;
-                text-align: center;
-                padding: 5px;
-            }
-        </style>
 </head>
 <body>
  
 <div id="tabs">
-	<div class="acount">
-		<span href="#" id="user_email"></span>
-	</div>
+	
 	<ul>
 		<li><a href="#tabs-price-history">Price History</a></li>
                 <li><a id="inventoryList" href="#tabs-inventoryList">Inventory list</a></li>
-		<li><a id="tracking_tab" href="#tabs-track-product">Track Product</a></li>
-                <li><a id="login_register_tab" href="#tabs-login_register">Login/Register</a></li>
+                <li style="visibility: hidden;"><a id="login_register_tab" href="#tabs-login_register">Login/Register</a></li>
 	</ul>
-        <div style="float: right;margin: 10px;">
-            <input type="button" value="Track product" id="track-button"/>
-        </div>
-        <div style="clear: both;"></div>
-        <div id="tracking_div" style="display: none;background-color: #ccc;">
-            <table id="tracking_table">
-                <thead>
-                    <tr>
-                        <th>
-                            Product
-                        </th>
-                        <th>
-                            Desired price
-                        </th>
-                        <th>
-                            Current price
-                        </th>
-                        <th>&nbsp;</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>
-                            <%= name %>
-                        </td>
-                        <td>
-                            $<input style="width: 50%;" class="numeric" type="text" id="desired_price" value=""/>
-                        </td>
-                        <td id="current_price">
-                            $<%= current_price %>
-                        </td>
-                        <td>
-                            <button class="ui-button ui-widget ui-corner-all"><%= label_for_action_tracking %></button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <div id="div_close" style="float: right;"><a class="btn_close" id="a_OptAllVw_closeBTN11">Close</a></div>
-        </div>
+        
 	<div id="tabs-price-history">
 		<div id="chartContainer"></div>
 	</div>
@@ -100,24 +47,6 @@
             </div>
             <div id="chartContainer-inventoryList">
             </div>
-	</div>
-	<div id="tabs-track-product">
-			
-			<!-- track-price -->
-			<div id="track-price" class="group-price">
-				<form action="" method="post" class="track-product">
-					<p class="price">Price: <span></span></p>
-					<p class="tracking_price">Traking Price: <span></span></p>
-					<p class="discount_price">Sale: <span></span><i></i></p>
-					<div class="price_slider">
-					  <div class="ui-slider-handle custom-handle"></div>
-					</div>
-					<div class="action">
-						<button class="ui-button ui-widget ui-corner-all"><%= label_for_action_tracking %></button>
-					</div>
-				</form>
-			</div>
-			<!-- end track-price -->
 	</div>
     
         <div id="tabs-login_register">
@@ -195,6 +124,49 @@
 			<!-- end acount-form -->
 			
 	</div>
+    
+        <div style="float: left;margin: 10px;">
+            <label style="cursor: pointer;">
+                <input type="checkbox" id="track-button"/>
+                Track product
+            </label>
+            
+        </div>
+        <div style="float: right;margin: 10px;" id='login-logout'>
+            <button class="ui-button ui-widget ui-corner-all">Login/Register</button>
+        </div>
+        <div style="clear: both;"></div>
+        <div id="tracking_div" style="display: none;background-color: #ccc;">
+            <table id="tracking_table">
+                <thead>
+                    <tr>
+                        <th>
+                            Product
+                        </th>
+                        <th>
+                            Desired price
+                        </th>
+                        <th>
+                            Current price
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <%= name %>
+                        </td>
+                        <td>
+                            $<input style="width: 50%;" class="numeric" type="text" id="desired_price" value=""/>
+                        </td>
+                        <td id="current_price">
+                            $<%= current_price %>
+                        </td>
+                        
+                    </tr>
+                </tbody>
+            </table>
+        </div>
         
     
 </div>
@@ -204,7 +176,6 @@
         $("body").html("Please reload.");
     }
     
-     var hasJustTracked=false;
      var isLogin= <%= isLogin %>;
         var href=window.location.href.split('banana/');
         href=href[1];
@@ -212,7 +183,10 @@
         domain=href[0];
         id=href[1].replace("/","");
         var current_price = parseFloat('<%= current_price %>');
-        var tracked_price = parseFloat('<%= tracked_price %>');
+        var tracked_price = '<%= tracked_price %>';
+        if(tracked_price!=''){
+            tracked_price=parseFloat(tracked_price);
+        }
         var price_history='<%= price_history %>';
         
         is_admin= '<%= is_admin %>';
@@ -228,19 +202,29 @@
         
 	$( function() {
         
+        $(".ui-button.ui-widget.ui-corner-all").click(function (){
+           $("#login_register_tab").click(); 
+        });
+        
         $(".numeric").numeric({ negative: false ,decimal : '.'});
         $(".numeric").keyup(function(){
             $(this).val(numberWithCommasForToko($(this).val()));
         });
         
         $("#current_price").html("$"+numberWithCommasForToko(current_price));
-        $("#desired_price").val(numberWithCommasForToko(tracked_price));
+        if(tracked_price!=''){
+            $("#desired_price").val(numberWithCommasForToko(tracked_price));
+        }
         
-        $("#track-button").click(function(){
+        $("#track-button").change(function(){
+            if($(this).is(":checked")){
+                if(isLogin==false){
+                    $("#login_register_tab").click();
+                    $('#login-form-link').click();
+                    return;
+                }
+            }
             $("#tracking_div").slideToggle('slow');        
-        });
-        $("#a_OptAllVw_closeBTN11").click(function(){
-            $("#tracking_div").slideToggle('slow'); 
         });
         
         if(item_type_history!=''&&item_type_history!='{}'){
@@ -464,9 +448,7 @@
         
         var user_email ='<%= user_email %>';
         if(isLogin){
-            $("#user_email").append('<a href="/logout/'+domain+'/'+id+'">Logout</a>');
-            $("#tabs-login_register").remove();
-            $("#login_register_tab").remove();
+            $("#login-logout").html('').append('<a href="/logout/'+domain+'/'+id+'">Logout</a>');
         }
         //tab and slider
         $( "#tabs" ).tabs();
@@ -531,36 +513,61 @@
             }
         });
 
-        $('.ui-button.ui-widget.ui-corner-all').click(function(e) {
-            e.preventDefault();
-            hasJustTracked=true;
-            if(isLogin==false){
-                $("#login_register_tab").click();
-                $('#login-form-link').click();
-                return;
-            }
-            price = $.trim($("#desired_price").val());
-            find1 = ',';
-            re1 = new RegExp(find1, 'g');
-            price = price.replace(re1,"");
-            $.ajax({
-                type: "GET",
-                url: '/tracking/'+domain+'/'+id+'/'+price,
-                dataType: 'json',
-                success: function(result) {
-                    if(result.success) {
-                        $( "#tracking" ).click();
-                    } else {
-                        alert('error');
+        $('#desired_price').keyup(function(e) {
+            var code = e.keyCode || e.which;
+             if(code == 13&&$.trim($(this).val())!='') { //Enter keycode
+               price = $.trim($(this).val());
+                find1 = ',';
+                re1 = new RegExp(find1, 'g');
+                price = price.replace(re1,"");
+                $.ajax({
+                    type: "GET",
+                    url: '/tracking/'+domain+'/'+id+'/'+price,
+                    dataType: 'json',
+                    success: function(result) {
+                        if(result.success) {
+                            $( "#tracking" ).click();
+                        } else {
+                            alert('error');
+                        }
+                    },
+                    error: function (request, status, error) {
+                        console.log(request.responseText);
+                        console.log(status);
+                        console.log(error);
                     }
-                },
-                error: function (request, status, error) {
-                    console.log(request.responseText);
-                    console.log(status);
-                    console.log(error);
-                }
-            });
-            $(this).html("Update tracking");
+                });
+             }	
+            
+            
+        });
+        
+        $('#desired_price').change(function() {
+             if($.trim($(this).val())!='') {
+               price = $.trim($(this).val());
+                find1 = ',';
+                re1 = new RegExp(find1, 'g');
+                price = price.replace(re1,"");
+                $.ajax({
+                    type: "GET",
+                    url: '/tracking/'+domain+'/'+id+'/'+price,
+                    dataType: 'json',
+                    success: function(result) {
+                        if(result.success) {
+                            $( "#tracking" ).click();
+                        } else {
+                            alert('error');
+                        }
+                    },
+                    error: function (request, status, error) {
+                        console.log(request.responseText);
+                        console.log(status);
+                        console.log(error);
+                    }
+                });
+             }	
+            
+            
         });
         
                 

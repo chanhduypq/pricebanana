@@ -24,9 +24,11 @@
 .mr-10 {
     margin-right: 10px !important;
 }
-li {
-    display: list-item !important;
-    text-align: -webkit-match-parent !important;
+.product-ratingstat li {
+    padding:2px 0;
+    float:left;
+    display:block;
+    width:100%;
 }
 img {
     height: auto !important;
@@ -86,9 +88,7 @@ small {
 
 .span2 {
   width: 14.893617021276595%;
-  *width: 14.840425531914894%;
 }
 .span9 {
   width: 74.46808510638297%;
-  *width: 74.41489361702126%;
 }

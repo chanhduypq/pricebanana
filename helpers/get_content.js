@@ -358,7 +358,7 @@ module.exports.get_info_from_tokopedia = function (html) {
     var weight = null;
     var current_review_count = null;
     var current_rating_count = null;
-    var currrent_a_talk_about_count = null;
+    var current_number_of_talk_about = null;
     
     var DomParser = require('dom-parser');
     var parser = new DomParser();
@@ -407,6 +407,7 @@ module.exports.get_info_from_tokopedia = function (html) {
     spans=node.getElementsByTagName('span');
     if(spans.length>0){
         discussion=spans[0].innerHTML.replace(/[^0-9\.]+/g, '');
+        current_number_of_talk_about=discussion;
     }
     else{
         discussion='0';
@@ -523,7 +524,7 @@ module.exports.get_info_from_tokopedia = function (html) {
     }
     
     
-    return {seller_name: seller_name,seller_url: seller_url,transaction_success: transaction_success,item_sold: item_sold,talk_response_rate: talk_response_rate,talk_response_time: talk_response_time,message_response_rate: message_response_rate,message_response_time: message_response_time,shipment_support: shipment_support,location_of_shop: location_of_shop,condition: condition,insurance: insurance,weight: weight,current_review_count: current_review_count,current_rating_count: current_rating_count,currrent_a_talk_about_count: currrent_a_talk_about_count,name: name, reviews: reviews,rating: rating,discussion: discussion,sold: sold,sell_price: sell_price,booking_min: booking_min,retail_price: retail_price, time_sell_price: time_sell_price,item_types:item_types,item_type_labels:item_type_labels};
+    return {seller_name: seller_name,seller_url: seller_url,transaction_success: transaction_success,item_sold: item_sold,talk_response_rate: talk_response_rate,talk_response_time: talk_response_time,message_response_rate: message_response_rate,message_response_time: message_response_time,shipment_support: shipment_support,location_of_shop: location_of_shop,condition: condition,insurance: insurance,weight: weight,current_review_count: current_review_count,current_rating_count: current_rating_count,current_number_of_talk_about: current_number_of_talk_about,name: name, reviews: reviews,rating: rating,discussion: discussion,sold: sold,sell_price: sell_price,booking_min: booking_min,retail_price: retail_price, time_sell_price: time_sell_price,item_types:item_types,item_type_labels:item_type_labels};
 };
 
 module.exports.send_mail_for_tracking_price_fixed = function (product_id, sell_price) {

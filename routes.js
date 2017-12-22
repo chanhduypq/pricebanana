@@ -9,6 +9,60 @@ var helperBanana = require(__dirname + '/helpers/banana');
 var config = require(__dirname + '/config');
 
 module.exports = function(app){
+    
+    app.get('/tracked', function (req, res) {
+        names=[];
+        current_prices=[];
+        tracked_prices=[];
+        sites=[];
+        if (req.session.hasOwnProperty("userId")) {
+//            TrackingPrice.find({user_id:req.session.userId}, function (error, trackingPrices) {
+//                console.log(trackingPrices);
+//                return res.render('tracked', {
+//                                    name: '',
+//                                });
+//            })
+
+                var MongoClient = require('mongodb').MongoClient;
+                var url = "mongodb://localhost/pricebanana";
+
+                MongoClient.connect(url, function(err, db) {
+                  if (err) throw err;
+                  db.collection('trackingprices').aggregate([
+                    { $lookup:
+                       {
+                         from: 'products',
+                         localField: 'product_id',
+                         foreignField: 'product_id',
+                         as: 'products'
+                       }
+                     }
+                    ], function(err, trackingprices) {
+                    if (err) throw err;
+                    for(i=0;i<trackingprices.length;i++){
+                        tracked_prices.push(trackingprices[i].tracked_price);
+                        names.push(trackingprices[i].products[0].name);
+                        current_prices.push(trackingprices[i].products[0].current_price);
+                        site=trackingprices[i].product_id.split('_');
+                        sites.push(site[0]);
+                    }
+                    db.close();
+                    return res.render('tracked', {
+                        tracked_prices: JSON.stringify(tracked_prices),
+                        current_prices: JSON.stringify(current_prices),
+                        names: JSON.stringify(names),
+                        sites: JSON.stringify(sites)
+                    });
+                    
+                  });
+                });
+        }
+        else{
+            return res.send("Please login.");
+        }
+        
+        
+    });
 
     app.get('/banana/:domain/:id', function (req, res) {
 
@@ -56,7 +110,6 @@ module.exports = function(app){
                                 current_price: 0,
                                 tracked_price: 0,
                                 isLogin: req.session.hasOwnProperty("userId"),
-                                label_for_action_tracking: 'Start tracking',
                                 item_type_history: item_types,
                                 item_type_labels:null,
                                 is_admin:is_admin,
@@ -81,7 +134,7 @@ module.exports = function(app){
                                 weight:'',
                                 current_review_count:'',
                                 current_rating_count:'',
-                                currrent_a_talk_about_count:''
+                                current_number_of_talk_about:''
                             });
             }
             else{
@@ -105,7 +158,7 @@ module.exports = function(app){
                 }
                 
                 var current_price = product.current_price;
-                var tracked_price = current_price;
+                var tracked_price = '';
                 
                 TrackingPrice.findOne({product_id: product_id,user_id:req.session.userId}, function (error, trackingPrice) {
                         if (trackingPrice === null) {
@@ -117,7 +170,6 @@ module.exports = function(app){
                                     current_price: current_price,
                                     tracked_price: tracked_price,
                                     isLogin: req.session.hasOwnProperty("userId"),
-                                    label_for_action_tracking: 'Start tracking',
                                     item_type_history: productItemType.item_type_history,
                                     item_type_labels:product.item_type_labels,
                                     is_admin:is_admin,
@@ -142,7 +194,7 @@ module.exports = function(app){
                                     weight:(product.weight==undefined?'':product.weight),
                                     current_review_count:(product.current_review_count==undefined?'':product.current_review_count),
                                     current_rating_count:(product.current_rating_count==undefined?'':product.current_rating_count),
-                                    currrent_a_talk_about_count:(product.currrent_a_talk_about_count==undefined?'':product.currrent_a_talk_about_count)
+                                    current_number_of_talk_about:(product.current_number_of_talk_about==undefined?'':product.current_number_of_talk_about)
                                 });
 
                             });
@@ -158,7 +210,6 @@ module.exports = function(app){
                                     current_price: current_price,
                                     tracked_price: tracked_price,
                                     isLogin: req.session.hasOwnProperty("userId"),
-                                    label_for_action_tracking: 'Update tracking',
                                     item_type_history: productItemType.item_type_history,
                                     item_type_labels:product.item_type_labels,
                                     is_admin:is_admin,
@@ -183,7 +234,7 @@ module.exports = function(app){
                                     weight:(product.weight==undefined?'':product.weight),
                                     current_review_count:(product.current_review_count==undefined?'':product.current_review_count),
                                     current_rating_count:(product.current_rating_count==undefined?'':product.current_rating_count),
-                                    currrent_a_talk_about_count:(product.currrent_a_talk_about_count==undefined?'':product.currrent_a_talk_about_count)
+                                    current_number_of_talk_about:(product.current_number_of_talk_about==undefined?'':product.current_number_of_talk_about)
                                 });
 
                             });
@@ -331,7 +382,7 @@ module.exports = function(app){
                                 productData['weight']=info.weight;
                                 productData['current_review_count']=info.current_review_count;
                                 productData['current_rating_count']=info.current_rating_count;
-                                productData['currrent_a_talk_about_count']=info.currrent_a_talk_about_count;
+                                productData['current_number_of_talk_about']=info.current_number_of_talk_about;
                             }
                             Product.create(productData, function (error, product) {
                             });
@@ -533,36 +584,14 @@ module.exports = function(app){
                     if(req.body.is_ajax) {
                         var obj = {success:true};
 
-                        if(req.body.price!=""){
-                            TrackingPrice.findOne({product_id: req.body.product_id,user_id:user._id}, function (error, trackingPrice) {
-                                if (trackingPrice === null) {
-                                    var trackingPriceData = {
-                                        product_id: req.body.product_id,
-                                        user_id: user._id,
-                                        user_email: req.body.logemail,
-                                        tracked_price: req.body.price
-                                    };
-                                    TrackingPrice.create(trackingPriceData, function (error, trackingPrice) {
-
-                                    });
-                                } else {
-                                    TrackingPrice.findOneAndUpdate({ "_id" : trackingPrice._id }, {tracked_price: req.body.price}, function (err, product) {
-
-                                    });
+                        TrackingPrice.findOne({product_id: req.body.product_id,user_id:req.session.userId}, function (error, trackingPrice) {
+                            if (error) { obj.tracked_price = 0; } else {
+                                if (trackingPrice === null) { obj.tracked_price = 0; } else {
+                                    obj.tracked_price = trackingPrice.tracked_price;
                                 }
-                            });
+                            }
                             res.send(JSON.stringify(obj));
-                        }
-                        else{
-                            TrackingPrice.findOne({product_id: req.body.product_id,user_id:req.session.userId}, function (error, trackingPrice) {
-                                if (error) { obj.tracked_price = 0; } else {
-                                    if (trackingPrice === null) { obj.tracked_price = 0; } else {
-                                        obj.tracked_price = trackingPrice.tracked_price;
-                                    }
-                                }
-                                res.send(JSON.stringify(obj));
-                            });
-                        }
+                        });
                         
                     } 
                 }
@@ -605,29 +634,7 @@ module.exports = function(app){
                             req.session.userId = user._id;
                             req.session.userEmail = req.body.email;
                             req.session.is24x7 = user.is24x7;
-                            if(req.body.price!=""){
-                                TrackingPrice.findOne({product_id: req.body.product_id,user_id:user._id}, function (error, trackingPrice) {
-                                if (trackingPrice === null) {
-                                        var trackingPriceData = {
-                                            product_id: req.body.product_id,
-                                            user_id: user._id,
-                                            user_email: req.body.email,
-                                            tracked_price: req.body.price
-                                        };
-                                        TrackingPrice.create(trackingPriceData, function (error, trackingPrice) {
-
-                                        });
-                                    } else {
-                                        TrackingPrice.findOneAndUpdate({ "_id" : trackingPrice._id }, {tracked_price: req.body.price}, function (err, product) {
-
-                                        });
-                                    }
-                                });
-                                return res.send(JSON.stringify(obj));
-                            }
-                            else{
-                                return res.send(JSON.stringify(obj));
-                            }
+                            return res.send(JSON.stringify(obj));
                             
                         } else {
                             req.session.userId = user._id;

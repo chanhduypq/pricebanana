@@ -2,7 +2,7 @@
     width: 100%;
 }
 #tracking_table td,#tracking_table th{
-    width: 32%;
+    width: 15%;
     border: 1px solid black;
     word-break: break-all;
     text-align: center;

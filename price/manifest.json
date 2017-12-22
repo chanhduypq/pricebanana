@@ -27,6 +27,9 @@
             "*://*.shopee.sg/*",
             "*://*.lazada.sg/*",
             "*://*.tokopedia.com/*",
-            "*://*.pricebanana.com/*"
-    ]
+            "*://*.pricebanana.com/*",
+            "tabs",
+            "activeTab"
+    ],
+    "homepage_url": "https://localhost/tracked"
 }
