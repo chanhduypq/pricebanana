@@ -333,6 +333,8 @@ module.exports.get_info_from_shopee = function (html) {
 
 module.exports.get_info_from_tokopedia = function (html) {
     var name = null;
+    var last_updated_price = null;
+    var product_category = '';
     var sell_price = null;
     var retail_price = null;
     var time_sell_price = null;
@@ -393,6 +395,32 @@ module.exports.get_info_from_tokopedia = function (html) {
     }
     node=dom.getElementById('p-info-minorder');
     booking_min=node.innerHTML.replace(/[^0-9\.]+/g, '');
+    
+    nodes=dom.getElementsByClassName('product-pricelastupdated');
+    if(nodes.length>0){
+        nodes=nodes[0].getElementsByTagName('i');
+        if(nodes.length>0){
+            last_updated_price=nodes[0].innerHTML.replace('Perubahan Harga Terakhir: ','');
+        }
+    }
+    
+    node=dom.getElementById('breadcrumb-container');
+    if(node!=null){
+        nodes=node.getElementsByTagName('li');
+        for(i=1;i<nodes.length-1;i++){
+            node=nodes[i].getElementsByTagName('a');
+            if(node.length>0){
+                product_category+=node[0].innerHTML+"->";
+            }
+        }
+        product_category=product_category.substr(0,product_category.length-2);
+        find1 = '&amp;';
+        re1 = new RegExp(find1, 'g');
+        product_category = product_category.replace(re1, '&');        
+    }
+    
+    
+
     
     node=dom.getElementById('p-nav-review');
     spans=node.getElementsByTagName('span');
@@ -495,13 +523,10 @@ module.exports.get_info_from_tokopedia = function (html) {
         node=node.getElementsByClassName('mt-5');
         if(node.length>1){
             current_review_count=node[1].innerHTML.replace(/[^0-9]+/g, '');
+            current_rating_count=current_review_count;
         }
     }
     
-    node = dom.getElementsByClassName('ratingtotal');
-    if(node.length>0){
-        current_rating_count=node[0].innerHTML;
-    }
     
     nodes=dom.getElementById('seller-message-response-time');
     if(nodes!=null){
@@ -524,7 +549,7 @@ module.exports.get_info_from_tokopedia = function (html) {
     }
     
     
-    return {seller_name: seller_name,seller_url: seller_url,transaction_success: transaction_success,item_sold: item_sold,talk_response_rate: talk_response_rate,talk_response_time: talk_response_time,message_response_rate: message_response_rate,message_response_time: message_response_time,shipment_support: shipment_support,location_of_shop: location_of_shop,condition: condition,insurance: insurance,weight: weight,current_review_count: current_review_count,current_rating_count: current_rating_count,current_number_of_talk_about: current_number_of_talk_about,name: name, reviews: reviews,rating: rating,discussion: discussion,sold: sold,sell_price: sell_price,booking_min: booking_min,retail_price: retail_price, time_sell_price: time_sell_price,item_types:item_types,item_type_labels:item_type_labels};
+    return {last_updated_price: last_updated_price,product_category: product_category,seller_name: seller_name,seller_url: seller_url,transaction_success: transaction_success,item_sold: item_sold,talk_response_rate: talk_response_rate,talk_response_time: talk_response_time,message_response_rate: message_response_rate,message_response_time: message_response_time,shipment_support: shipment_support,location_of_shop: location_of_shop,condition: condition,insurance: insurance,weight: weight,current_review_count: current_review_count,current_rating_count: current_rating_count,current_number_of_talk_about: current_number_of_talk_about,name: name, reviews: reviews,rating: rating,discussion: discussion,sold: sold,sell_price: sell_price,booking_min: booking_min,retail_price: retail_price, time_sell_price: time_sell_price,item_types:item_types,item_type_labels:item_type_labels};
 };
 
 module.exports.send_mail_for_tracking_price_fixed = function (product_id, sell_price) {

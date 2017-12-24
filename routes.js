@@ -10,6 +10,57 @@ var config = require(__dirname + '/config');
 
 module.exports = function(app){
     
+    app.get('/get/:domain/:id/:text', function (req, res) {
+        var domain = req.params.domain;        
+        var id = req.params.id;
+        var product_id = domain+'_'+id;
+        var text = req.params.text;
+        var to_day = new Date();
+        var from_day = new Date(helper.get_today());
+        if (text=='1w'){
+            from_day.setDate(from_day.getDate() - 7);
+        }
+        else if (text=='1m'){
+            from_day.setDate(from_day.getDate() - 31);
+        }
+        else if (text=='3m'){
+            from_day.setDate(from_day.getDate() - 93);
+        }
+        else if (text=='6m'){
+            from_day.setDate(from_day.getDate() - 186);
+        }
+        else if (text=='YTD'){
+            from_day=new Date(new Date().getFullYear(), 0, 1);
+        }
+        else if (text=='1y'){
+            from_day.setDate(from_day.getDate() - 365);
+        }
+        else if (text=='All'){
+            from_day=null;
+        }
+        
+        
+        Product.findOne({product_id: product_id}, function (error, product) {  
+            var price_histories = JSON.parse(product.price_history);
+            price_history=helper.build_price_history(price_histories);
+            var data_price=[];
+            temp=price_history.split('_');
+            for(i=0;i<temp.length;i++){
+                if(temp[i]!=''){
+                    date_and_price=temp[i].split('-');
+                    date=parseInt(date_and_price[0]);
+                    price=parseFloat(date_and_price[1]);
+                    if (from_day == null || date >= from_day.getTime()) {
+                        data_price.push([date, price]);
+                    }
+                    
+                }
+
+            }
+            return res.send(JSON.stringify(data_price));
+        });
+        
+    });
     app.get('/tracked', function (req, res) {
         names=[];
         current_prices=[];
@@ -29,6 +80,7 @@ module.exports = function(app){
                 MongoClient.connect(url, function(err, db) {
                   if (err) throw err;
                   db.collection('trackingprices').aggregate([
+                      { $match: { user_id: req.session.userId } },
                     { $lookup:
                        {
                          from: 'products',
@@ -79,7 +131,9 @@ module.exports = function(app){
         else{
             var user_email = '';
         }
-        
+
+        var from_day = new Date(helper.get_today());
+        from_day.setDate(from_day.getDate() - config.range_date_default);
         
         if (domain == 'tokopedia') {
             render_file = path_for_view+'/banana_tokopedia';
@@ -134,12 +188,33 @@ module.exports = function(app){
                                 weight:'',
                                 current_review_count:'',
                                 current_rating_count:'',
-                                current_number_of_talk_about:''
+                                current_number_of_talk_about:'',
+                                last_updated_price:'',
+                                product_category:''
                             });
             }
             else{
                 
                 var price_histories = JSON.parse(product.price_history);
+                
+                temp = helper.build_price_history(price_histories);
+                
+//                var data_price = [];
+//                temp = temp.split('_');
+//                for (i = 0; i < temp.length; i++) {
+//                    if (temp[i] != '') {
+//                        date_and_price = temp[i].split('-');
+//                        date = parseInt(date_and_price[0]);
+//                        price = parseFloat(date_and_price[1]);
+//                        if (from_day == null || (date >= from_day.getTime())) {
+//                            data_price.push({date: price_histories[i].date, price: price});
+//                        }
+//
+//                    }
+//
+//                }
+//                price_histories = data_price;
+                
                 if (domain == 'tokopedia') {
                     var see_histories = JSON.parse(product.see_history);
                     var sold_histories = JSON.parse(product.sold_history);
@@ -194,7 +269,9 @@ module.exports = function(app){
                                     weight:(product.weight==undefined?'':product.weight),
                                     current_review_count:(product.current_review_count==undefined?'':product.current_review_count),
                                     current_rating_count:(product.current_rating_count==undefined?'':product.current_rating_count),
-                                    current_number_of_talk_about:(product.current_number_of_talk_about==undefined?'':product.current_number_of_talk_about)
+                                    current_number_of_talk_about:(product.current_number_of_talk_about==undefined?'':product.current_number_of_talk_about),
+                                    last_updated_price:(product.last_updated_price==undefined?'':product.last_updated_price),
+                                    product_category:(product.product_category==undefined?'':product.product_category)
                                 });
 
                             });
@@ -234,7 +311,9 @@ module.exports = function(app){
                                     weight:(product.weight==undefined?'':product.weight),
                                     current_review_count:(product.current_review_count==undefined?'':product.current_review_count),
                                     current_rating_count:(product.current_rating_count==undefined?'':product.current_rating_count),
-                                    current_number_of_talk_about:(product.current_number_of_talk_about==undefined?'':product.current_number_of_talk_about)
+                                    current_number_of_talk_about:(product.current_number_of_talk_about==undefined?'':product.current_number_of_talk_about),
+                                    last_updated_price:(product.last_updated_price==undefined?'':product.last_updated_price),
+                                    product_category:(product.product_category==undefined?'':product.product_category)
                                 });
 
                             });
@@ -383,6 +462,8 @@ module.exports = function(app){
                                 productData['current_review_count']=info.current_review_count;
                                 productData['current_rating_count']=info.current_rating_count;
                                 productData['current_number_of_talk_about']=info.current_number_of_talk_about;
+                                productData['last_updated_price']=info.last_updated_price;
+                                productData['product_category']=info.product_category;
                             }
                             Product.create(productData, function (error, product) {
                             });

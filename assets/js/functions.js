@@ -87,7 +87,7 @@ function login() {
     }
 }
 
-function showChart(label_for_yAxis,label_for_chart,seriesData,elementId_for_render) {    
+function showChart(label_for_yAxis,label_for_chart,seriesData,elementId_for_render) { 
     Highcharts.setOptions({
             lang:{
                 rangeSelectorZoom: ''
@@ -103,21 +103,37 @@ function showChart(label_for_yAxis,label_for_chart,seriesData,elementId_for_rend
             }
         },
         rangeSelector: {
-            selected: 3,
+            allButtonsEnabled: true,
+            selected: 0,
             buttonTheme: {
-                width: 50,
-                visibility: 'hidden'
+                width: 50
+//                visibility: 'hidden'
             },
             buttons: [
                 {type: 'week', count: 1, text: '1w'},
                 {type: 'month', count: 1, text: '1m'},
                 {type: 'month', count: 3, text: '3m'},
                 {type: 'month', count: 6, text: '6m'},
-                {type: 'ytd', text: 'YTD'},
+                {type: 'ytd',count: 6, text: 'YTD'},
                 {type: 'year', count: 1, text: '1y'},
-                {type: 'all', text: 'All'}
+                {type: 'all',count: 6, text: 'All'}
             ]
         },
+//        xAxis: {
+//            events: {
+//                setExtremes: function(e) {
+////                    console.log(this);
+//                    if(typeof(e.rangeSelectorButton)!== 'undefined')
+//                    {
+//                        $.getJSON('https://localhost/get/'+domain+'/'+id+'/'+e.rangeSelectorButton.text, function (data) {
+//                            console.log(data);
+//                            this.series=data;
+//                        });
+////                        console.log('count: '+e.rangeSelectorButton.count + 'text: ' +e.rangeSelectorButton.text + ' type:' + e.rangeSelectorButton.type);
+//                    }
+//                }
+//            }
+//        },
         yAxis: {
             title: {
                 text: label_for_yAxis,
@@ -126,7 +142,9 @@ function showChart(label_for_yAxis,label_for_chart,seriesData,elementId_for_rend
         },
         title: {
             text: '<b>' + label_for_chart + '</b>',
-            style: {"color": "#333", "fontSize": "12px"}
+            style: {"color": "#333", "fontSize": "12px"},
+            align: 'left',
+            y: 25
         },
         plotOptions: {
             line: {

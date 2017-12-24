@@ -72,6 +72,22 @@
                     </tr>
                     <tr>
                         <td class="left">
+                            last updated price
+                        </td>
+                        <td class="right">
+                            <%= last_updated_price %>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="left">
+                            product category
+                        </td>
+                        <td class="right">
+                            <%= product_category %>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="left">
                             seller name
                         </td>
                         <td class="right">
@@ -124,14 +140,6 @@
                         </td>
                         <td class="right">
                             <%= message_response_rate %>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="left">
-                            seller name
-                        </td>
-                        <td class="right">
-                            <%= seller_name %>
                         </td>
                     </tr>
                     <tr>
@@ -290,7 +298,7 @@
 	</div>
     
         <div style="float: left;margin: 10px;">
-            <label style="cursor: pointer;">
+            <label style="cursor: pointer;" id="track-label">
                 <input type="checkbox" id="track-button"/>
                 Track product
             </label>
@@ -338,9 +346,9 @@
 <div id="tracking" style="display: none;">success</div>
  <script>
      
-     window.onerror = function myErrorHandler(errorMsg, url, lineNumber) {
-        $("body").html("Please reload.");
-    }
+//     window.onerror = function myErrorHandler(errorMsg, url, lineNumber) {
+//        $("body").html("Please reload.");
+//    }
     
     
      var isLogin= <%= isLogin %>;
@@ -403,15 +411,20 @@
         }
         
         
-        $("#track-button").change(function(){
-            if($(this).is(":checked")){
+        $("#track-label").click(function(){
                 if(isLogin==false){
                     $("#login_register_tab").click();
                     $('#login-form-link').click();
+                    $('#track-button').prop('checked',false);
                     return;
                 }
+            if($('#track-button').is(":checked")){
+                $("#tracking_div").slideDown('slow');    
             }
-            $("#tracking_div").slideToggle('slow');        
+            else{
+                $("#tracking_div").slideUp('slow'); 
+            }
+                
         });
         
         
@@ -467,18 +480,16 @@
 
         //login
         $('#login-form-link').click(function(e) {
-                $("#login-form").fadeIn(100);
-                $("#register-form").fadeOut(100);
-                $("#forgot-form").fadeOut(100);
+                $("#login-form").show();//.fadeIn(100);
+                $("#register-form").hide();//.fadeOut(100);
                 $('.panel-heading a').removeClass('active');
                 $(this).addClass('active');
                 $('input[name="logemail"]').focus();
                 e.preventDefault();
         });
         $('#register-form-link').click(function(e) {
-                $("#register-form").fadeIn(100);
-                $("#login-form").fadeOut(100);
-                $("#forgot-form").fadeOut(100);
+                $("#register-form").show();//.fadeIn(100);
+                $("#login-form").hide();//.fadeOut(100);
                 $('.panel-heading a').removeClass('active');
                 $(this).addClass('active');
                 $('input[name="email"]').focus();
@@ -754,17 +765,16 @@
             showChart('Other','Other History',seriesData,'chartContainer-other');
         }
         
-        
         seriesData=[{
-                        name: 'Price',
-                        data: data_price,
-                        tooltip: {
-                                valueDecimals: 0,
-                                pointFormat: '{series.name}: <b>Rp {point.y}</b><br/>',
-                                shared: true,
-                                xDateFormat: '%b %e %Y'
-                        }
-                }];
+                    name: 'Price',
+                    data: data_price,
+                    tooltip: {
+                            valueDecimals: 0,
+                            pointFormat: '{series.name}: <b>Rp {point.y}</b><br/>',
+                            shared: true,
+                            xDateFormat: '%b %e %Y'
+                    }
+            }];
         Highcharts.setOptions({
                 lang: {
                         thousandsSep: ','
@@ -772,8 +782,8 @@
         });
         showChart('Price','Price History',seriesData,'chartContainer');
         
-       
-	
+        
+        
     
  </script>
 </body>

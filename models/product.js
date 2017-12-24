@@ -96,6 +96,12 @@ var ProductSchema = new mongoose.Schema({
     },
     current_number_of_talk_about: {
         type: String
+    },
+    last_updated_price: {
+        type: String
+    },
+    product_category: {
+        type: String
     }
 });
 

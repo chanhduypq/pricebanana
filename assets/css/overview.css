@@ -1,3 +1,4 @@
+@font-face{font-family:tokopedia;src:url(Tokopedia.eot?v=3.3.5);src:url(Tokopedia.eot?#iefix&v=3.3.5) format("embedded-opentype"),url(Tokopedia.woff?v=3.3.5) format("woff"),url(Tokopedia.ttf?v=3.3.5) format("truetype");font-weight:400;font-style:normal}
 .product-ratingstat {
     list-style: none !important;
     margin: 10px 0 15px !important;
@@ -92,3 +93,4 @@ small {
 .span9 {
   width: 74.46808510638297%;
 }
+
