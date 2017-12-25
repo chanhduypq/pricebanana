@@ -114,9 +114,9 @@ function showChart(label_for_yAxis,label_for_chart,seriesData,elementId_for_rend
                 {type: 'month', count: 1, text: '1m'},
                 {type: 'month', count: 3, text: '3m'},
                 {type: 'month', count: 6, text: '6m'},
-                {type: 'ytd',count: 6, text: 'YTD'},
+                {type: 'ytd', text: 'YTD'},
                 {type: 'year', count: 1, text: '1y'},
-                {type: 'all',count: 6, text: 'All'}
+                {type: 'all', text: 'All'}
             ]
         },
 //        xAxis: {
