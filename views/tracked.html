@@ -18,9 +18,6 @@
 	<script src="https://code.highcharts.com/stock/highstock.js"></script>
 	<script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
         <script src="/js/functions.js"></script>
-        <script src="/js/functions_tokopedia.js"></script>
-        <script src="/js/jAlert.js"></script>
-        <script src="/js/jquery.numeric.min.js"></script>
         
 	<link rel="stylesheet" type="text/css" href="/css/style.css" />
         <link rel="stylesheet" type="text/css" href="/css/tracked.css" />
@@ -31,7 +28,10 @@
 <div id="tabs">
 	
 	
-        
+        <div style="float: right;margin: 10px;" id='logout'>
+            <button class="ui-button ui-widget ui-corner-all">Logout</button>
+        </div>
+        <div style="clear: both;"></div>
         <div id="tracking_div" style="background-color: #ccc;">
             <table id="tracking_table">
                 <thead>
@@ -91,6 +91,26 @@
         
         
 	$( function() {
+            
+            $('#logout').click(function(e) {
+                $.ajax({
+                    type: "GET",
+                    url: '/logout/empty/empty',
+                    dataType: 'json',
+                    success: function(result) {
+                        if(result.success) {
+                            window.location='/account';
+                        } else {
+                            alert('error');
+                        }
+                    },
+                    error: function (request, status, error) {
+                        console.log(request.responseText);
+                        console.log(status);
+                        console.log(error);
+                    }
+                });
+            });
         
         tracked_prices=$.parseJSON(tracked_prices);
         current_prices=$.parseJSON(current_prices);

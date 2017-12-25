@@ -66,48 +66,69 @@ module.exports = function(app){
         current_prices=[];
         tracked_prices=[];
         sites=[];
+        product_ids=[];
         if (req.session.hasOwnProperty("userId")) {
-//            TrackingPrice.find({user_id:req.session.userId}, function (error, trackingPrices) {
-//                console.log(trackingPrices);
-//                return res.render('tracked', {
-//                                    name: '',
-//                                });
-//            })
-
-                var MongoClient = require('mongodb').MongoClient;
-                var url = "mongodb://localhost/pricebanana";
-
-                MongoClient.connect(url, function(err, db) {
-                  if (err) throw err;
-                  db.collection('trackingprices').aggregate([
-                      { $match: { user_id: req.session.userId } },
-                    { $lookup:
-                       {
-                         from: 'products',
-                         localField: 'product_id',
-                         foreignField: 'product_id',
-                         as: 'products'
-                       }
-                     }
-                    ], function(err, trackingprices) {
-                    if (err) throw err;
-                    for(i=0;i<trackingprices.length;i++){
-                        tracked_prices.push(trackingprices[i].tracked_price);
-                        names.push(trackingprices[i].products[0].name);
-                        current_prices.push(trackingprices[i].products[0].current_price);
-                        site=trackingprices[i].product_id.split('_');
-                        sites.push(site[0]);
+            //$orderby 1 is ascending and -1 is descending.
+            TrackingPrice.find({ $query: {user_id:req.session.userId}, $orderby: { product_id : -1 } }, function (error, trackingprices) {
+                for(i=0;i<trackingprices.length;i++){
+                    tracked_prices.push(trackingprices[i].tracked_price);
+                    site=trackingprices[i].product_id.split('_');
+                    sites.push(site[0]);
+                    product_ids.push(trackingprices[i].product_id);
+                }
+                
+                Product.find({ $query: {product_id: {$in:product_ids}}, $orderby: { product_id : -1 } } , function (error, products) {  
+                    for(i=0;i<products.length;i++){
+                        names.push(products[i].name);
+                        current_prices.push(products[i].current_price);
                     }
-                    db.close();
+                    
                     return res.render('tracked', {
                         tracked_prices: JSON.stringify(tracked_prices),
                         current_prices: JSON.stringify(current_prices),
                         names: JSON.stringify(names),
                         sites: JSON.stringify(sites)
                     });
-                    
-                  });
-                });
+                })
+                
+            });
+
+
+//                var MongoClient = require('mongodb').MongoClient;
+//                var url = "mongodb://localhost/pricebanana";
+// 
+//                MongoClient.connect(url, function(err, db) {
+//                    
+//                  if (err) throw err;
+//                  db.collection('trackingprices').aggregate([
+//                      { $match: { user_id: req.session.userId } },
+//                    { $lookup:
+//                       {
+//                         from: 'products',
+//                         localField: 'product_id',
+//                         foreignField: 'product_id',
+//                         as: 'products'
+//                       }
+//                     }
+//                    ], function(err, trackingprices) {
+//                    if (err) throw err;
+//                    for(i=0;i<trackingprices.length;i++){
+//                        tracked_prices.push(trackingprices[i].tracked_price);
+//                        names.push(trackingprices[i].products[0].name);
+//                        current_prices.push(trackingprices[i].products[0].current_price);
+//                        site=trackingprices[i].product_id.split('_');
+//                        sites.push(site[0]);
+//                    }
+//                    db.close();
+//                    return res.render('tracked', {
+//                        tracked_prices: JSON.stringify(tracked_prices),
+//                        current_prices: JSON.stringify(current_prices),
+//                        names: JSON.stringify(names),
+//                        sites: JSON.stringify(sites)
+//                    });
+//                    
+//                  });
+//                });
         }
         else{
             return res.redirect('/account');
@@ -753,15 +774,22 @@ module.exports = function(app){
     });
     // GET for logout
     app.get('/logout/:domain/:id', function (req, res, next) {
-        var domain = req.params.domain;
-        var id = req.params.id;
+        var isAjaxRequest = req.xhr;
         if (req.session) {
             // delete session object
             req.session.destroy(function (err) {
                 if (err) {
                     res.send('Something went wrong');
                 } else {
-                    return res.redirect('/banana/'+domain+'/'+id);
+                    if (isAjaxRequest) {
+                        var obj = {success: true};
+                        res.send(JSON.stringify(obj));
+                    } else {
+                        var domain = req.params.domain;
+                        var id = req.params.id;
+                        return res.redirect('/banana/'+domain+'/'+id);
+                    }
+                    
                 }
             });
         }
