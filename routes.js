@@ -110,9 +110,20 @@ module.exports = function(app){
                 });
         }
         else{
-            return res.send("Please login.");
+            return res.redirect('/account');
         }
         
+        
+    });
+    
+    app.get('/account', function (req, res) {
+        if(req.session.hasOwnProperty("userId")){
+            return res.redirect('/tracked');
+        }
+        else{
+            return res.render('account', {
+            });
+        }
         
     });
 
@@ -642,7 +653,6 @@ module.exports = function(app){
     //POST route for updating data
     app.post('/login', function (req, res) {
         var err = '';
-
         if (req.body.logemail && req.body.logpassword) {
             // login
             User.authenticate(req.body.logemail, req.body.logpassword, function (error, user) {
