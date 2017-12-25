@@ -5,7 +5,7 @@ var config = {
     'user': 'jack@24x7studios.com',
     'pass': 'wq3rtfyupvsdnwg4',
     'email_24x7': ['tue@24x7studios.com', 'jack@24x7studios.com', 'loc@24x7studios.com'],
-    'range_date_default':31
+    'range_date_default':7
 };
 
 module.exports = config;
