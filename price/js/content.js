@@ -5,8 +5,29 @@ if(url[url.length-1]=='/'){
 }
 var apiUrl = url+'/get_content';
 var current_url = window.location.href;
-
+function setCookie(cname, cvalue) {
+    var d = new Date();
+    d.setTime(d.getTime() + (60*60*1000));
+    var expires = "expires="+ d.toUTCString();
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+}
+function getCookie(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for(var i = 0; i <ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
 $(function () {
+    
 
 // contentFull
 
@@ -192,33 +213,42 @@ $(function () {
 
     //check march domain to send full page to server by ajax
     if (domain != false && domain != 'shopee' && domain != 'tokopedia' && product_id != false && iframe_node != false){
-        $.ajax({
-            url: apiUrl,
-            method: "POST",
-            crossDomain: true,
-            async: false,
-            dataType: 'json',
-            data: {
-                id:product_id,
-                url:current_url,
-                domain:domain,
-                content:contentFull,
-                inventoryList:inventoryList
-            },
-            success: function (result) {
-                if (result.success) {
-                    setTimeout(function (){
-                        $("#loading_banana").remove();
-                        $(iframe_node).after('<div id="pricebanana_ctn"><iframe src="'+url+'/banana/' + domain + '/' + product_id + '"></iframe></div>');
-                    },3000);
+        if(getCookie(domain+"_"+product_id)=='1'){
+            $("#loading_banana").remove();
+            $(iframe_node).after('<div id="pricebanana_ctn"><iframe src="'+url+'/banana/' + domain + '/' + product_id + '"></iframe></div>');
+        }
+        else{
+            $.ajax({
+                url: apiUrl,
+                method: "POST",
+                crossDomain: true,
+                async: false,
+                dataType: 'json',
+                data: {
+                    id:product_id,
+                    url:current_url,
+                    domain:domain,
+                    content:contentFull,
+                    inventoryList:inventoryList
+                },
+                success: function (result) {
+                    if (result.success) {
+                        setTimeout(function (){
+                            $("#loading_banana").remove();
+                            $(iframe_node).after('<div id="pricebanana_ctn"><iframe src="'+url+'/banana/' + domain + '/' + product_id + '"></iframe></div>');
+                        },3000);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log(status);
+                    console.log(error);
+                    console.log(xhr.responseText);
                 }
-            },
-            error: function (xhr, status, error) {
-                console.log(status);
-                console.log(error);
-                console.log(xhr.responseText);
-            }
-        });
+            });
+        }
+        
+        setCookie(domain+"_"+product_id,'1');
+        
         
     }
 
@@ -243,6 +273,7 @@ var shopeeRegex = /shopee.sg\/[\S]*(-i.)([0-9]).([0-9])/i;
 if (current_url.indexOf("shopee.sg") > - 1) {
     $('body').prepend('<div id="loading_banana" style="width:30%;height:50%;position:fixed;left:30%;top:30%;"><img src="'+url+'/image/loading.gif" style="width: 100%;height: 100%;"/></div>');
     timer = setInterval(runShopee, 5000);
+    
 }
 
 if (current_url.indexOf("www.tokopedia.com") > - 1 && $('.pull-left.m-0.view-count').length>0) {
@@ -252,40 +283,49 @@ if (current_url.indexOf("www.tokopedia.com") > - 1 && $('.pull-left.m-0.view-cou
 
 
 function runShopee() {
+    
     if ($('.product-page__top-section').html() != undefined) {
         clearInterval(timer);
         contentFull = $("html").html();
-        var asin = current_url.split('.');
+        asin = current_url.split('.');
         product_id = asin[3];
         iframe_node = '.product-page__top-section';
-        $.ajax({
-            url: apiUrl,
-            method: "POST",
-            crossDomain: true,
-            async: false,
-            dataType: 'json',
-            data: {
-                id:product_id,
-                url:current_url,
-                domain:'shopee',
-                content:contentFull,
-                inventoryList:''
-            },
-            success: function (result) {
-                if (result.success) {
-                    setTimeout(function (){
-                        $("#loading_banana").remove();
-                        $(iframe_node).after('<div id="pricebanana_ctn"><iframe src="'+url+'/banana/shopee/' + product_id + '"></iframe></div>');
-                    },5000);
-                    
+        if(getCookie("shopee_"+product_id)=='1'){
+            $("#loading_banana").remove();
+            $(iframe_node).after('<div id="pricebanana_ctn"><iframe src="'+url+'/banana/shopee/' + product_id + '"></iframe></div>');
+        }
+        else{
+            $.ajax({
+                url: apiUrl,
+                method: "POST",
+                crossDomain: true,
+                async: false,
+                dataType: 'json',
+                data: {
+                    id:product_id,
+                    url:current_url,
+                    domain:'shopee',
+                    content:contentFull,
+                    inventoryList:''
+                },
+                success: function (result) {
+                    if (result.success) {
+                        setTimeout(function (){
+                            $("#loading_banana").remove();
+                            $(iframe_node).after('<div id="pricebanana_ctn"><iframe src="'+url+'/banana/shopee/' + product_id + '"></iframe></div>');
+                        },5000);
+
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log(status);
+                    console.log(error);
+                    console.log(xhr.responseText);
                 }
-            },
-            error: function (xhr, status, error) {
-                console.log(status);
-                console.log(error);
-                console.log(xhr.responseText);
-            }
-        });
+            });
+        }
+        setCookie("shopee_"+product_id,'1');
+        
         
     }
 }
@@ -296,53 +336,62 @@ function runTokopedia() {
         contentFull = $("html").html();
         product_id = $("#product-id").val();
         see='0';
-        $.ajax({
-            url: 'https://www.tokopedia.com/provi/check?pid='+product_id+'&callback=show_product_view',//&_=1513821634109',
-            method: "GET",
-            crossDomain: true,
-            async: false,
-            success: function (result) {
-                result=result.split(':');
-                result=result[1];
-                result=result.split('}');
-                see=result[0];
-            },
-            error: function (xhr, status, error) {
-                console.log(status);
-                console.log(error);
-                console.log(xhr.responseText);
-            }
-        });
-        
-        
-        $.ajax({
-            url: apiUrl,
-            method: "POST",
-            crossDomain: true,
-            async: false,
-            dataType: 'json',
-            data: {
-                id:product_id,
-                url:current_url,
-                domain:'tokopedia',
-                content:contentFull,
-                inventoryList:'',
-                see:see
-            },
-            success: function (result) {
-                if (result.success) {
-                    setTimeout(function (){
-                        $("#loading_banana").remove();
-                        $('#review-summary-container').before('<div id="pricebanana_ctn"><iframe src="'+url+'/banana/tokopedia/' + product_id + '"></iframe></div>');
-                    },3000);
+        if(getCookie("tokopedia_"+product_id)=='1'){
+            $("#loading_banana").remove();
+            $('#review-summary-container').before('<div id="pricebanana_ctn"><iframe src="'+url+'/banana/tokopedia/' + product_id + '"></iframe></div>');
+        }
+        else{
+            $.ajax({
+                url: 'https://www.tokopedia.com/provi/check?pid='+product_id+'&callback=show_product_view',//&_=1513821634109',
+                method: "GET",
+                crossDomain: true,
+                async: false,
+                success: function (result) {
+                    result=result.split(':');
+                    result=result[1];
+                    result=result.split('}');
+                    see=result[0];
+                },
+                error: function (xhr, status, error) {
+                    console.log(status);
+                    console.log(error);
+                    console.log(xhr.responseText);
                 }
-            },
-            error: function (xhr, status, error) {
-                console.log(status);
-                console.log(error);
-                console.log(xhr.responseText);
-            }
-        });
+            });
+
+
+            $.ajax({
+                url: apiUrl,
+                method: "POST",
+                crossDomain: true,
+                async: false,
+                dataType: 'json',
+                data: {
+                    id:product_id,
+                    url:current_url,
+                    domain:'tokopedia',
+                    content:contentFull,
+                    inventoryList:'',
+                    see:see
+                },
+                success: function (result) {
+                    if (result.success) {
+                        setTimeout(function (){
+                            $("#loading_banana").remove();
+                            $('#review-summary-container').before('<div id="pricebanana_ctn"><iframe src="'+url+'/banana/tokopedia/' + product_id + '"></iframe></div>');
+                        },3000);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log(status);
+                    console.log(error);
+                    console.log(xhr.responseText);
+                }
+            });
+        }
+        
+        setCookie("tokopedia_"+product_id,'1');
+        
         
     }
 }
