@@ -119,10 +119,10 @@ function showChart(label_for_yAxis,label_for_chart,seriesData,elementId_for_rend
                 {type: 'all', text: 'All'}
             ]
         },
-        xAxis: {
-            events: {
-                setExtremes: function(e) {
-                    console.log(this);
+//        xAxis: {
+//            events: {
+//                setExtremes: function(e) {
+////                    console.log(this);
 //                    if(typeof(e.rangeSelectorButton)!== 'undefined')
 //                    {
 //                        $.getJSON('https://localhost/get/'+domain+'/'+id+'/'+e.rangeSelectorButton.text, function (data) {
@@ -131,9 +131,9 @@ function showChart(label_for_yAxis,label_for_chart,seriesData,elementId_for_rend
 //                        });
 ////                        console.log('count: '+e.rangeSelectorButton.count + 'text: ' +e.rangeSelectorButton.text + ' type:' + e.rangeSelectorButton.type);
 //                    }
-                }
-            }
-        },
+//                }
+//            }
+//        },
         yAxis: {
             title: {
                 text: label_for_yAxis,
