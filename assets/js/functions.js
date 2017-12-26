@@ -93,6 +93,15 @@ function showChart(label_for_yAxis,label_for_chart,seriesData,breakData,elementI
                 rangeSelectorZoom: ''
             }
     });
+    if (breakData.length > 0) {
+        xAxis = {tickInterval: 1,breaks: breakData};
+    } else {
+        xAxis = {labels:
+                    {
+                        enabled: true
+                    }
+                };
+    }
     Highcharts.stockChart({
         chart: {
             borderColor: 'white',
@@ -119,20 +128,11 @@ function showChart(label_for_yAxis,label_for_chart,seriesData,breakData,elementI
                 {type: 'all', text: 'All'}
             ]
         },
-        xAxis: {
-            tickInterval: 1,
-            breaks: breakData
-        },
-//        xAxis: {
-//                        labels:
-//                        {
-//                            enabled: false
-//                        }
-//                    },
+        xAxis: xAxis,
 //        xAxis: {
 //            events: {
 //                setExtremes: function(e) {
-////                    console.log(this);
+//                    console.log(this);
 //                    if(typeof(e.rangeSelectorButton)!== 'undefined')
 //                    {
 //                        $.getJSON('https://localhost/get/'+domain+'/'+id+'/'+e.rangeSelectorButton.text, function (data) {

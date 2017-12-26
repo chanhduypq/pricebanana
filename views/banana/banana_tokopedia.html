@@ -445,7 +445,7 @@
     });
 
         breakData=[];
-
+        num=parseInt(new Date('2017-01-02').getTime())-parseInt(new Date('2017-01-01').getTime());
         var data_price=[];
         temp=price_history.split('_');
         for(i=0;i<temp.length;i++){
@@ -457,16 +457,20 @@
             }
             if(i<temp.length-1){
                 date_and_price=temp[i].split('-');
-                from=parseInt(date_and_price[0]);
+                from=parseInt(date_and_price[0])+num;
                 
                 date_and_price=temp[i+1].split('-');
                 to=parseInt(date_and_price[0]);
                 
                 t={from: from,to:to,breakSize: 1};
-                breakData.push(t);
+                if(to-from>num&&(breakData.length==0||breakData[breakData.length-1].to!=from)){
+                    breakData.push(t); 
+                }
+                
             }
             
         }
+        
         
         var data_see=[];
         temp=see_history.split('_');

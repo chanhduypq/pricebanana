@@ -375,6 +375,18 @@ module.exports.get_info_from_tokopedia = function (html) {
         }
         
     }
+    if(sell_price==null){
+        var product_pricetag = dom.getElementsByClassName('product-discounted-pricetag');
+        if (product_pricetag.length>0) {
+            product_pricetag = product_pricetag[0];
+            spans=product_pricetag.getElementsByTagName('span');
+            if (spans.length>1) {
+                sell_price=spans[1].innerHTML.replace('.', '');
+                sell_price=sell_price.replace('.', '');
+            }
+
+        }
+    }
     
     uls = dom.getElementsByClassName('product-ratingstat');
     ul=uls[0];
