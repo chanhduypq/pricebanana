@@ -360,6 +360,11 @@ module.exports = function(app){
     });
     
     app.get('/tracking/:domain/:id/:tracked_price', function (req, res) {
+        if(!(req.session.hasOwnProperty("userEmail"))){
+            var obj = {success:false,message:'logout'};
+            return res.send(JSON.stringify(obj));
+        }
+        
         var domain = req.params.domain;
         var id = req.params.id;
         var tracked_price = req.params.tracked_price;

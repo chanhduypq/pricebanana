@@ -296,7 +296,13 @@
                         if(result.success) {
                             $( "#tracking" ).click();
                         } else {
-                            alert('error');
+                            if(result.message!=undefined&&result.message=='logout'){
+                                alert("You have been logged out.");
+                                window.location='/banana/'+domain+'/'+id;
+                            }
+                            else{
+                                alert('error');
+                            }
                         }
                     },
                     error: function (request, status, error) {
@@ -324,7 +330,13 @@
                         if(result.success) {
                             $( "#tracking" ).click();
                         } else {
-                            alert('error');
+                            if(result.message!=undefined&&result.message=='logout'){
+                                alert("You have been logged out.");
+                                window.location='/banana/'+domain+'/'+id;
+                            }
+                            else{
+                                alert('error');
+                            }
                         }
                     },
                     error: function (request, status, error) {
