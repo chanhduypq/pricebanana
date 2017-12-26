@@ -269,8 +269,8 @@ function showIframeForTokopedia() {
 }
 //var shopeeRegex = /shopee.sg\/[\S]*(-i.)([0-9]{6}).([0-9]{9})/i;
 var shopeeRegex = /shopee.sg\/[\S]*(-i.)([0-9]).([0-9])/i;
-//if (shopeeRegex.test(current_url)){
-if (current_url.indexOf("shopee.sg") > - 1) {
+if (shopeeRegex.test(current_url)){
+//if (current_url.indexOf("shopee.sg") > - 1) {
     $('body').prepend('<div id="loading_banana" style="width:30%;height:50%;position:fixed;left:30%;top:30%;"><img src="'+url+'/image/loading.gif" style="width: 100%;height: 100%;"/></div>');
     timer = setInterval(runShopee, 5000);
     
