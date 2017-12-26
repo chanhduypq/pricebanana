@@ -432,7 +432,7 @@
                     $(this).find('option').eq(0).remove();
                 }
                 
-                showChart('Price','Price History',seriesData,'chartContainer-inventoryList');
+                showChart('Price','Price History',seriesData,breakData,'chartContainer-inventoryList');
                 
             });
         }
@@ -444,7 +444,7 @@
         
     });
 
-
+        breakData=[];
 
         var data_price=[];
         temp=price_history.split('_');
@@ -454,6 +454,16 @@
                 date=parseInt(date_and_price[0]);
                 price=parseFloat(date_and_price[1]);
                 data_price.push([date,price]);
+            }
+            if(i<temp.length-1){
+                date_and_price=temp[i].split('-');
+                from=parseInt(date_and_price[0]);
+                
+                date_and_price=temp[i+1].split('-');
+                to=parseInt(date_and_price[0]);
+                
+                t={from: from,to:to,breakSize: 1};
+                breakData.push(t);
             }
             
         }
@@ -607,7 +617,7 @@
                     color: 'violet'
                 }
             ];
-            showChart('Other','Other History',seriesData,'chartContainer-other');
+            showChart('Other','Other History',seriesData,breakData,'chartContainer-other');
         }
         
         seriesData=[{
@@ -625,7 +635,7 @@
                         thousandsSep: ','
                 }
         });
-        showChart('Price','Price History',seriesData,'chartContainer');
+        showChart('Price','Price History',seriesData,breakData,'chartContainer');
         
         
         

@@ -87,7 +87,7 @@ function login() {
     }
 }
 
-function showChart(label_for_yAxis,label_for_chart,seriesData,elementId_for_render) { 
+function showChart(label_for_yAxis,label_for_chart,seriesData,breakData,elementId_for_render) { 
     Highcharts.setOptions({
             lang:{
                 rangeSelectorZoom: ''
@@ -119,6 +119,16 @@ function showChart(label_for_yAxis,label_for_chart,seriesData,elementId_for_rend
                 {type: 'all', text: 'All'}
             ]
         },
+        xAxis: {
+            tickInterval: 1,
+            breaks: breakData
+        },
+//        xAxis: {
+//                        labels:
+//                        {
+//                            enabled: false
+//                        }
+//                    },
 //        xAxis: {
 //            events: {
 //                setExtremes: function(e) {
