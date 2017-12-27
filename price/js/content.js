@@ -331,7 +331,7 @@ function runShopee() {
 }
 
 function runTokopedia() {
-    if ($('.pull-left.m-0.view-count').html() != undefined) {
+    if ($('.pull-left.m-0.view-count').html() != undefined && isFinite($('.item-sold-count').html())) {
         clearInterval(timerTokopedia);
         contentFull = $("html").html();
         product_id = $("#product-id").val();

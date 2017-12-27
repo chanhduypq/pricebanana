@@ -343,7 +343,8 @@
                 $("#div_inventory_list").hide(1000);
                 $("#div_close").hide(1000);
                 
-                showChart(label_for_yAxis,label_for_yAxis+' History',seriesData,breakData,'chartContainer-inventoryList');
+                //showChart(label_for_yAxis,label_for_yAxis+' History',seriesData,breakData,'chartContainer-inventoryList');
+                showChart(label_for_yAxis,'',seriesData,breakData,'chartContainer-inventoryList');
                 
                 
             });
@@ -413,7 +414,8 @@
                     $(this).find('option').eq(0).remove();
                 }
                 
-                showChart(label_for_yAxis,label_for_yAxis+' History',seriesData,breakData,'chartContainer-inventoryList');
+                //showChart(label_for_yAxis,label_for_yAxis+' History',seriesData,breakData,'chartContainer-inventoryList');
+                showChart(label_for_yAxis,'',seriesData,breakData,'chartContainer-inventoryList');
                 
             });
         }

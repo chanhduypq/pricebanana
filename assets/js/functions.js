@@ -111,11 +111,15 @@ function showChart(label_for_yAxis,label_for_chart,seriesData,breakData,elementI
                 fontFamily: 'Arial,Helvetica,sans-serif'
             }
         },
+        
         rangeSelector: {
+            buttonPosition: {
+                x: 15
+            },
             allButtonsEnabled: true,
             selected: 0,
             buttonTheme: {
-                width: 50
+                width: 30
 //                visibility: 'hidden'
             },
             buttons: [
@@ -154,7 +158,8 @@ function showChart(label_for_yAxis,label_for_chart,seriesData,breakData,elementI
             text: '<b>' + label_for_chart + '</b>',
             style: {"color": "#333", "fontSize": "12px"},
             align: 'left',
-            y: 25
+            y: 42
+            
         },
         plotOptions: {
             line: {
