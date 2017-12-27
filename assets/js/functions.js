@@ -102,6 +102,54 @@ function showChart(label_for_yAxis,label_for_chart,seriesData,breakData,elementI
                     }
                 };
     }
+    data_price=seriesData[0].data;
+    if(data_price.length==1){
+        num=1;
+    }
+    else{
+        min=parseInt(data_price[0][0]);
+        max=parseInt(data_price[data_price.length-1][0]);
+        num=(max-min)/86400000;
+    }
+    
+    minDate = new Date(min);
+
+console.log(minDate.getFullYear());
+
+//Date.prototype.yyyymmdd = function() {
+//   var yyyy = this.getFullYear().toString();
+//   var mm = (this.getMonth()+1).toString(); // getMonth() is zero-based
+//   var dd  = this.getDate().toString();
+//   return yyyy + (mm[1]?mm:"0"+mm[0]) + (dd[1]?dd:"0"+dd[0]); // padding
+//  };
+//
+//d = new Date();
+//d.yyyymmdd();
+
+    maxDate = new Date(max);
+
+
+    buttons=[];
+    buttons.push({type: 'week', count: 1, text: '1w'});
+    if(num>7){
+        buttons.push({type: 'month', count: 1, text: '1m'});
+    }
+    if(num>30){
+        buttons.push({type: 'month', count: 3, text: '3m'});
+    }
+    if(num>90){
+        buttons.push({type: 'month', count: 6, text: '6m'});
+    }
+    if(num>365){
+        buttons.push({type: 'ytd', count: 1, text: 'YTD'});
+    }
+    if(num>365){
+        buttons.push({type: 'year', count: 1, text: '1y'});
+    }
+    if(num>365){
+        buttons.push({type: 'all', count: 1, text: 'All'});
+    }
+    
     Highcharts.stockChart({
         chart: {
             borderColor: 'white',
@@ -122,15 +170,7 @@ function showChart(label_for_yAxis,label_for_chart,seriesData,breakData,elementI
                 width: 30
 //                visibility: 'hidden'
             },
-            buttons: [
-                {type: 'week', count: 1, text: '1w'},
-                {type: 'month', count: 1, text: '1m'},
-                {type: 'month', count: 3, text: '3m'},
-                {type: 'month', count: 6, text: '6m'},
-                {type: 'ytd', text: 'YTD'},
-                {type: 'year', count: 1, text: '1y'},
-                {type: 'all', text: 'All'}
-            ]
+            buttons: buttons
         },
         xAxis: xAxis,
 //        xAxis: {
