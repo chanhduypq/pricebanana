@@ -412,7 +412,7 @@
             item_type_labels=$.parseJSON(item_type_labels);
             
             
-            item_type_html+='<table><tr><td style="width:25%;">&nbsp;&nbsp;&nbsp;Quantity</td><td style="width:75%;"><select style="width:40%;" id="level0" name="level"><option value="">Please select</option>';
+            item_type_html+='<table><tr><td style="width:25%;">&nbsp;&nbsp;&nbsp;Quantity</td><td style="width:75%;"><select style="width:40%;" id="level0" name="level">';
             for(key in item_type_history){
                 item_type_html+='<option value="'+key+'">'+key+'</option>';
             }
@@ -428,13 +428,15 @@
                 key=$(this).val();
                 seriesData=getSeriesData(key);
                 
-                if($(this).find('option').eq(0).html()=='Please select'){
-                    $(this).find('option').eq(0).remove();
-                }
-                
                 showChart('Price','Price History',seriesData,breakData,'chartContainer-inventoryList');
                 
             });
+            
+            
+            seriesData=getSeriesData($("#form_inventoryList option").eq(0).attr('value'));
+            showChart('Price','Price History',seriesData,breakData,'chartContainer-inventoryList');
+            
+            $("#form_inventoryList option").eq(0).attr('selected','selected');
         }
         else{
             $("#tabs-inventoryList").remove();
