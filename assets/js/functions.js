@@ -103,50 +103,46 @@ function showChart(label_for_yAxis,label_for_chart,seriesData,breakData,elementI
                 };
     }
     data_price=seriesData[0].data;
-    if(data_price.length==1){
-        num=1;
-    }
-    else{
-        min=parseInt(data_price[0][0]);
-        max=parseInt(data_price[data_price.length-1][0]);
-        num=(max-min)/86400000;
-    }
     
-    minDate = new Date(min);
-
-console.log(minDate.getFullYear());
-
-//Date.prototype.yyyymmdd = function() {
-//   var yyyy = this.getFullYear().toString();
-//   var mm = (this.getMonth()+1).toString(); // getMonth() is zero-based
-//   var dd  = this.getDate().toString();
-//   return yyyy + (mm[1]?mm:"0"+mm[0]) + (dd[1]?dd:"0"+dd[0]); // padding
-//  };
-//
-//d = new Date();
-//d.yyyymmdd();
-
+    min=parseInt(data_price[0][0]);
+    max=parseInt(data_price[data_price.length-1][0]);
     maxDate = new Date(max);
-
+    
+    oneWeek=new Date(max);
+    oneWeek.setDate(oneWeek.getDate()-7);
+    
+    oneMonth=new Date(max);
+    oneMonth.setMonth(oneMonth.getMonth()-1);
+    
+    threeMonth=new Date(max);
+    threeMonth.setMonth(threeMonth.getMonth()-3);
+    
+    sixMonth=new Date(max);
+    sixMonth.setMonth(sixMonth.getMonth()-6);
+    
+    year=new Date(max);
+    year.setFullYear(year.getFullYear()-1);    
+    
+    startOfYear=new Date(maxDate.getFullYear()+"-01-01");    
 
     buttons=[];
     buttons.push({type: 'week', count: 1, text: '1w'});
-    if(num>7){
+    if(min<oneWeek.getTime()){
         buttons.push({type: 'month', count: 1, text: '1m'});
     }
-    if(num>30){
+    if(min<oneMonth.getTime()){
         buttons.push({type: 'month', count: 3, text: '3m'});
     }
-    if(num>90){
+    if(min<threeMonth.getTime()){
         buttons.push({type: 'month', count: 6, text: '6m'});
     }
-    if(num>365){
+    if(min<sixMonth.getTime()){
         buttons.push({type: 'ytd', count: 1, text: 'YTD'});
     }
-    if(num>365){
+    if(min<startOfYear.getTime()){
         buttons.push({type: 'year', count: 1, text: '1y'});
     }
-    if(num>365){
+    if(min<year.getTime()){
         buttons.push({type: 'all', count: 1, text: 'All'});
     }
     
