@@ -106,6 +106,7 @@ function showChart(label_for_yAxis,label_for_chart,seriesData,breakData,elementI
     
     min=parseInt(data_price[0][0]);
     max=parseInt(data_price[data_price.length-1][0]);
+    
     maxDate = new Date(max);
     
     oneWeek=new Date(max);
@@ -211,7 +212,7 @@ function showChart(label_for_yAxis,label_for_chart,seriesData,breakData,elementI
     }, function (chart) {
         // apply the date pickers
         setTimeout(function () {
-            $('input.highcharts-range-selector', $('#' + chart.options.chart.renderTo)).datepicker()
+            $('input.highcharts-range-selector', $('#' + chart.options.chart.renderTo)).datepicker({minDate: ((max-min)/86400000)*(-1),maxDate:0})
         }, 0)
     });
 }
