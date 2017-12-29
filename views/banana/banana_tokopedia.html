@@ -399,49 +399,7 @@
         
         
         
-        if(item_type_history!=''&&item_type_history!='{}'){
-            var find = '&#34;';
-            var re = new RegExp(find, 'g');
-
-            var item_type_html='<table>';
-            
-            item_type_history = item_type_history.replace(re, '"');
-            item_type_labels = item_type_labels.replace(re, '"');
-            
-            item_type_history=$.parseJSON(item_type_history);
-            item_type_labels=$.parseJSON(item_type_labels);
-            
-            
-            item_type_html+='<table><tr><td style="width:25%;">&nbsp;&nbsp;&nbsp;Quantity</td><td style="width:75%;"><select style="width:40%;" id="level0" name="level">';
-            for(key in item_type_history){
-                item_type_html+='<option value="'+key+'">'+key+'</option>';
-            }
-
-            item_type_html+='</select></td></tr>';
-            item_type_html+='<table>';
-            
-            
-            $("#form_inventoryList").html(item_type_html);
-            
-            
-            $("#form_inventoryList").delegate("select", "change", function(){
-                key=$(this).val();
-                seriesData=getSeriesData(key);
-                
-                showChart('Price','Price History',seriesData,breakData,'chartContainer-inventoryList');
-                
-            });
-            
-            
-            seriesData=getSeriesData($("#form_inventoryList option").eq(0).attr('value'));
-            showChart('Price','Price History',seriesData,breakData,'chartContainer-inventoryList');
-            
-            $("#form_inventoryList option").eq(0).attr('selected','selected');
-        }
-        else{
-            $("#tabs-inventoryList").remove();
-            $("#inventoryList").remove();
-        }
+        
             
         
     });
@@ -546,6 +504,70 @@
             
         }
 
+        
+        
+        seriesData=[{
+                    name: 'Price',
+                    data: data_price,
+                    tooltip: {
+                            valueDecimals: 0,
+                            pointFormat: '{series.name}: <b>Rp {point.y}</b><br/>',
+                            shared: true,
+                            xDateFormat: '%b %e %Y'
+                    }
+            }];
+        Highcharts.setOptions({
+                lang: {
+                        thousandsSep: ','
+                }
+        });
+        showChart('Price','Price History',seriesData,breakData,'chartContainer');
+        
+        if(item_type_history!=''&&item_type_history!='{}'){
+            var find = '&#34;';
+            var re = new RegExp(find, 'g');
+
+            var item_type_html='<table>';
+            
+            item_type_history = item_type_history.replace(re, '"');
+            item_type_labels = item_type_labels.replace(re, '"');
+            
+            item_type_history=$.parseJSON(item_type_history);
+            item_type_labels=$.parseJSON(item_type_labels);
+            
+            
+            item_type_html+='<table><tr><td style="width:25%;">&nbsp;&nbsp;&nbsp;Quantity</td><td style="width:75%;"><select style="width:40%;" id="level0" name="level">';
+            for(key in item_type_history){
+                item_type_html+='<option value="'+key+'">'+key+'</option>';
+            }
+
+            item_type_html+='</select></td></tr>';
+            item_type_html+='<table>';
+            
+            
+            $("#form_inventoryList").html(item_type_html);
+            
+            
+            $("#form_inventoryList").delegate("select", "change", function(){
+                key=$(this).val();
+                seriesData=getSeriesData(key);
+                
+                showChart('Price','Price History',seriesData,breakData,'chartContainer-inventoryList');
+                
+            });
+            
+            
+            seriesData=getSeriesData($("#form_inventoryList option").eq(0).attr('value'));
+            showChart('Price','Price History',seriesData,breakData,'chartContainer-inventoryList');
+            
+            $("#form_inventoryList option").eq(0).attr('selected','selected');
+        }
+        else{
+            $("#tabs-inventoryList").remove();
+            $("#inventoryList").remove();
+        }
+        
+        
         if(is_admin=='1'){
             seriesData = [{
                     name: 'View',
@@ -625,24 +647,6 @@
             ];
             showChart('Other','Other History',seriesData,breakData,'chartContainer-other');
         }
-        
-        seriesData=[{
-                    name: 'Price',
-                    data: data_price,
-                    tooltip: {
-                            valueDecimals: 0,
-                            pointFormat: '{series.name}: <b>Rp {point.y}</b><br/>',
-                            shared: true,
-                            xDateFormat: '%b %e %Y'
-                    }
-            }];
-        Highcharts.setOptions({
-                lang: {
-                        thousandsSep: ','
-                }
-        });
-        showChart('Price','Price History',seriesData,breakData,'chartContainer');
-        
         
         
     

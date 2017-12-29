@@ -1,5 +1,4 @@
 var User = require(__dirname + '/models/user');
-var Log = require(__dirname + '/models/log');
 var Product = require(__dirname + '/models/product');
 var ProductItemType = require(__dirname + '/models/product_item_type');
 var TrackingPrice = require(__dirname + '/models/tracking_price');
@@ -159,36 +158,7 @@ module.exports = function(app){
             return res.send('Wrong domain name');
         }
         
-        // Fetch the computer's mac address 
-        require('getmac').getMac(function(err,macAddress){
-            if (!err){
-                var getIP = require('ipware')().get_ip;
-                var ipInfo = getIP(req);
-                var logData = {
-                    product_id: product_id,
-                    id: id,
-                    domain: domain,
-                    ipAddress: ipInfo.clientIp,
-                    macAddress: macAddress
-                };
-                if (req.session.hasOwnProperty("userEmail")) {
-                    logData['userEmail'] = req.session.userEmail;
-                }
-                else{
-                    logData['userEmail'] = null;
-                }
-                if (req.session.hasOwnProperty("userId")) {
-                    logData['userId'] = req.session.userId;
-                }
-                else{
-                    logData['userId'] = null;
-                }
-                Log.create(logData, function (error, log) {
-                });
-            }
-//            if ( require('getmac').isMac("e4:ce:8f:5b:a7:fc") ) {
-        });
-
+        helper.write_log(req,id,domain);
         
         if(req.session.hasOwnProperty("userEmail")){
             var user_email = req.session.userEmail;
@@ -507,6 +477,8 @@ module.exports = function(app){
                             }
                             var productData = {
                                 product_id: product_id,
+                                id: id,
+                                domain: domain,
                                 price_history: JSON.stringify(price_histories),
                                 current_price: info.sell_price,
                                 name: info.name,

@@ -8,6 +8,14 @@ var ProductSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
+    id: {
+        type: String,
+        trim: true
+    },
+    domain: {
+        type: String,
+        trim: true
+    },
     name: {
         type: String,
         trim: true

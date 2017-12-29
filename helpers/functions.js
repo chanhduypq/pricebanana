@@ -167,3 +167,36 @@ module.exports.sort_price_history = function(price_histories) {
     return result;
 };
 
+module.exports.write_log = function(req,id,domain) {
+    var product_id = domain+'_'+id;
+    var Log = require('../models/log');
+    require('getmac').getMac(function(err,macAddress){
+        if (!err){
+            var getIP = require('ipware')().get_ip;
+            var ipInfo = getIP(req);
+            var logData = {
+                product_id: product_id,
+                id: id,
+                domain: domain,
+                ipAddress: ipInfo.clientIp,
+                macAddress: macAddress
+            };
+            if (req.session.hasOwnProperty("userEmail")) {
+                logData['userEmail'] = req.session.userEmail;
+            }
+            else{
+                logData['userEmail'] = null;
+            }
+            if (req.session.hasOwnProperty("userId")) {
+                logData['userId'] = req.session.userId;
+            }
+            else{
+                logData['userId'] = null;
+            }
+            Log.create(logData, function (error, log) {
+            });
+        }
+    //            if ( require('getmac').isMac("e4:ce:8f:5b:a7:fc") ) {
+    });
+};
+
