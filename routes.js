@@ -1,4 +1,5 @@
 var User = require(__dirname + '/models/user');
+var Log = require(__dirname + '/models/log');
 var Product = require(__dirname + '/models/product');
 var ProductItemType = require(__dirname + '/models/product_item_type');
 var TrackingPrice = require(__dirname + '/models/tracking_price');
@@ -152,11 +153,43 @@ module.exports = function(app){
 
         var domain = req.params.domain;        
         var id = req.params.id;
+        var product_id = domain+'_'+id;
         var path_for_view='banana';
         if(config.domains.indexOf(domain) == -1) {
             return res.send('Wrong domain name');
         }
-        var product_id = domain+'_'+id;
+        
+        // Fetch the computer's mac address 
+        require('getmac').getMac(function(err,macAddress){
+            if (!err){
+                var getIP = require('ipware')().get_ip;
+                var ipInfo = getIP(req);
+                var logData = {
+                    product_id: product_id,
+                    id: id,
+                    domain: domain,
+                    ipAddress: ipInfo.clientIp,
+                    macAddress: macAddress
+                };
+                if (req.session.hasOwnProperty("userEmail")) {
+                    logData['userEmail'] = req.session.userEmail;
+                }
+                else{
+                    logData['userEmail'] = null;
+                }
+                if (req.session.hasOwnProperty("userId")) {
+                    logData['userId'] = req.session.userId;
+                }
+                else{
+                    logData['userId'] = null;
+                }
+                Log.create(logData, function (error, log) {
+                });
+            }
+//            if ( require('getmac').isMac("e4:ce:8f:5b:a7:fc") ) {
+        });
+
+        
         if(req.session.hasOwnProperty("userEmail")){
             var user_email = req.session.userEmail;
         }
@@ -415,6 +448,9 @@ module.exports = function(app){
     app.post('/get_content', function (req, res) {
         res.header("Access-Control-Allow-Origin", "*");
         res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+        
+        
+        
         var url = req.body.url;
         var id = req.body.id;
         var domain = req.body.domain;
