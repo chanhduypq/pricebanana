@@ -27,8 +27,7 @@ function regist() {
             data: {
                 email: email,
                 password: password,
-                passwordConf: passwordConf,
-                is_ajax: true
+                passwordConf: passwordConf
             },
             dataType: 'json',
             success: function (result) {
@@ -67,8 +66,7 @@ function login() {
             data: {
                 logemail: logemail,
                 logpassword: logpassword,
-                rememberme: rememberme,
-                is_ajax: true
+                rememberme: rememberme
             },
             dataType: 'json',
             success: function (result) {

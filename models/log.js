@@ -30,6 +30,18 @@ var LogSchema = new mongoose.Schema({
         type: String,
         trim: true
     },
+    city: {
+        type: String,
+        trim: true
+    },
+    country: {
+        type: String,
+        trim: true
+    },
+    countryCode: {
+        type: String,
+        trim: true
+    },
     createdDate: {
         type: Date,
         default:Date.now

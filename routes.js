@@ -421,7 +421,6 @@ module.exports = function(app){
         
         
         
-        var url = req.body.url;
         var id = req.body.id;
         var domain = req.body.domain;
         var see = req.body.see;
@@ -686,12 +685,13 @@ module.exports = function(app){
 
     //POST route for updating data
     app.post('/login', function (req, res) {
+        var isAjaxRequest = req.xhr;
         var err = '';
         if (req.body.logemail && req.body.logpassword) {
             // login
             User.authenticate(req.body.logemail, req.body.logpassword, function (error, user) {
                 if (error || !user) {
-                    if(req.body.is_ajax) {
+                    if(isAjaxRequest) {
                         var obj = {success:false,message:"Wrong email or password."};
                         return res.send(JSON.stringify(obj));
                     } else {
@@ -706,7 +706,7 @@ module.exports = function(app){
                     } else {
                         req.session.cookie.expires = false; // Cookie expires at end of session
                     }
-                    if(req.body.is_ajax) {
+                    if(isAjaxRequest) {
                         var obj = {success:true};
 
                         TrackingPrice.findOne({product_id: req.body.product_id,user_id:req.session.userId}, function (error, trackingPrice) {
@@ -722,7 +722,7 @@ module.exports = function(app){
                 }
             });
         } else {
-            if(req.body.is_ajax) {
+            if(isAjaxRequest) {
                 var obj = {success:false,message:'All fields required.'};
                 res.send(JSON.stringify(obj));
             } else {
@@ -732,10 +732,11 @@ module.exports = function(app){
     });
     
     app.post('/register', function (req, res) {
+        var isAjaxRequest = req.xhr;
         var err = '';
         // confirm that user typed same password twice
         if (req.body.password !== req.body.passwordConf) {
-            if(req.body.is_ajax) {
+            if(isAjaxRequest) {
                 var obj = {success:false,message:"Passwords do not match."};
                 return res.send(JSON.stringify(obj));
             } else {
@@ -754,7 +755,7 @@ module.exports = function(app){
             User.findOne({email: req.body.email}, function (error, user) {
                 if (user === null) {
                     User.create(userData, function (error, user) {
-                        if (req.body.is_ajax) {
+                        if (isAjaxRequest) {
                             var obj = {success: true,tracked_price: 0};
                             req.session.userId = user._id;
                             req.session.userEmail = req.body.email;
@@ -768,7 +769,7 @@ module.exports = function(app){
                         }
                     });
                 } else {
-                    if (req.body.is_ajax) {
+                    if (isAjaxRequest) {
                         var obj = {success: false, message: "Email was existed"};
                         res.send(JSON.stringify(obj));
                     } else {
@@ -777,7 +778,7 @@ module.exports = function(app){
                 }
             });
         }  else {
-            if(req.body.is_ajax) {
+            if(isAjaxRequest) {
                 var obj = {success:false,message:'All fields required.'};
                 res.send(JSON.stringify(obj));
             } else {
