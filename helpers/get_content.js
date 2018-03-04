@@ -405,8 +405,11 @@ module.exports.get_info_from_tokopedia = function (html) {
     if(sold.trim()==''){
         sold='0';
     }
-    node=dom.getElementById('p-info-minorder');
-    booking_min=node.innerHTML.replace(/[^0-9\.]+/g, '');
+//    node=dom.getElementById('p-info-minorder');
+//    booking_min=node.innerHTML.replace(/[^0-9\.]+/g, '');
+    nodes=dom.getElementsByClassName('detail-info');
+    nodes=nodes[0].getElementsByTagName('dd');
+    booking_min=nodes[5].innerHTML.replace(/[^0-9\.]+/g, '');
     
     nodes=dom.getElementsByClassName('product-pricelastupdated');
     if(nodes.length>0){
