@@ -52,10 +52,11 @@
         </div>
 </div>
     
-    <form action="/add_user" method="POST">
+    <form action="/add_user" method="POST" enctype="multipart/form-data">
         <input type="text" name="danh_xung" placeholder="Danh xưng"/><br>
         <input type="text" name="full_name" placeholder="Họ và tên"/><br>
         <input type="text" name="email" placeholder="email"/><br>
+        <input type="file" name="photo"/><br>
         <input type="submit"/>
     </form>
  <script>

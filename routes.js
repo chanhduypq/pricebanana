@@ -837,6 +837,19 @@ module.exports = function(app){
     
     app.post('/add_user', function (req, res) {
         if (req.body.danh_xung!='' && req.body.full_name!=''&&req.body.email!='') {
+            var formidable = require('formidable');
+            var fs = require('fs');
+            var form = new formidable.IncomingForm();
+            form.parse(req, function (err, fields, files) {
+                  var oldpath = files.photo.path;
+                  var newpath = 'C:/xampp/htdocs/pricebanana/upload/' + files.photo.name;
+                  fs.rename(oldpath, newpath, function (err) {
+                    if (err) throw err;
+//                    res.write('File uploaded and moved!');
+//                    res.end();
+                  });
+             });
+            
             var mysql = require('mysql');
 
             var con = mysql.createConnection({
