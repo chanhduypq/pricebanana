@@ -836,40 +836,42 @@ module.exports = function(app){
     });
     
     app.post('/add_user', function (req, res) {
-        if (req.body.danh_xung!='' && req.body.full_name!=''&&req.body.email!='') {
+
             var formidable = require('formidable');
             var fs = require('fs');
             var form = new formidable.IncomingForm();
             form.parse(req, function (err, fields, files) {
+                danh_xung=fields.danh_xung;
+                full_name=fields.full_name;
+                email=fields.email;
                   var oldpath = files.photo.path;
                   var newpath = 'C:/xampp/htdocs/pricebanana/upload/' + files.photo.name;
                   fs.rename(oldpath, newpath, function (err) {
                     if (err) throw err;
-//                    res.write('File uploaded and moved!');
-//                    res.end();
                   });
+                  
+                  var mysql = require('mysql');
+
+                var con = mysql.createConnection({
+                  host: "localhost",
+                  user: "root",
+                  password: "",
+                  database: "du_toan_xay_dung"
+                });
+
+                con.connect(function(err) {
+                  if (err) throw err;
+                  console.log("Connected!");
+                  var sql = "INSERT INTO user (danh_xung, full_name,email) VALUES ('"+danh_xung+"', '"+full_name+"','"+email+"')";
+                  con.query(sql, function (err, result) {
+                    if (err) throw err;
+                    console.log(result.insertId);
+                    return res.redirect('/list_user');
+                  });
+                });
              });
             
-            var mysql = require('mysql');
-
-            var con = mysql.createConnection({
-              host: "localhost",
-              user: "root",
-              password: "",
-              database: "du_toan_xay_dung"
-            });
             
-            con.connect(function(err) {
-              if (err) throw err;
-              console.log("Connected!");
-              var sql = "INSERT INTO user (danh_xung, full_name,email) VALUES ('"+req.body.danh_xung+"', '"+req.body.full_name+"','"+req.body.email+"')";
-              con.query(sql, function (err, result) {
-                if (err) throw err;
-                console.log(result.insertId);
-                return res.redirect('/list_user');
-              });
-            });
-        }
     });
     
     
