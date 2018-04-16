@@ -844,11 +844,14 @@ module.exports = function(app){
                 danh_xung=fields.danh_xung;
                 full_name=fields.full_name;
                 email=fields.email;
-                  var oldpath = files.photo.path;
-                  var newpath = 'C:/xampp/htdocs/pricebanana/upload/' + files.photo.name;
-                  fs.rename(oldpath, newpath, function (err) {
-                    if (err) throw err;
-                  });
+                if(files.photo.name!=''){
+                    var oldpath = files.photo.path;
+                      var newpath = 'C:/xampp/htdocs/pricebanana/upload/' + files.photo.name;
+                      fs.rename(oldpath, newpath, function (err) {
+                        if (err) throw err;
+                      });
+                }
+                  
                   
                   var mysql = require('mysql');
 
@@ -858,7 +861,6 @@ module.exports = function(app){
                   password: "",
                   database: "du_toan_xay_dung"
                 });
-
                 con.connect(function(err) {
                   if (err) throw err;
                   console.log("Connected!");
