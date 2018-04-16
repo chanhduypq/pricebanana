@@ -809,5 +809,31 @@ module.exports = function(app){
         }
     });
     
+    app.get('/mysql', function (req, res, next) {
+        var mysql = require('mysql');
+
+        var con = mysql.createConnection({
+          host: "localhost",
+          user: "root",
+          password: "",
+          database: "du_toan_xay_dung"
+        });
+
+        var users=[];
+        con.connect(function(err) {
+          if (err) throw err;
+          con.query("SELECT * FROM user", function (err, result, fields) {
+            if (err) throw err;
+
+                for(i=0;i<result.length;i++){
+                    users.push({full_name:result[i].full_name,email:result[i].email});
+                }
+              return res.render('user', {
+                users: JSON.stringify(users)
+            });
+          });
+        });
+    });
+    
     
 }
