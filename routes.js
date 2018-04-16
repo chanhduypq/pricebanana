@@ -852,7 +852,7 @@ module.exports = function(app){
               var sql = "INSERT INTO user (danh_xung, full_name,email) VALUES ('"+req.body.danh_xung+"', '"+req.body.full_name+"','"+req.body.email+"')";
               con.query(sql, function (err, result) {
                 if (err) throw err;
-                
+                console.log(result.insertId);
                 return res.redirect('/list_user');
               });
             });
