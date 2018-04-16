@@ -809,7 +809,7 @@ module.exports = function(app){
         }
     });
     
-    app.get('/mysql', function (req, res, next) {
+    app.get('/list_user', function (req, res, next) {
         var mysql = require('mysql');
 
         var con = mysql.createConnection({
@@ -833,6 +833,30 @@ module.exports = function(app){
             });
           });
         });
+    });
+    
+    app.post('/add_user', function (req, res) {
+        if (req.body.danh_xung!='' && req.body.full_name!=''&&req.body.email!='') {
+            var mysql = require('mysql');
+
+            var con = mysql.createConnection({
+              host: "localhost",
+              user: "root",
+              password: "",
+              database: "du_toan_xay_dung"
+            });
+            
+            con.connect(function(err) {
+              if (err) throw err;
+              console.log("Connected!");
+              var sql = "INSERT INTO user (danh_xung, full_name,email) VALUES ('"+req.body.danh_xung+"', '"+req.body.full_name+"','"+req.body.email+"')";
+              con.query(sql, function (err, result) {
+                if (err) throw err;
+                
+                return res.redirect('/list_user');
+              });
+            });
+        }
     });
     
     
